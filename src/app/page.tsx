@@ -140,7 +140,7 @@ export default function Home() {
                 }}
                 className="font-mono text-sm uppercase opacity-50 hover:opacity-100 flex items-center gap-4 text-background transition-opacity cursor-pointer group"
               >
-                Click to explore <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+                Scroll to explore <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
               </button>
             </div>
 
