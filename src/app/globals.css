@@ -157,12 +157,12 @@ body {
   display: inline-flex;
 }
 
-/* Reduced-motion users skip the GSAP hook and see the text at rest. */
+/* Hides hero spans in the initial SSR paint so they don't flash visible
+   before useLayoutEffect runs. GSAP overrides this with `yPercent: 120,
+   y: 0` (the explicit y:0 prevents GSAP from reading the matrix form of
+   this rule as a pixel offset and stacking another 120% on top). The
+   fallback animation at 2.5s snaps text in if GSAP never runs. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Initial hidden state for the hero reveal — GSAP overrides this inline
-     within the first synchronous useLayoutEffect tick. A CSS-only fallback
-     reveals the text after the GSAP animation would have finished, so if
-     GSAP fails to load the text never stays hidden. */
   .hero-line span {
     transform: translateY(120%);
     animation: hero-line-reveal-fallback 0.01s 2.5s linear forwards;
