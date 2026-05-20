@@ -39,10 +39,14 @@ export default function FooterReveal() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const footer = footerRef.current;
+    if (!footer) return;
     const ctx = gsap.context(() => {
       gsap.from(".footer-giant-text", {
         scrollTrigger: {
-          trigger: "footer",
+          // Pass the element directly — selector lookups inside gsap.context
+          // are scoped to the footer itself, which can't match its own tag.
+          trigger: footer,
           start: "top bottom",
           end: "bottom bottom",
           scrub: 1,

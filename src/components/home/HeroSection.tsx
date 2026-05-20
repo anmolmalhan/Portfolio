@@ -10,7 +10,11 @@ export default function HeroSection() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
       const lines = gsap.utils.toArray<HTMLElement>(".hero-line span");
-      gsap.set(lines, { yPercent: 120 });
+      // Explicitly zero `y` so the CSS-derived pixel translation doesn't
+      // stack with `yPercent`. Without this, GSAP reads the CSS rule
+      // `transform: translateY(120%)` as a 124px pixel offset, then `yPercent: 120`
+      // adds another 120% on top, leaving the spans permanently off-screen.
+      gsap.set(lines, { yPercent: 120, y: 0 });
       gsap.to(lines, {
         yPercent: 0,
         duration: 1.4,

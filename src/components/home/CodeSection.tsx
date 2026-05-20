@@ -12,9 +12,13 @@ export default function CodeSection() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const section = ref.current;
+    if (!section) return;
     const ctx = gsap.context(() => {
       gsap.from(".code-line", {
-        scrollTrigger: { trigger: ".code-section", start: "top 75%" },
+        // Pass the element directly — selector lookups inside gsap.context
+        // are scoped to the section itself, which can't match its own class.
+        scrollTrigger: { trigger: section, start: "top 75%" },
         opacity: 0,
         x: -50,
         stagger: 0.1,
