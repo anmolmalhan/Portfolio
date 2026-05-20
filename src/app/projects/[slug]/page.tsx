@@ -1,12 +1,32 @@
+import type { Metadata } from "next";
 import { projects } from "@/data/projects";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Code, ExternalLink } from "lucide-react";
 
 export async function generateStaticParams() {
   return projects.map((project) => ({
     slug: project.slug,
   }));
+}
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projects.find((p) => p.slug === slug);
+  if (!project) return { title: "Project not found" };
+  return {
+    title: project.title,
+    description: project.shortDescription,
+    alternates: { canonical: `/projects/${project.slug}` },
+    openGraph: {
+      title: `${project.title} · Anmol Malhan`,
+      description: project.shortDescription,
+      // og:image is auto-attached by src/app/projects/[slug]/opengraph-image.tsx
+    },
+  };
 }
 
 export default async function ProjectDetail({ params }: { params: Promise<{ slug: string }> }) {
@@ -53,39 +73,51 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             </p>
           </div>
 
-          {/* Quick Launch Button */}
+          {/* Quick Launch + Source — render only when the URLs exist.
+              Private prototypes can omit both and the page stays clean. */}
           <div className="shrink-0 pb-2">
-            <a 
-              href={project.liveUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="group relative flex items-center justify-center gap-3 px-8 py-5 bg-[var(--syntax-blue)] text-white overflow-hidden rounded-full font-mono font-bold tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
-            >
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-              <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-              Quick Launch
-            </a>
-            <a 
-              href={project.githubUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="mt-4 flex items-center justify-center gap-2 font-mono text-sm text-[var(--syntax-comment)] hover:text-foreground transition-colors"
-            >
-              <Code className="w-4 h-4" /> View Source Code
-            </a>
+            {project.liveUrl ? (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center justify-center gap-3 px-8 py-5 bg-[var(--syntax-blue)] text-white overflow-hidden rounded-full font-mono font-bold tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
+              >
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                Quick Launch
+              </a>
+            ) : (
+              <div className="flex items-center justify-center gap-3 px-8 py-5 border border-foreground/15 text-[var(--syntax-comment)] rounded-full font-mono text-sm uppercase tracking-wider">
+                Prototype — not yet public
+              </div>
+            )}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center justify-center gap-2 font-mono text-sm text-[var(--syntax-comment)] hover:text-foreground transition-colors"
+              >
+                <Code className="w-4 h-4" /> View Source Code
+              </a>
+            )}
           </div>
         </div>
       </div>
 
       {/* Main Feature Image */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 mb-32">
-        <div className="w-full aspect-[21/9] lg:aspect-[2.5/1] bg-surface overflow-hidden relative" 
+        <div className="w-full aspect-[21/9] lg:aspect-[2.5/1] bg-surface overflow-hidden relative"
              style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
-          {project.image && project.image !== "" ? (
-            <img 
-              src={project.image} 
-              alt={`${project.title} Interface`} 
-              className="w-full h-full object-cover opacity-90 hover:opacity-100 hover:scale-[1.02] transition-all duration-1000 ease-out" 
+          {project.image ? (
+            <Image
+              src={project.image}
+              alt={`${project.title} Interface`}
+              fill
+              sizes="(max-width: 1024px) 100vw, 1280px"
+              priority
+              className="object-cover opacity-90 hover:opacity-100 hover:scale-[1.02] transition-all duration-1000 ease-out"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center font-mono text-[var(--syntax-comment)] bg-surface-hover/50">
@@ -101,8 +133,10 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
           <h2 className="text-4xl uppercase mb-8 border-b border-foreground/10 pb-4">Architectural Overview</h2>
           <p>{project.content}</p>
           <div className="my-12 p-8 border border-[var(--syntax-blue)]/20 bg-[var(--syntax-blue)]/5 rounded-xl">
-            <h3 className="text-2xl font-mono text-[var(--syntax-blue)] mb-4 mt-0">Technical Execution</h3>
-            <p className="text-lg m-0">The entire platform relies on aggressive micro-optimizations, bypassing standard generic latency flaws by connecting directly at the edge boundary. GSAP and Framer Motion sequence transitions flawlessly without triggering Main Thread blockage.</p>
+            <h3 className="text-2xl font-mono text-[var(--syntax-blue)] mb-4 mt-0">Stack</h3>
+            <p className="text-lg m-0">
+              Built with {project.techStack.join(", ")}. Role: {project.role}.
+            </p>
           </div>
         </div>
       </div>

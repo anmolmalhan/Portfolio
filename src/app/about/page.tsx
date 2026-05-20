@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { User, MonitorPlay, BookOpen, Coffee, ArrowRight, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Anmol Malhan — frontend developer in Rohtak, Haryana. Building polished, performance-driven web experiences with React, Next.js, and TypeScript.",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   const blocks = [
@@ -73,16 +81,12 @@ export default function AboutPage() {
         {/* Right Column: Photo */}
         <div className="order-first lg:order-last w-full max-w-sm mx-auto lg:mx-0">
           <div className="relative aspect-[3/4] w-full border border-surface/50 rounded-2xl overflow-hidden shadow-2xl bg-surface/20 group">
-            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
-            {/* 
-              TODO: Add your photo to the public/ folder and name it 'profile.jpg'.
-              The grayscale filter keeps it matching the dark aesthetic.
-            */}
-            <Image 
-              src="/profile.jpg" 
-              alt="Anmol - Frontend Developer"
+            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
+            <Image
+              src="/profile.jpg"
+              alt="Anmol — Frontend Developer"
               fill
-              className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
               sizes="(max-width: 768px) 100vw, 320px"
               priority
             />

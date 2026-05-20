@@ -1,23 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #09090b;
-  --surface: #f4f4f5;
-  
-  --syntax-blue: #0070f3;
-  --syntax-amber: #f5a623;
-  --syntax-magenta: #eb367f;
-  --syntax-green: #50e3c2;
-  --syntax-comment: #888888;
+  /* Light palette — refined for higher contrast and a calmer, modern feel.
+     Background leans toward off-white with a faint cool tint; surfaces step
+     down through subtle zinc grays. Syntax colors are deeper than the dark
+     mode equivalents so they hit WCAG AA on white. */
+  --background: #fbfbfc;
+  --foreground: #0a0a0b;
+  --surface: #f2f3f5;
+  --surface-hover: #e4e6ea;
+  --accent: #2563eb;
+
+  --syntax-blue: #2563eb;
+  --syntax-amber: #b45309;
+  --syntax-magenta: #be185d;
+  --syntax-green: #047857;
+  --syntax-comment: #71717a;
+}
+
+/* Dark palette — applied when the user explicitly selects dark OR when their
+   system prefers dark AND they haven't explicitly chosen light. */
+:root[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --surface: #18181b;
+  --surface-hover: #27272a;
+  --accent: #60a5fa;
+
+  --syntax-blue: #60a5fa;
+  --syntax-amber: #fbbf24;
+  --syntax-magenta: #e879f9;
+  --syntax-green: #4ade80;
+  --syntax-comment: #71717a;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b; 
+  :root:not([data-theme="light"]) {
+    --background: #09090b;
     --foreground: #f4f4f5;
     --surface: #18181b;
-    
+    --surface-hover: #27272a;
+    --accent: #60a5fa;
+
     --syntax-blue: #60a5fa;
     --syntax-amber: #fbbf24;
     --syntax-magenta: #e879f9;
@@ -30,7 +54,9 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
-  
+  --color-surface-hover: var(--surface-hover);
+  --color-accent: var(--accent);
+
   --color-syntax-blue: var(--syntax-blue);
   --color-syntax-amber: var(--syntax-amber);
   --color-syntax-magenta: var(--syntax-magenta);
@@ -85,21 +111,33 @@ body {
   contain: layout paint;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  body {
-    cursor: none;
-  }
-  a, button {
+/* Custom cursor only replaces the system cursor when the user accepts motion.
+   Users with prefers-reduced-motion keep their native pointer. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body,
+  a,
+  button {
     cursor: none;
   }
 }
 
-::selection {
-  background: var(--foreground);
-  color: var(--background);
+/* Hide native scrollbar on the horizontal projects carousel. */
+.pin-wrap::-webkit-scrollbar {
+  display: none;
 }
 
-/* Typography styles for Studio Namma inspiration */
+/* Opt into the View Transitions API for in-app navigation. The
+   `viewTransitionName: project-…` styles set on project cards and the
+   case-study page can now morph between routes. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 250ms;
+}
+
+/* Typography */
 .text-giant {
   font-size: clamp(3rem, 9vw, 9rem);
   line-height: 0.9;
@@ -119,10 +157,22 @@ body {
   display: inline-flex;
 }
 
-/* GSAP core configs */
-.gsap-reveal {
-  opacity: 0;
-  visibility: hidden;
+/* Reduced-motion users skip the GSAP hook and see the text at rest. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Initial hidden state for the hero reveal — GSAP overrides this inline
+     within the first synchronous useLayoutEffect tick. A CSS-only fallback
+     reveals the text after the GSAP animation would have finished, so if
+     GSAP fails to load the text never stays hidden. */
+  .hero-line span {
+    transform: translateY(120%);
+    animation: hero-line-reveal-fallback 0.01s 2.5s linear forwards;
+  }
+}
+
+@keyframes hero-line-reveal-fallback {
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Lenis smooth scrolling config */
