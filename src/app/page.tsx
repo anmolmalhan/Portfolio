@@ -6,8 +6,8 @@ import { projects } from "@/data/projects";
 
 export default function Home() {
   return (
-    <div className="w-full relative">
-      <div className="relative z-10 w-full bg-background flex flex-col rounded-b-[2rem] md:rounded-b-[4rem] shadow-[0_30px_60px_rgba(0,0,0,0.15)] overflow-hidden text-foreground">
+    <div className="w-full relative pointer-events-none">
+      <div className="relative z-10 w-full bg-background flex flex-col rounded-b-[2rem] md:rounded-b-[4rem] shadow-[0_30px_60px_rgba(0,0,0,0.15)] overflow-hidden text-foreground pointer-events-auto">
         <HeroSection />
         <CodeSection />
         <ProjectsCarousel projects={projects} />

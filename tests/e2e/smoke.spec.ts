@@ -32,6 +32,17 @@ test.describe("smoke", () => {
     await expect(page.getByRole("link", { name: /github/i }).first()).toBeVisible();
   });
 
+  test("home footer contact CTA navigates to /contact", async ({ page }) => {
+    await page.goto("/");
+    // Scroll to the bottom so the fixed-reveal footer is fully on-screen
+    // and `inert` flips off via the IntersectionObserver.
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight }));
+    const cta = page.getByRole("link", { name: /Execute Contact/i });
+    await expect(cta).toBeVisible();
+    await cta.click();
+    await expect(page).toHaveURL(/\/contact$/);
+  });
+
   test("unknown route renders the 404 page", async ({ page }) => {
     const res = await page.goto("/this-route-does-not-exist");
     expect(res?.status()).toBe(404);
