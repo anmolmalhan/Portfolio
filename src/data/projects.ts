@@ -1,3 +1,13 @@
+export type ProjectSection = {
+  heading: string;
+  paragraphs: string[];
+};
+
+export type ProjectMetric = {
+  label: string;
+  value: string;
+};
+
 export type Project = {
   id: string;
   slug: string;
@@ -11,7 +21,12 @@ export type Project = {
   /** Optional. Omit / leave empty if not deployed yet. UI hides the link. */
   liveUrl?: string;
   featured: boolean;
-  content: string;
+  /** One-line positioning shown above the section list on the case study page. */
+  summary: string;
+  /** Highlight numbers shown as a small stat row at the top of the case study. */
+  metrics?: ProjectMetric[];
+  /** Structured case study body. Each section renders as a heading + paragraphs. */
+  sections: ProjectSection[];
 };
 
 export const projects: Project[] = [
@@ -27,8 +42,42 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/anmolmalhan/tripmates",
     liveUrl: "https://tripmates-coral.vercel.app/",
     featured: true,
-    content:
-      "Tripmates is a group-travel marketplace built around one observation: every trip you try to plan with friends gets killed by excuses. The product replaces the coordination loop with a curated catalogue of trips that already have fixed dates, pre-booked hotels, and a verified host — you book a seat, you go. The current build is a frontend-complete prototype: a homepage that pitches the value (travel together, make friends, save ~30%), a trip listings grid with day-by-day itineraries, host-verification and trust-and-safety pages, and a seat-based booking flow that drops users into a WhatsApp group on confirmation. It's intentionally backend-agnostic — no database, no real payments — so the matching, pricing, and trust flows can be validated with real users before wiring up Clerk for auth, Neon Postgres for trip data, and Razorpay for payments in Phase 1. Built with Next.js 16 (App Router, Server Components, Turbopack), TypeScript in strict mode, Tailwind v4, and a shadcn/ui Nova preset.",
+    summary:
+      "Replacing the friend-group coordination loop with a marketplace of pre-curated trips you can join with one seat.",
+    metrics: [
+      { label: "Status", value: "Frontend-complete prototype" },
+      { label: "Target market", value: "India · solo travellers" },
+      { label: "Avg. saving vs DIY", value: "~30%" },
+    ],
+    sections: [
+      {
+        heading: "The Problem",
+        paragraphs: [
+          "Every group trip you try to plan with friends gets killed by excuses — mismatched leaves, mismatched budgets, mismatched commitment. Solo travellers who want company end up either traveling alone or coordinating with strangers on noisy WhatsApp groups with no accountability.",
+          "Tripmates is built around one observation: the coordination loop is the bottleneck, not the desire. Remove the loop and the trip happens.",
+        ],
+      },
+      {
+        heading: "The Product",
+        paragraphs: [
+          "A curated catalogue of trips that already have fixed dates, pre-booked hotels, and a verified host. You browse, you book a seat, you go. No planning, no chasing, no convincing.",
+          "The current build is frontend-complete: a homepage that pitches the value (travel together, make friends, save ~30%), a trip listings grid with day-by-day itineraries, host-verification and trust-and-safety pages, and a seat-based booking flow that drops users into a WhatsApp group on confirmation.",
+        ],
+      },
+      {
+        heading: "Why Backend-Agnostic First",
+        paragraphs: [
+          "Deliberately no database, no real payments — yet. The hardest questions for a marketplace like this aren't technical: they're whether real users trust a stranger-host enough to wire money, whether per-seat pricing reads as fair, and whether the WhatsApp handoff feels safe.",
+          "By keeping the prototype backend-light, I can iterate on those flows with real users in days, not sprints. Phase 1 wires up Clerk for auth, Neon Postgres for trip data, and Razorpay for payments only once the trust and pricing flows are validated.",
+        ],
+      },
+      {
+        heading: "Stack & Engineering Choices",
+        paragraphs: [
+          "Next.js 16 with the App Router, Server Components, and Turbopack. TypeScript in strict mode. Tailwind v4 with a shadcn/ui Nova preset for a consistent design system. The catalogue is statically generated where possible so listing pages stay sub-second even on Indian mid-tier devices.",
+        ],
+      },
+    ],
   },
   {
     id: "1",
@@ -42,7 +91,40 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/anmolmalhan/Speedometx",
     liveUrl: "https://speedometx.vercel.app/",
     featured: true,
-    content:
-      "Engineered from the ground up to bypass standard browser telemetry bottlenecks, SPEEDOMETX utilizes a high-concurrency upload engine pooling multithreaded HTTP workers to saturate modern TCP stacks. Paired with a dark, immersive interface, it accurately logs latency jitter natively to edge nodes without yielding to micro-stutters — making it an aggressively premium network assessment tool.",
+    summary:
+      "A network speed test that competes on motion fidelity, not just numbers — saturating the link without dropping a frame on the gauge.",
+    metrics: [
+      { label: "Status", value: "Public" },
+      { label: "Render budget", value: "60fps gauge under load" },
+      { label: "Concurrency", value: "Pooled HTTP workers" },
+    ],
+    sections: [
+      {
+        heading: "The Goal",
+        paragraphs: [
+          "Most browser-based speed tests measure the bottleneck of their own measurement code, not your link. They run on a single TCP connection, share the main thread with the rendering loop, and produce numbers that lag behind reality.",
+          "SPEEDOMETX is engineered from the ground up to bypass those bottlenecks — and to look good doing it.",
+        ],
+      },
+      {
+        heading: "How It Measures",
+        paragraphs: [
+          "A high-concurrency upload engine pools multithreaded HTTP workers to saturate modern TCP stacks the way a real workload would. Latency jitter is sampled natively against edge nodes rather than against a single distant origin, so the readout reflects what the user's network actually feels like under sustained load.",
+        ],
+      },
+      {
+        heading: "Why Motion Matters Here",
+        paragraphs: [
+          "A speed test is one of the rare apps where the user stares at a single animating component for the entire session. If the gauge stutters while the link is being saturated, the tool feels slow — even if its numbers are correct.",
+          "Framer Motion drives the kinematics with spring physics tuned to feel weighty without lag. The dark, immersive interface keeps focus on the gauge, and the rendering path is structured so the upload engine never starves the animation frame.",
+        ],
+      },
+      {
+        heading: "Stack",
+        paragraphs: [
+          "Next.js with the App Router, TypeScript in strict mode, Tailwind for utility-first styling, and Framer Motion for the gauge and transitions.",
+        ],
+      },
+    ],
   },
 ];

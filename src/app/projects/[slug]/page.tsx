@@ -129,15 +129,50 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
 
       {/* Case Study Content */}
       <div className="max-w-4xl mx-auto px-6 md:px-12 pb-32">
-        <div className="prose prose-invert prose-xl max-w-none prose-p:text-[var(--syntax-comment)] prose-p:leading-relaxed prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight">
-          <h2 className="text-4xl uppercase mb-8 border-b border-foreground/10 pb-4">Architectural Overview</h2>
-          <p>{project.content}</p>
-          <div className="my-12 p-8 border border-[var(--syntax-blue)]/20 bg-[var(--syntax-blue)]/5 rounded-xl">
-            <h3 className="text-2xl font-mono text-[var(--syntax-blue)] mb-4 mt-0">Stack</h3>
-            <p className="text-lg m-0">
-              Built with {project.techStack.join(", ")}. Role: {project.role}.
-            </p>
-          </div>
+        <p className="text-2xl md:text-3xl text-foreground/90 leading-snug font-light mb-12 md:mb-16">
+          {project.summary}
+        </p>
+
+        {project.metrics && project.metrics.length > 0 && (
+          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 md:mb-20 border-y border-foreground/10 py-8">
+            {project.metrics.map((m) => (
+              <div key={m.label}>
+                <dt className="font-mono text-xs uppercase tracking-widest text-[var(--syntax-comment)] mb-2">
+                  {m.label}
+                </dt>
+                <dd className="text-xl md:text-2xl font-semibold text-foreground">
+                  {m.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
+        <div className="space-y-16 md:space-y-20">
+          {project.sections.map((section, i) => (
+            <section key={section.heading}>
+              <div className="flex items-baseline gap-4 mb-6 md:mb-8">
+                <span className="font-mono text-sm text-[var(--syntax-blue)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-tight">
+                  {section.heading}
+                </h2>
+              </div>
+              <div className="space-y-5 text-lg md:text-xl text-[var(--syntax-comment)] leading-relaxed border-l-2 border-surface pl-6 md:pl-8">
+                {section.paragraphs.map((p, j) => (
+                  <p key={j}>{p}</p>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <div className="mt-20 p-8 border border-[var(--syntax-blue)]/20 bg-[var(--syntax-blue)]/5 rounded-xl">
+          <h3 className="text-xl font-mono text-[var(--syntax-blue)] mb-3">Stack</h3>
+          <p className="text-lg text-foreground/80">
+            Built with {project.techStack.join(", ")}. Role: {project.role}.
+          </p>
         </div>
       </div>
     </div>
