@@ -50,7 +50,7 @@ export function Header() {
                 key={label}
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`font-sans font-medium text-xs md:text-sm tracking-wide uppercase transition-opacity rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                className={`font-sans font-medium text-xs md:text-sm tracking-wide uppercase transition-opacity rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background inline-flex items-center min-h-[44px] md:min-h-0 ${
                   active ? "opacity-100" : "opacity-70 hover:opacity-100"
                 }`}
               >

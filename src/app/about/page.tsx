@@ -80,7 +80,7 @@ export default function AboutPage() {
 
         {/* Right Column: Photo */}
         <div className="order-first lg:order-last w-full max-w-sm mx-auto lg:mx-0">
-          <div className="relative aspect-[3/4] w-full border border-surface/50 rounded-2xl overflow-hidden shadow-2xl bg-surface/20 group">
+          <div className="relative aspect-[4/3] sm:aspect-[3/4] w-full border border-surface/50 rounded-2xl overflow-hidden shadow-2xl bg-surface/20 group">
             <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
             <Image
               src="/profile.jpg"

@@ -29,7 +29,7 @@ export default function HeroSection() {
   return (
     <section
       ref={ref}
-      className="h-[75dvh] md:h-[100dvh] w-full flex flex-col justify-end pb-10 md:pb-12 px-6 md:px-12 relative overflow-hidden hero-section"
+      className="min-h-[75dvh] md:h-[100dvh] w-full flex flex-col justify-end pb-14 md:pb-12 px-6 md:px-12 relative overflow-hidden hero-section"
     >
       <div className="absolute top-1/4 right-[10%] w-[40vw] h-[40vw] bg-[var(--syntax-blue)] rounded-full blur-[40px] md:blur-[80px] opacity-10 pointer-events-none hero-glow" />
       <div className="absolute bottom-0 left-[10%] w-[30vw] h-[30vw] bg-[var(--syntax-magenta)] rounded-full blur-[40px] md:blur-[80px] opacity-10 pointer-events-none hero-glow" />

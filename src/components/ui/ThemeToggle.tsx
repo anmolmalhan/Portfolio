@@ -64,7 +64,7 @@ export function ThemeToggle() {
       aria-label={label}
       title={label}
       suppressHydrationWarning
-      className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-foreground/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="w-11 h-11 md:w-8 md:h-8 flex items-center justify-center rounded-md hover:bg-foreground/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
       <Icon className="w-4 h-4" />
     </button>
