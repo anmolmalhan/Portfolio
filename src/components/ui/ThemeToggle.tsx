@@ -18,7 +18,7 @@ function getClientSnapshot(): Theme {
 }
 
 function getServerSnapshot(): Theme {
-  // The server has no access to the user's choice — render a stable default
+  // The server has no access to the user's choice. render a stable default
   // and let useSyncExternalStore reconcile on the client.
   return "system";
 }
@@ -40,7 +40,7 @@ function applyTheme(next: Theme) {
     if (next === "system") window.localStorage.removeItem(STORAGE_KEY);
     else window.localStorage.setItem(STORAGE_KEY, next);
   } catch {
-    /* localStorage unavailable — DOM state still updates */
+    /* localStorage unavailable. DOM state still updates */
   }
   // Notify same-tab listeners; the `storage` event only fires across tabs.
   window.dispatchEvent(new Event(CHANGE_EVENT));

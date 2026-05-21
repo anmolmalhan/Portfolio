@@ -4,13 +4,14 @@ test.describe("smoke", () => {
   test("home renders the hero", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Anmol Malhan/i);
-    await expect(page.getByText("THINK", { exact: true })).toBeVisible();
-    await expect(page.getByText("CODE", { exact: true })).toBeVisible();
+    await expect(page.getByText("THINK.", { exact: true })).toBeVisible();
+    await expect(page.getByText("CODE.", { exact: true })).toBeVisible();
+    await expect(page.getByText("SHIP.", { exact: true })).toBeVisible();
   });
 
-  test("hero text reveal lands at translate(0) — guards GSAP/CSS conflict", async ({ page }) => {
+  test("hero text reveal lands at translate(0), guards GSAP/CSS conflict", async ({ page }) => {
     await page.goto("/");
-    // Hero tween is 0.2s delay + 1.4s duration + 0.3s worst-case stagger.
+    // Hero tween is 0.2s delay + 1.4s duration + 0.2s worst-case stagger.
     // Allow a generous tail for slower CI hardware before reading the final state.
     await page.waitForTimeout(2500);
     const matrices = await page.evaluate(() =>
@@ -18,7 +19,7 @@ test.describe("smoke", () => {
         (s) => getComputedStyle(s).transform
       )
     );
-    expect(matrices).toHaveLength(4);
+    expect(matrices).toHaveLength(3);
     // Final state should be identity-translate. We round to tolerate sub-px
     // float dust from GSAP's tween precision.
     for (const m of matrices) {

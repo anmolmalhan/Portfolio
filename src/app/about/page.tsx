@@ -6,7 +6,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Anmol Malhan — frontend developer in Rohtak, Haryana. Building polished, performance-driven web experiences with React, Next.js, and TypeScript.",
+    "Anmol Malhan, frontend developer in Rohtak, Haryana. Building polished, performance-driven web experiences with React, Next.js, and TypeScript.",
   alternates: { canonical: "/about" },
 };
 
@@ -84,7 +84,7 @@ export default function AboutPage() {
             <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
             <Image
               src="/profile.jpg"
-              alt="Anmol — Frontend Developer"
+              alt="Anmol Malhan, Frontend Developer"
               fill
               className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
               sizes="(max-width: 768px) 100vw, 320px"

@@ -12,7 +12,7 @@ export type ContactResult =
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
 // In-memory rate limit: max 3 successful sends per IP per 10 minutes.
-// Lives in the function instance — Fluid Compute reuses instances, so this
+// Lives in the function instance. Fluid Compute reuses instances, so this
 // shares state across nearby requests on the same warm container. For a
 // hardened deployment, swap for Upstash KV.
 const RATE_WINDOW_MS = 10 * 60 * 1000;
@@ -35,7 +35,7 @@ export async function sendContactMessage(payload: {
   name: string;
   email: string;
   message: string;
-  // Honeypot — bots fill hidden fields. Real users leave it empty.
+  // Honeypot. bots fill hidden fields. Real users leave it empty.
   website?: string;
 }): Promise<ContactResult> {
   const name = payload.name.trim();
@@ -72,7 +72,7 @@ export async function sendContactMessage(payload: {
   const to = process.env.CONTACT_TO_EMAIL;
   const from = process.env.CONTACT_FROM_EMAIL;
 
-  // No backend creds configured — tell the client to fall back to mailto.
+  // No backend creds configured. tell the client to fall back to mailto.
   if (!apiKey || !to || !from) {
     return { ok: true, mode: "mailto" };
   }
@@ -89,7 +89,7 @@ export async function sendContactMessage(payload: {
         to: [to],
         reply_to: [email],
         subject: `Portfolio inquiry from ${name}`,
-        text: `${message}\n\n— ${name}\n${email}`,
+        text: `${message}\n\nFrom: ${name}\n${email}`,
       }),
     });
     if (!res.ok) {

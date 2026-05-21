@@ -22,7 +22,7 @@ const CONTACT_EMAIL = "malhananmol1@gmail.com";
 
 // Server Component: reads searchParams on the server so the status banner
 // renders in the initial HTML. That means visitors without JS see the
-// success/error feedback from the Server Action redirect immediately —
+// success/error feedback from the Server Action redirect immediately , 
 // real progressive enhancement, not a client-only patch.
 export default async function ContactPage({
   searchParams,
@@ -35,7 +35,7 @@ export default async function ContactPage({
     {
       icon: Clock,
       label: "Response time",
-      value: "1–2 business days",
+      value: "1 to 2 business days",
     },
     {
       icon: MapPin,
@@ -50,9 +50,9 @@ export default async function ContactPage({
   ];
 
   const goodFit = [
-    "Frontend builds where motion and interaction matter — landing pages, marketing sites, product surfaces.",
+    "Frontend builds where motion and interaction matter: landing pages, marketing sites, product surfaces.",
     "Next.js + TypeScript applications that need a careful hand on performance and accessibility.",
-    "Design-engineering collaborations — taking a Figma file and turning it into something that feels alive.",
+    "Design-engineering collaborations. Taking a Figma file and turning it into something that feels alive.",
   ];
 
   return (
@@ -60,7 +60,7 @@ export default async function ContactPage({
       <div className="mb-10">
         <div className="font-mono text-xs uppercase tracking-widest flex items-center gap-2 text-[var(--syntax-comment)] mb-6">
           <span className="w-2 h-2 bg-[var(--syntax-green)] rounded-full animate-pulse" />
-          Available for new work — May 2026
+          Available for new work · May 2026
         </div>
         <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
           <Terminal className="text-accent w-8 h-8" />

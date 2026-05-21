@@ -35,7 +35,7 @@ export const projects: Project[] = [
     slug: "tripmates",
     title: "Tripmates",
     shortDescription:
-      "A group-travel marketplace for India where solo travellers join curated trips with verified hosts, fixed dates, and pre-booked hotels — at unbeatable per-seat prices.",
+      "A group-travel marketplace for India where solo travellers join curated trips with verified hosts, fixed dates, and pre-booked hotels at unbeatable per-seat prices.",
     techStack: ["Next.js 16", "TypeScript", "Tailwind CSS v4", "shadcn/ui"],
     role: "Founder & Builder",
     image: "/projects/tripmates.svg",
@@ -53,7 +53,7 @@ export const projects: Project[] = [
       {
         heading: "The Problem",
         paragraphs: [
-          "Every group trip you try to plan with friends gets killed by excuses — mismatched leaves, mismatched budgets, mismatched commitment. Solo travellers who want company end up either traveling alone or coordinating with strangers on noisy WhatsApp groups with no accountability.",
+          "Every group trip you try to plan with friends gets killed by excuses: mismatched leaves, mismatched budgets, mismatched commitment. Solo travellers who want company end up either traveling alone or coordinating with strangers on noisy WhatsApp groups with no accountability.",
           "Tripmates is built around one observation: the coordination loop is the bottleneck, not the desire. Remove the loop and the trip happens.",
         ],
       },
@@ -67,7 +67,7 @@ export const projects: Project[] = [
       {
         heading: "Why Backend-Agnostic First",
         paragraphs: [
-          "Deliberately no database, no real payments — yet. The hardest questions for a marketplace like this aren't technical: they're whether real users trust a stranger-host enough to wire money, whether per-seat pricing reads as fair, and whether the WhatsApp handoff feels safe.",
+          "Deliberately no database, no real payments yet. The hardest questions for a marketplace like this aren't technical: they're whether real users trust a stranger-host enough to wire money, whether per-seat pricing reads as fair, and whether the WhatsApp handoff feels safe.",
           "By keeping the prototype backend-light, I can iterate on those flows with real users in days, not sprints. Phase 1 wires up Clerk for auth, Neon Postgres for trip data, and Razorpay for payments only once the trust and pricing flows are validated.",
         ],
       },
@@ -92,7 +92,7 @@ export const projects: Project[] = [
     liveUrl: "https://speedometx.vercel.app/",
     featured: true,
     summary:
-      "A network speed test that competes on motion fidelity, not just numbers — saturating the link without dropping a frame on the gauge.",
+      "A network speed test that competes on motion fidelity, not just numbers. Saturating the link without dropping a frame on the gauge.",
     metrics: [
       { label: "Status", value: "Public" },
       { label: "Render budget", value: "60fps gauge under load" },
@@ -103,7 +103,7 @@ export const projects: Project[] = [
         heading: "The Goal",
         paragraphs: [
           "Most browser-based speed tests measure the bottleneck of their own measurement code, not your link. They run on a single TCP connection, share the main thread with the rendering loop, and produce numbers that lag behind reality.",
-          "SPEEDOMETX is engineered from the ground up to bypass those bottlenecks — and to look good doing it.",
+          "SPEEDOMETX is engineered from the ground up to bypass those bottlenecks, and to look good doing it.",
         ],
       },
       {
@@ -115,7 +115,7 @@ export const projects: Project[] = [
       {
         heading: "Why Motion Matters Here",
         paragraphs: [
-          "A speed test is one of the rare apps where the user stares at a single animating component for the entire session. If the gauge stutters while the link is being saturated, the tool feels slow — even if its numbers are correct.",
+          "A speed test is one of the rare apps where the user stares at a single animating component for the entire session. If the gauge stutters while the link is being saturated, the tool feels slow, even if its numbers are correct.",
           "Framer Motion drives the kinematics with spring physics tuned to feel weighty without lag. The dark, immersive interface keeps focus on the gauge, and the rendering path is structured so the upload engine never starves the animation frame.",
         ],
       },

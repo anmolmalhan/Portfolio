@@ -73,7 +73,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             </p>
           </div>
 
-          {/* Quick Launch + Source — render only when the URLs exist.
+          {/* Quick Launch + Source. render only when the URLs exist.
               Private prototypes can omit both and the page stays clean. */}
           <div className="shrink-0 pb-2">
             {project.liveUrl ? (
@@ -89,7 +89,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
               </a>
             ) : (
               <div className="flex items-center justify-center gap-3 px-8 py-5 border border-foreground/15 text-[var(--syntax-comment)] rounded-full font-mono text-sm uppercase tracking-wider">
-                Prototype — not yet public
+                Prototype · not yet public
               </div>
             )}
             {project.githubUrl && (

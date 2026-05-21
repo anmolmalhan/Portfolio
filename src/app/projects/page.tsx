@@ -7,7 +7,7 @@ import { FolderGit2 } from "lucide-react";
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Selected work by Anmol Malhan — interfaces and applications focused on performance, interaction design, and clean architecture.",
+    "Selected work by Anmol Malhan. Interfaces and applications focused on performance, interaction design, and clean architecture.",
   alternates: { canonical: "/projects" },
 };
 

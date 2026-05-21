@@ -26,7 +26,7 @@ export default function CustomCursor() {
       });
 
       // Hit-test on every move instead of subscribing to per-element
-      // pointerenter/leave — handles dynamically inserted/removed targets
+      // pointerenter/leave. handles dynamically inserted/removed targets
       // without re-binding listeners and avoids the thrash from bubbling
       // mouseover firing on every nested child transition.
       const target = e.target as HTMLElement | null;

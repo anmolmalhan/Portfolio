@@ -50,11 +50,11 @@ export function ContactForm() {
       }
 
       if (result.mode === "mailto") {
-        appendLog("[handoff] Backend not configured — opening default mail client...");
+        appendLog("[handoff] Backend not configured, opening default mail client...");
         appendLog("[success] Message handed off to mail client.");
         setStatus("success");
         const subject = `Portfolio inquiry from ${name}`;
-        const body = `${message}\n\n— ${name}\n${email}`;
+        const body = `${message}\n\nFrom: ${name}\n${email}`;
         const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         await wait(300);
         window.location.href = mailto;
@@ -78,7 +78,13 @@ export function ContactForm() {
           <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
           <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
         </div>
-        <div className="text-xs font-mono text-[var(--syntax-comment)] mx-auto">contact.sh</div>
+        <div className="text-xs font-mono text-[var(--syntax-comment)] mx-auto">
+          <span className="text-[var(--syntax-green)]">anmol@portfolio</span>
+          <span className="opacity-60">:</span>
+          <span className="text-[var(--syntax-blue)]">~</span>
+          <span className="opacity-60">$ </span>
+          ./transmit.sh
+        </div>
       </div>
 
       <div className="p-6 md:p-8 relative">
@@ -134,7 +140,7 @@ export function ContactForm() {
             />
           </div>
 
-          {/* Honeypot — hidden from real users, irresistible to dumb bots */}
+          {/* Honeypot. hidden from real users, irresistible to dumb bots */}
           <div aria-hidden className="hidden" style={{ position: "absolute", left: "-9999px" }}>
             <label htmlFor="contact-website">Website (leave blank)</label>
             <input id="contact-website" name="website" type="text" tabIndex={-1} autoComplete="off" />

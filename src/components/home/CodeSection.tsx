@@ -16,7 +16,7 @@ export default function CodeSection() {
     if (!section) return;
     const ctx = gsap.context(() => {
       gsap.from(".code-line", {
-        // Pass the element directly — selector lookups inside gsap.context
+        // Pass the element directly. selector lookups inside gsap.context
         // are scoped to the section itself, which can't match its own class.
         scrollTrigger: { trigger: section, start: "top 75%" },
         opacity: 0,
@@ -40,7 +40,7 @@ export default function CodeSection() {
           It&apos;s never<br />just a<br />website.
         </h2>
         <p className="text-xl md:text-2xl text-[var(--syntax-comment)] max-w-md !leading-snug">
-          Every detail matters. I craft digital experiences where design meets logic — built to feel fast, intentional, and ready for production.
+          Every detail matters. I build digital experiences where design meets logic. Fast, intentional, ready for production.
         </p>
       </div>
       <div className="w-full md:w-1/2 p-12 md:p-24 bg-background h-full flex flex-col justify-center text-xl md:text-2xl font-mono leading-relaxed">

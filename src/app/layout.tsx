@@ -17,11 +17,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Anmol Malhan — Frontend Portfolio",
+    default: "Anmol Malhan · Frontend Portfolio",
     template: "%s · Anmol Malhan",
   },
   description:
-    "Anmol Malhan — frontend developer building fast, animated web experiences with Next.js, React, TypeScript, and GSAP.",
+    "Anmol Malhan, frontend developer building fast, animated web experiences with Next.js, React, TypeScript, and GSAP.",
   applicationName: "Anmol Malhan",
   authors: [{ name: "Anmol Malhan" }],
   creator: "Anmol Malhan",
@@ -37,14 +37,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "website",
-    title: "Anmol Malhan — Frontend Portfolio",
+    title: "Anmol Malhan · Frontend Portfolio",
     description:
       "Frontend developer building fast, animated web experiences with Next.js, React, and GSAP.",
     siteName: "Anmol Malhan",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anmol Malhan — Frontend Portfolio",
+    title: "Anmol Malhan · Frontend Portfolio",
     description:
       "Frontend developer building fast, animated web experiences with Next.js, React, and GSAP.",
   },

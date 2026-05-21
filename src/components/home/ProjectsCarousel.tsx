@@ -25,7 +25,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         tabIndex={0}
         role="region"
-        aria-label="Project carousel — use arrow keys to navigate"
+        aria-label="Project carousel. Use arrow keys to navigate."
         onKeyDown={(e) => {
           if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
           e.preventDefault();

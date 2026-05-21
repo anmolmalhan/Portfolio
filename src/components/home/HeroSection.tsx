@@ -29,13 +29,32 @@ export default function HeroSection() {
   return (
     <section
       ref={ref}
-      className="min-h-[75dvh] md:h-[100dvh] w-full flex flex-col justify-end pb-14 md:pb-12 px-6 md:px-12 relative overflow-hidden hero-section"
+      className="min-h-[75dvh] md:h-[100dvh] w-full flex flex-col justify-between pt-24 md:pt-32 pb-14 md:pb-12 px-6 md:px-12 relative overflow-hidden hero-section"
     >
       <div className="absolute top-1/4 right-[10%] w-[40vw] h-[40vw] bg-[var(--syntax-blue)] rounded-full blur-[40px] md:blur-[80px] opacity-10 pointer-events-none hero-glow" />
       <div className="absolute bottom-0 left-[10%] w-[30vw] h-[30vw] bg-[var(--syntax-magenta)] rounded-full blur-[40px] md:blur-[80px] opacity-10 pointer-events-none hero-glow" />
 
-      <div className="z-10 w-full pt-20 md:pt-32">
-        <div className="flex justify-between items-end mb-6 md:mb-16 border-b border-foreground/20 pb-6 w-full">
+      {/* Top intro band. fills what used to be empty space above the hero text */}
+      <div className="z-10 w-full grid grid-cols-2 gap-6 md:gap-12 items-start">
+        <div>
+          <div className="font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest mb-3">
+            {"// portfolio.v3 · 2026"}
+          </div>
+          <h1 className="text-xl md:text-3xl font-semibold tracking-tight leading-tight max-w-md">
+            Frontend developer building motion-aware,<br className="hidden md:block" />
+            production-grade interfaces.
+          </h1>
+        </div>
+        <div className="font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest text-right space-y-1">
+          <div>Anmol Malhan</div>
+          <div className="text-foreground/40">Rohtak, IN · UTC+5:30</div>
+          <div className="text-foreground/40">React · Next 16 · GSAP</div>
+        </div>
+      </div>
+
+      {/* Bottom statement band */}
+      <div className="z-10 w-full">
+        <div className="flex justify-between items-end mb-6 md:mb-10 border-b border-foreground/20 pb-6 w-full">
           <div className="font-mono text-xs md:text-sm uppercase tracking-widest flex items-center gap-2">
             <span className="w-2 h-2 bg-[var(--syntax-green)] rounded-full animate-pulse" />
             Execution Layer
@@ -46,12 +65,9 @@ export default function HeroSection() {
         </div>
 
         <div className="flex flex-col text-giant font-bold tracking-tighter">
-          <div className="reveal-wrapper hero-line"><span className="block">THINK</span></div>
-          <div className="flex items-center gap-8 md:gap-16">
-            <div className="reveal-wrapper hero-line"><span className="block italic font-serif opacity-80">&</span></div>
-            <div className="reveal-wrapper hero-line"><span className="block ml-[5vw]">CODE</span></div>
-          </div>
-          <div className="reveal-wrapper hero-line"><span className="block text-[var(--syntax-blue)]">SCALE</span></div>
+          <div className="reveal-wrapper hero-line"><span className="block">THINK.</span></div>
+          <div className="reveal-wrapper hero-line"><span className="block">CODE.</span></div>
+          <div className="reveal-wrapper hero-line"><span className="block text-[var(--syntax-blue)]">SHIP.</span></div>
         </div>
       </div>
     </section>
