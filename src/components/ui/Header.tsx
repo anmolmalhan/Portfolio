@@ -8,6 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const NAV = [
   { label: "Work", href: "/projects" },
+  { label: "Notes", href: "/notes" },
   { label: "Studio", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];

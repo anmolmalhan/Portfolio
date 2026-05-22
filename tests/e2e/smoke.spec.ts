@@ -85,4 +85,24 @@ test.describe("smoke", () => {
     expect(res?.status()).toBe(404);
     await expect(page.getByText("404: route not found")).toBeVisible();
   });
+
+  test("notes listing renders and links to a post", async ({ page }) => {
+    await page.goto("/notes");
+    await expect(page.getByRole("heading", { name: "Notes", level: 1 })).toBeVisible();
+    // First post should be linked
+    const firstPostLink = page.getByRole("link", { name: /Why my hero text/i });
+    await expect(firstPostLink).toBeVisible();
+    await firstPostLink.click();
+    await expect(page).toHaveURL(/\/notes\/hero-text-invisible-for-2-5-seconds$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("notes RSS feed is valid XML", async ({ page }) => {
+    const res = await page.goto("/notes/rss.xml");
+    expect(res?.status()).toBe(200);
+    expect(res?.headers()["content-type"]).toMatch(/rss\+xml/);
+    const body = await res?.text();
+    expect(body).toContain("<rss");
+    expect(body).toContain("hero-text-invisible-for-2-5-seconds");
+  });
 });

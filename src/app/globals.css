@@ -175,6 +175,81 @@ body {
   }
 }
 
+/* Notes / markdown typography */
+.prose-note {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: color-mix(in oklab, var(--foreground), transparent 10%);
+}
+.prose-note > * + * { margin-top: 1.25em; }
+.prose-note h2 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  margin-top: 2.5em;
+  margin-bottom: 0.6em;
+  border-top: 1px solid color-mix(in oklab, var(--foreground), transparent 90%);
+  padding-top: 1.5em;
+}
+.prose-note h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-top: 2em;
+  margin-bottom: 0.4em;
+}
+.prose-note p { color: color-mix(in oklab, var(--foreground), transparent 25%); }
+.prose-note strong { color: var(--foreground); font-weight: 600; }
+.prose-note a {
+  color: var(--syntax-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.prose-note a:hover { text-decoration-thickness: 2px; }
+.prose-note ul, .prose-note ol { padding-left: 1.5em; }
+.prose-note ul { list-style-type: disc; }
+.prose-note ol { list-style-type: decimal; }
+.prose-note li::marker { color: color-mix(in oklab, var(--foreground), transparent 60%); }
+.prose-note blockquote {
+  border-left: 3px solid var(--syntax-blue);
+  padding-left: 1.25em;
+  font-style: italic;
+  color: color-mix(in oklab, var(--foreground), transparent 30%);
+}
+.prose-note code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface);
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+  color: var(--syntax-magenta);
+}
+.prose-note pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  background: #0d1117;
+  color: #c9d1d9;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.6rem;
+  overflow-x: auto;
+  border: 1px solid color-mix(in oklab, var(--foreground), transparent 90%);
+}
+.prose-note pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+.prose-note hr {
+  border: 0;
+  border-top: 1px solid color-mix(in oklab, var(--foreground), transparent 85%);
+  margin: 2.5em 0;
+}
+
 /* Lenis smooth scrolling config */
 html.lenis, html.lenis body {
   height: auto;

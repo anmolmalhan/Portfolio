@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { projects } from "@/data/projects";
+import { getAllNotes } from "@/lib/notes";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -9,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "monthly", priority: 1 },
     { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/projects`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/notes`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.6 },
   ];
 
@@ -19,5 +21,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...projectRoutes];
+  const noteRoutes: MetadataRoute.Sitemap = getAllNotes().map((n) => ({
+    url: `${SITE_URL}/notes/${n.slug}`,
+    lastModified: new Date(n.date + "T00:00:00Z"),
+    changeFrequency: "yearly",
+    priority: 0.6,
+  }));
+
+  return [...staticRoutes, ...projectRoutes, ...noteRoutes];
 }
