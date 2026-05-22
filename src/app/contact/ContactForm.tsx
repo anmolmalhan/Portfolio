@@ -159,8 +159,15 @@ export function ContactForm() {
             <Send className="w-4 h-4" /> await transmit()
           </button>
 
-          <p className="font-mono text-xs text-[var(--syntax-comment)] text-center">
-            Sends directly via the API when configured, otherwise opens your default mail client.
+          <p className="font-mono text-xs text-[var(--syntax-comment)] text-center leading-relaxed">
+            This form sends straight to my inbox. If it doesn&apos;t work for you, email{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="text-[var(--syntax-blue)] hover:underline focus-visible:outline-none focus-visible:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>{" "}
+            directly.
           </p>
         </form>
 

@@ -77,6 +77,14 @@ export const projects: Project[] = [
           "Next.js 16 with the App Router, Server Components, and Turbopack. TypeScript in strict mode. Tailwind v4 with a shadcn/ui Nova preset for a consistent design system. The catalogue is statically generated where possible so listing pages stay sub-second even on Indian mid-tier devices.",
         ],
       },
+      {
+        heading: "Outcomes & Roadmap",
+        paragraphs: [
+          "Where it landed: a frontend-complete prototype that walks a real user end-to-end from landing page through host verification, trip selection, day-by-day itinerary, seat-based booking, and a WhatsApp-group handoff on confirmation. Every flow is interactive; nothing is a dead Figma mock.",
+          "What I'm validating next: whether per-seat pricing reads as fair to the target user, whether the WhatsApp-group reveal feels safe, and how many seats convert from view to booking before any paid acquisition. Phase 1 then wires Clerk for auth, Neon Postgres for persistent trip data, and Razorpay for payments only after those conversions hold up.",
+          "If you want to walk the flows: the live prototype runs without an account, no card required.",
+        ],
+      },
     ],
   },
   {
@@ -123,6 +131,13 @@ export const projects: Project[] = [
         heading: "Stack",
         paragraphs: [
           "Next.js with the App Router, TypeScript in strict mode, Tailwind for utility-first styling, and Framer Motion for the gauge and transitions.",
+        ],
+      },
+      {
+        heading: "Outcomes & What I Took Away",
+        paragraphs: [
+          "Where it landed: a public, working speed-test app where the gauge holds a steady 60fps while the upload engine saturates the link. The visible jitter and download numbers track real edge-node behavior rather than a smoothed average, which is the differentiator vs. consumer tests.",
+          "What it taught me: rendering budgets are a first-class constraint, not an afterthought. The biggest win came from making sure the measurement workers and the animation frame never compete for the same thread, which sounds obvious until you actually instrument it. Useful pattern I'll reach for again on any data-heavy live-updating UI.",
         ],
       },
     ],
