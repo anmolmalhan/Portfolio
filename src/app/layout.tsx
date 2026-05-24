@@ -65,6 +65,7 @@ export const viewport: Viewport = {
 import { Header } from "@/components/ui/Header";
 import CustomCursor from "@/components/animations/CustomCursor";
 import SmoothScroll from "@/components/animations/SmoothScroll";
+import { Analytics } from "@vercel/analytics/next";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -116,6 +117,7 @@ export default function RootLayout({
           <Header />
           <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
         </SmoothScroll>
+        <Analytics />
       </body>
     </html>
   );
