@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { User, MonitorPlay, BookOpen, Coffee, ArrowRight, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import GitHubActivity from "@/components/about/GitHubActivity";
 
 export const metadata: Metadata = {
   title: "About",
@@ -112,6 +113,8 @@ export default function AboutPage() {
           })}
         </div>
       </div>
+      
+      <GitHubActivity username="anmolmalhan" />
     </div>
   );
 }
