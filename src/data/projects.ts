@@ -142,4 +142,61 @@ export const projects: Project[] = [
       },
     ],
   },
+  {
+    id: "2",
+    slug: "client-work-os",
+    title: "Client Work OS",
+    shortDescription:
+      "A WhatsApp-first digital service center for managing remote client requests, document workflows, pricing, payment status, and delivery.",
+    techStack: ["Next.js 16", "TypeScript", "Hono", "Drizzle ORM"],
+    role: "Full-stack Product Engineer",
+    image: "/projects/client-work-os-hero.png",
+    githubUrl: "https://github.com/anmolmalhan/Client-Work-OS",
+    liveUrl: "https://client-work-os.vercel.app/",
+    featured: true,
+    summary:
+      "Turning informal WhatsApp service requests into a trackable operating system for clients, payments, documents, and delivery.",
+    metrics: [
+      { label: "Status", value: "Polished MVP" },
+      { label: "Architecture", value: "Bun + Turborepo monorepo" },
+      { label: "Core flow", value: "Request ID tracking" },
+    ],
+    sections: [
+      {
+        heading: "The Problem",
+        paragraphs: [
+          "Small digital service providers often run real client work entirely through WhatsApp: online form filling, document uploads, PDF edits, file conversions, application submissions, and status checks. The chat is familiar, but it becomes messy once pricing, payment, documents, deadlines, and delivery proof all live in the same thread.",
+          "Client Work OS keeps WhatsApp as the primary communication channel while adding a professional website and admin layer around the operation.",
+        ],
+      },
+      {
+        heading: "The Product",
+        paragraphs: [
+          "The public site explains supported services, pricing expectations, document safety, working process, and common questions. Clients can submit request details, continue on WhatsApp, and later track progress using a request ID and WhatsApp number.",
+          "The admin workspace mirrors the real back-office flow: request stats, filters, search, payment status, uploaded document context, admin notes, progress tracking, and delivery status. It is designed around the way local service work actually moves: document check first, price confirmation second, payment and delivery after scope is clear.",
+        ],
+      },
+      {
+        heading: "Architecture",
+        paragraphs: [
+          "The project is built as a Bun workspace monorepo with a Next.js web app, a Hono API service, shared domain packages, typed environment validation, and a Drizzle PostgreSQL schema. The shared domain layer owns services, pricing, statuses, demo data, schemas, and formatting helpers so the website, admin UI, and API stay aligned.",
+          "The current MVP includes the polished interface, demo data, API routes, domain model, and database schema. The remaining production steps are admin authentication, persistent request storage, real document uploads, and save actions for request updates.",
+        ],
+      },
+      {
+        heading: "Trust Design",
+        paragraphs: [
+          "The UX is built for non-technical clients sending sensitive documents. Instead of pushing users into an opaque form, the interface makes each promise visible: what documents are needed, when payment is required, how updates are shared, and what proof the client receives at the end.",
+          "That trust layer matters because the product is not trying to replace WhatsApp. It is trying to make the business behind the WhatsApp chat feel organized, accountable, and easy to understand.",
+        ],
+      },
+      {
+        heading: "Outcomes & Roadmap",
+        paragraphs: [
+          "Where it landed: a polished MVP that covers the main customer journey from service discovery to request submission, WhatsApp handoff, status tracking, and admin-side request management.",
+          "What comes next: connect the flow to persistent storage, add admin authentication, wire real upload handling, and turn the demo admin actions into production save flows.",
+        ],
+      },
+    ],
+  },
 ];

@@ -37,12 +37,22 @@ test.describe("smoke", () => {
 
     const tripmatesHeading = page.getByRole("heading", { name: "Tripmates", level: 2 });
     await expect(tripmatesHeading).toBeVisible();
+
+    const clientWorkHeading = page.getByRole("heading", { name: "Client Work OS", level: 2 });
+    await expect(clientWorkHeading).toBeVisible();
   });
 
   test("project case study renders structured sections", async ({ page }) => {
     await page.goto("/projects/tripmates");
     await expect(page.getByRole("heading", { name: "Tripmates", level: 1 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The Problem" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Stack", exact: true })).toBeVisible();
+  });
+
+  test("client work os case study renders", async ({ page }) => {
+    await page.goto("/projects/client-work-os");
+    await expect(page.getByRole("heading", { name: "Client Work OS", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Architecture" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Stack", exact: true })).toBeVisible();
   });
 
