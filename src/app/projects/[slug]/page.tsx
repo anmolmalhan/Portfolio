@@ -37,6 +37,9 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
     notFound();
   }
 
+  const featureImageAspect =
+    project.detailImageAspect === "video" ? "aspect-video" : "aspect-[21/9] lg:aspect-[2.5/1]";
+
   return (
     <div className="w-full relative bg-background text-foreground page-reveal min-h-screen">
       {/* Decorative background glow */}
@@ -108,7 +111,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
 
       {/* Main Feature Image */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 mb-32">
-        <div className="w-full aspect-[21/9] lg:aspect-[2.5/1] bg-surface overflow-hidden relative"
+        <div className={`w-full ${featureImageAspect} bg-surface overflow-hidden relative`}
              style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
           {project.image ? (
             <Image

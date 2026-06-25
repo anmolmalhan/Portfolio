@@ -16,6 +16,8 @@ export type Project = {
   techStack: string[];
   role: string;
   image: string;
+  /** Optional. Use "video" for 16:9 screenshots that should not be cropped into the wide case-study frame. */
+  detailImageAspect?: "wide" | "video";
   /** Optional. Omit / leave empty for private prototypes. UI hides the link. */
   githubUrl?: string;
   /** Optional. Omit / leave empty if not deployed yet. UI hides the link. */
@@ -150,7 +152,8 @@ export const projects: Project[] = [
       "A WhatsApp-first digital service center for managing remote client requests, document workflows, pricing, payment status, and delivery.",
     techStack: ["Next.js 16", "TypeScript", "Hono", "Drizzle ORM"],
     role: "Full-stack Product Engineer",
-    image: "/projects/client-work-os-hero.png",
+    image: "/projects/client-work-os-hero-full.png",
+    detailImageAspect: "video",
     githubUrl: "https://github.com/anmolmalhan/Client-Work-OS",
     liveUrl: "https://client-work-os.vercel.app/",
     featured: true,
