@@ -175,6 +175,42 @@ body {
   }
 }
 
+/* Mobile nav menu entrance: the panel fades/slides down and its links
+   stagger in. Gated behind reduced-motion like the hero reveal above. */
+@keyframes menu-panel-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes nav-item-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes header-drop {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Sliding active/hover indicator under the desktop nav, with an always-on
+   monochrome shimmer that sweeps along the bar. */
+.nav-indicator {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--foreground), transparent 60%) 0%,
+    var(--foreground) 50%,
+    color-mix(in oklab, var(--foreground), transparent 60%) 100%
+  );
+  background-size: 200% 100%;
+}
+@keyframes indicator-shimmer {
+  to { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .menu-panel-reveal { animation: menu-panel-in 220ms ease-out both; }
+  .nav-item-reveal { animation: nav-item-in 320ms ease-out both; }
+  .header-reveal { animation: header-drop 500ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .nav-indicator { animation: indicator-shimmer 2.4s linear infinite; }
+}
+
 /* Notes / markdown typography */
 .prose-note {
   font-size: 1.0625rem;
