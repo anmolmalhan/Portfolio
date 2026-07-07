@@ -2,28 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { GitHubCalendar } from "react-github-calendar";
-
-/** Resolve the active theme the same way globals.css does:
- *  explicit data-theme wins, otherwise fall back to the system preference. */
-function getActiveScheme(): "light" | "dark" {
-  const attr = document.documentElement.getAttribute("data-theme");
-  if (attr === "dark" || attr === "light") return attr;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function subscribeToScheme(onChange: () => void) {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
-  const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  mq.addEventListener("change", onChange);
-  return () => {
-    observer.disconnect();
-    mq.removeEventListener("change", onChange);
-  };
-}
+import { getResolvedScheme, getServerScheme, subscribeToScheme } from "@/lib/theme";
 
 function GithubMark({ className }: { className?: string }) {
   return (
@@ -49,7 +28,7 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
   // The calendar must follow the site's active theme, otherwise the empty
   // cells (near-black in the dark palette) clash with the light card. Track
   // the resolved scheme reactively so toggling theme repaints the calendar.
-  const scheme = useSyncExternalStore(subscribeToScheme, getActiveScheme, (): "light" | "dark" => "light");
+  const scheme = useSyncExternalStore(subscribeToScheme, getResolvedScheme, getServerScheme);
 
   return (
     <div className="mt-20 pt-8 border-t border-surface/30">
