@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { User, MonitorPlay, BookOpen, Coffee, ArrowRight, MapPin } from "lucide-react";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { User, MonitorPlay, BookOpen, Coffee, ArrowRight, MapPin, FileText } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import GitHubActivity from "@/components/about/GitHubActivity";
@@ -13,6 +15,10 @@ export const metadata: Metadata = {
     "Anmol Malhan, frontend developer in Rohtak, Haryana. Building polished, performance-driven web experiences with React, Next.js, and TypeScript.",
   alternates: { canonical: "/about" },
 };
+
+// This page is statically generated, so the check runs at build time: drop
+// resume.pdf into public/ and the link appears on the next build.
+const hasResume = existsSync(join(process.cwd(), "public", "resume.pdf"));
 
 export default function AboutPage() {
   const blocks = [
@@ -83,6 +89,18 @@ export default function AboutPage() {
                 Let&apos;s Work Together
               </Link>
             </Magnetic>
+            {hasResume && (
+              <Magnetic>
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border border-surface px-6 py-3 rounded-full text-sm font-bold hover:bg-surface/50 transition-colors"
+                >
+                  <FileText className="w-4 h-4" /> Resume
+                </a>
+              </Magnetic>
+            )}
           </div>
         </Reveal>
 
