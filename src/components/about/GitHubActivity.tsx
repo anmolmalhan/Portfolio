@@ -1,15 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { GitHubCalendar } from "react-github-calendar";
 
 /** Resolve the active theme the same way globals.css does:
  *  explicit data-theme wins, otherwise fall back to the system preference. */
 function getActiveScheme(): "light" | "dark" {
-  if (typeof document === "undefined") return "light";
   const attr = document.documentElement.getAttribute("data-theme");
   if (attr === "dark" || attr === "light") return attr;
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function subscribeToScheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  mq.addEventListener("change", onChange);
+  return () => {
+    observer.disconnect();
+    mq.removeEventListener("change", onChange);
+  };
 }
 
 function GithubMark({ className }: { className?: string }) {
@@ -24,35 +37,19 @@ interface GitHubActivityProps {
   username: string;
 }
 
+// Canonical GitHub palettes: light gray → green on light, dark → green on dark.
+const explicitTheme = {
+  light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+  dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+};
+
+const calendarStyle = { color: 'var(--foreground)' };
+
 export default function GitHubActivity({ username }: GitHubActivityProps) {
   // The calendar must follow the site's active theme, otherwise the empty
   // cells (near-black in the dark palette) clash with the light card. Track
   // the resolved scheme reactively so toggling theme repaints the calendar.
-  const [scheme, setScheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    setScheme(getActiveScheme());
-
-    const update = () => setScheme(getActiveScheme());
-    const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    mq.addEventListener("change", update);
-
-    return () => {
-      observer.disconnect();
-      mq.removeEventListener("change", update);
-    };
-  }, []);
-
-  // Canonical GitHub palettes: light gray → green on light, dark → green on dark.
-  const explicitTheme = {
-    light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-    dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
-  };
+  const scheme = useSyncExternalStore(subscribeToScheme, getActiveScheme, (): "light" | "dark" => "light");
 
   return (
     <div className="mt-20 pt-8 border-t border-surface/30">
@@ -71,9 +68,7 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
               fontSize={14}
               blockSize={12}
               blockMargin={4}
-              style={{
-                color: 'var(--foreground)'
-              }}
+              style={calendarStyle}
             />
           </div>
         </div>

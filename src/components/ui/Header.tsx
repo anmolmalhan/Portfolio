@@ -29,7 +29,7 @@ export function Header() {
   const navListRef = useRef<HTMLDivElement | null>(null);
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const innerRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
+  const indicatorRef = useRef<HTMLSpanElement | null>(null);
 
   const activeIndex = NAV.findIndex(
     ({ href }) => pathname === href || (href !== "/" && pathname?.startsWith(href)),
@@ -48,17 +48,23 @@ export function Header() {
     setMenuOpen(false);
   }
 
-  // Glide the indicator to a given link (or hide it when index < 0).
+  // Glide the indicator to a given link (or hide it when index < 0). The
+  // indicator is purely decorative, so position it with direct style writes
+  // (like the magnetic transform below) instead of routing through state.
   const moveIndicator = useCallback((index: number) => {
+    const indicator = indicatorRef.current;
     const list = navListRef.current;
     const link = index >= 0 ? linkRefs.current[index] : null;
+    if (!indicator) return;
     if (!list || !link) {
-      setIndicator((s) => ({ ...s, ready: false }));
+      indicator.style.opacity = "0";
       return;
     }
     const lr = list.getBoundingClientRect();
     const r = link.getBoundingClientRect();
-    setIndicator({ left: r.left - lr.left, width: r.width, ready: true });
+    indicator.style.left = `${r.left - lr.left}px`;
+    indicator.style.width = `${r.width}px`;
+    indicator.style.opacity = "1";
   }, []);
 
   // Rest the indicator on the active link; keep it aligned on resize.
@@ -165,11 +171,9 @@ export function Header() {
             })}
             {/* Shared sliding indicator that glides between links. */}
             <span
+              ref={indicatorRef}
               aria-hidden
-              className={`nav-indicator pointer-events-none absolute -bottom-1 h-0.5 rounded-full transition-[left,width,opacity] duration-300 ease-out ${
-                indicator.ready ? "opacity-100" : "opacity-0"
-              }`}
-              style={{ left: indicator.left, width: indicator.width }}
+              className="nav-indicator pointer-events-none absolute -bottom-1 h-0.5 rounded-full opacity-0 transition-[left,width,opacity] duration-300 ease-out"
             />
           </div>
           <ThemeToggle />
