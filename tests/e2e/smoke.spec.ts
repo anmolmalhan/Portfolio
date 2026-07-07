@@ -38,8 +38,8 @@ test.describe("smoke", () => {
     const tripmatesHeading = page.getByRole("heading", { name: "Tripmates", level: 2 });
     await expect(tripmatesHeading).toBeVisible();
 
-    const clientWorkHeading = page.getByRole("heading", { name: "Client Work OS", level: 2 });
-    await expect(clientWorkHeading).toBeVisible();
+    const swiftSevaHeading = page.getByRole("heading", { name: "Swift Digital Seva", level: 2 });
+    await expect(swiftSevaHeading).toBeVisible();
   });
 
   test("project case study renders structured sections", async ({ page }) => {
@@ -49,11 +49,17 @@ test.describe("smoke", () => {
     await expect(page.getByRole("heading", { name: "Stack", exact: true })).toBeVisible();
   });
 
-  test("client work os case study renders", async ({ page }) => {
-    await page.goto("/projects/client-work-os");
-    await expect(page.getByRole("heading", { name: "Client Work OS", level: 1 })).toBeVisible();
+  test("swift digital seva case study renders", async ({ page }) => {
+    await page.goto("/projects/swift-digital-seva");
+    await expect(page.getByRole("heading", { name: "Swift Digital Seva", level: 1 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Architecture" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Stack", exact: true })).toBeVisible();
+  });
+
+  test("old client-work-os slug redirects to swift-digital-seva", async ({ page }) => {
+    await page.goto("/projects/client-work-os");
+    await expect(page).toHaveURL(/\/projects\/swift-digital-seva$/);
+    await expect(page.getByRole("heading", { name: "Swift Digital Seva", level: 1 })).toBeVisible();
   });
 
   test("contact page exposes form and fallback channels", async ({ page }) => {
