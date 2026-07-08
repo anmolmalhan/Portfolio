@@ -99,6 +99,7 @@ export const projects: Project[] = [
     techStack: ["Next.js", "TypeScript", "TailwindCSS", "Framer Motion"],
     role: "Full-stack Engineer",
     image: "/projects/speedometx.png",
+    detailImageAspect: "video",
     githubUrl: "https://github.com/anmolmalhan/Speedometx",
     liveUrl: "https://speedometx.vercel.app/",
     featured: true,
