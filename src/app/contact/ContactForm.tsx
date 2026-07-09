@@ -93,8 +93,7 @@ export function ContactForm() {
           action={sendContactForm}
           onSubmit={handleSubmit}
           className={`space-y-6 ${showTerminal ? "pointer-events-none opacity-0 absolute inset-6 md:inset-8" : ""}`}
-          aria-hidden={showTerminal}
-          noValidate
+          inert={showTerminal || undefined}
         >
           <div className="space-y-2">
             <label htmlFor="contact-name" className="font-mono text-sm text-[var(--syntax-blue)] flex">

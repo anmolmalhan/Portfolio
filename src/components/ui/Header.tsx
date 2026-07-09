@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CodeXml, Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { prefersReducedMotion } from "@/lib/motion";
 
 const NAV = [
   { label: "Work", href: "/projects" },
@@ -12,13 +13,6 @@ const NAV = [
   { label: "Studio", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
-
-function prefersReducedMotion() {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
-}
 
 export function Header() {
   const pathname = usePathname();
@@ -30,6 +24,8 @@ export function Header() {
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const innerRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const indicatorRef = useRef<HTMLSpanElement | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const menuPanelRef = useRef<HTMLDivElement | null>(null);
 
   const activeIndex = NAV.findIndex(
     ({ href }) => pathname === href || (href !== "/" && pathname?.startsWith(href)),
@@ -47,6 +43,30 @@ export function Header() {
     setPrevPathname(pathname);
     setMenuOpen(false);
   }
+
+  // While the mobile menu is open, close it on Escape (returning focus to the
+  // toggle) or on a pointer/focus event outside the panel + button.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeAndFocusButton = () => {
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeAndFocusButton();
+    };
+    const onPointerDown = (e: Event) => {
+      const target = e.target as Node;
+      if (menuPanelRef.current?.contains(target) || menuButtonRef.current?.contains(target)) return;
+      setMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [menuOpen]);
 
   // Glide the indicator to a given link (or hide it when index < 0). The
   // indicator is purely decorative, so position it with direct style writes
@@ -178,10 +198,12 @@ export function Header() {
           </div>
           <ThemeToggle />
           <button
+            ref={menuButtonRef}
             className="md:hidden p-2 -mr-2 rounded-md hover:bg-foreground/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle Menu"
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -190,7 +212,11 @@ export function Header() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="menu-panel-reveal md:hidden absolute top-full left-0 w-full bg-background border-b border-foreground/10 py-4 px-4 shadow-lg pointer-events-auto text-foreground flex flex-col gap-4">
+        <div
+          id="mobile-menu"
+          ref={menuPanelRef}
+          className="menu-panel-reveal md:hidden absolute top-full left-0 w-full bg-background border-b border-foreground/10 py-4 px-4 shadow-lg pointer-events-auto text-foreground flex flex-col gap-4"
+        >
           {NAV.map(({ label, href }, i) => {
             const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
             return (

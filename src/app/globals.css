@@ -227,12 +227,19 @@ body {
 .reveal.is-visible {
   opacity: 1;
   transform: none;
+  /* One-shot animation is done — release the compositor layer. */
+  will-change: auto;
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  /* Tailwind's animate-pulse isn't gated like the bespoke animations above;
+     stop the looping pulse for users who asked for reduced motion. */
+  .animate-pulse {
+    animation: none;
   }
 }
 
