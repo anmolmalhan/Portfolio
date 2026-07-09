@@ -8,6 +8,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { SplitReveal } from "@/components/ui/SplitReveal";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export async function generateStaticParams() {
   return projects.map((project) => ({
     slug: project.slug,
@@ -43,8 +45,23 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
   const featureImageAspect =
     project.detailImageAspect === "video" ? "aspect-video" : "aspect-[21/9] lg:aspect-[2.5/1]";
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.shortDescription,
+    url: `${siteUrl}/projects/${project.slug}`,
+    author: { "@type": "Person", name: "Anmol Malhan", url: siteUrl },
+    keywords: project.techStack.join(", "),
+    ...(project.liveUrl ? { sameAs: project.liveUrl } : {}),
+  };
+
   return (
     <div className="w-full relative bg-background text-foreground page-reveal min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Decorative background glow */}
       <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[var(--syntax-blue)] rounded-full blur-[80px] md:blur-[200px] opacity-[0.03] pointer-events-none" />
 

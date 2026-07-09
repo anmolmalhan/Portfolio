@@ -1,12 +1,26 @@
 import { ImageResponse } from "next/og";
 import { projects } from "@/data/projects";
 
-export const alt = "Project case study";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
+}
+
+// Give each project's OG card its own alt text instead of a shared generic one.
+export function generateImageMetadata({ params }: { params: { slug: string } }) {
+  const project = projects.find((p) => p.slug === params.slug);
+  return [
+    {
+      id: "og",
+      alt: project
+        ? `${project.title} — case study by Anmol Malhan`
+        : "Project case study",
+      size,
+      contentType,
+    },
+  ];
 }
 
 export default async function ProjectOG({ params }: { params: Promise<{ slug: string }> }) {

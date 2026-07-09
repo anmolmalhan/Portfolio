@@ -103,9 +103,9 @@ export default function AboutPage() {
       </div>
 
       <div className="pt-8 border-t border-surface/30">
-        <div className="font-mono text-sm text-[var(--syntax-comment)] mb-8">
+        <h2 className="font-mono text-sm text-[var(--syntax-comment)] mb-8">
           {"/* The Builder's Mindset */"}
-        </div>
+        </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           {blocks.map((block, i) => {

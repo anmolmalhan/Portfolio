@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FileText, ArrowRight } from "lucide-react";
 import { getAllNotes } from "@/lib/notes";
+import { formatDate } from "@/lib/date";
 import { Reveal } from "@/components/ui/Reveal";
 import { SplitReveal } from "@/components/ui/SplitReveal";
 
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   title: "Notes",
   description:
     "Field notes from building interfaces. Bug post-mortems, pattern essays, and engineering trade-offs from real projects.",
-  alternates: { canonical: "/notes" },
+  alternates: {
+    canonical: "/notes",
+    types: { "application/rss+xml": "/notes/rss.xml" },
+  },
 };
 
 export default function NotesPage() {
@@ -69,15 +73,4 @@ export default function NotesPage() {
       )}
     </div>
   );
-}
-
-function formatDate(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso + "T00:00:00Z");
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
 }

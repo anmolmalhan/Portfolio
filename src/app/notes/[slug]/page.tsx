@@ -3,7 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getAllNotes, getNoteBySlug } from "@/lib/notes";
+import { formatDate } from "@/lib/date";
 import "highlight.js/styles/github-dark.css";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export async function generateStaticParams() {
   return getAllNotes().map((n) => ({ slug: n.slug }));
@@ -38,8 +41,25 @@ export default async function NotePage({
   const note = await getNoteBySlug(slug);
   if (!note) notFound();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: note.title,
+    description: note.excerpt,
+    datePublished: note.date,
+    dateModified: note.date,
+    author: { "@type": "Person", name: "Anmol Malhan", url: siteUrl },
+    ...(note.tags && note.tags.length > 0 ? { keywords: note.tags.join(", ") } : {}),
+    url: `${siteUrl}/notes/${note.slug}`,
+    mainEntityOfPage: `${siteUrl}/notes/${note.slug}`,
+  };
+
   return (
     <article className="max-w-3xl w-full mx-auto px-6 py-20 flex-1 page-reveal">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link
         href="/notes"
         className="inline-flex items-center gap-2 text-[var(--syntax-comment)] hover:text-foreground font-mono text-sm transition-colors group mb-12"
@@ -78,15 +98,4 @@ export default async function NotePage({
       />
     </article>
   );
-}
-
-function formatDate(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso + "T00:00:00Z");
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
 }
