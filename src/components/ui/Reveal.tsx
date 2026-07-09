@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 type RevealProps = {
   children: ReactNode;
@@ -34,7 +35,7 @@ export function Reveal({
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion()) {
       el.classList.add("is-visible");
       return;
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 type MagneticProps = {
   children: ReactNode;
@@ -18,7 +19,7 @@ export function Magnetic({ children, className = "", strength = 0.4 }: MagneticP
   const ref = useRef<HTMLSpanElement | null>(null);
 
   const onMove = (e: React.MouseEvent) => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();

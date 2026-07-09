@@ -2,12 +2,13 @@
 
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       const lines = gsap.utils.toArray<HTMLElement>(".hero-line span");
       // Explicitly zero `y` so the CSS-derived pixel translation doesn't
@@ -49,8 +50,8 @@ export default function HeroSection() {
         </div>
         <div className="hidden md:block font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest text-right space-y-1 pt-1">
           <div>Anmol Malhan</div>
-          <div className="text-foreground/40">Rohtak, IN · UTC+5:30</div>
-          <div className="text-foreground/40">Available for new work</div>
+          <div className="text-foreground/60">Rohtak, IN · UTC+5:30</div>
+          <div className="text-foreground/60">Available for new work</div>
         </div>
       </div>
 

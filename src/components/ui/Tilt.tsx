@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type CSSProperties, type ReactNode } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 type TiltProps = {
   children: ReactNode;
@@ -19,7 +20,7 @@ export function Tilt({ children, className = "", max = 6, style }: TiltProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const onMove = (e: React.MouseEvent) => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();

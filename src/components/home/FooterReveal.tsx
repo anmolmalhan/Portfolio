@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { prefersReducedMotion } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,7 +39,7 @@ export default function FooterReveal() {
   }, []);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
     const footer = footerRef.current;
     if (!footer) return;
     const ctx = gsap.context(() => {
@@ -110,7 +111,7 @@ export default function FooterReveal() {
             { k: "Reply", v: "Within 1 to 2 days" },
           ].map((s) => (
             <div key={s.k}>
-              <div className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-2">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-white/60 mb-2">
                 {s.k}
               </div>
               <div className="font-mono text-sm text-white/85">{s.v}</div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties, type ElementType } from "react";
+import { prefersReducedMotion } from "@/lib/motion";
 
 type SplitRevealProps = {
   /** The text to split into individually-revealing words. */
@@ -25,7 +26,7 @@ export function SplitReveal({ text, as: Tag = "span", className = "", stagger = 
     if (!el) return;
     const words = el.querySelectorAll<HTMLElement>("[data-word]");
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion()) {
       words.forEach((w) => w.classList.add("is-visible"));
       return;
     }

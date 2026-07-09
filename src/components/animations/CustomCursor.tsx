@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -9,7 +10,7 @@ export default function CustomCursor() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
 
     const cursor = cursorRef.current;
     if (!cursor) return;
