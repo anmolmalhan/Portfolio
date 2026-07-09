@@ -37,6 +37,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "website",
+    url: "/",
     title: "Anmol Malhan · Frontend Portfolio",
     description:
       "Frontend developer building fast, animated web experiences with Next.js, React, and GSAP.",

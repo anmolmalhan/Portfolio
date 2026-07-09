@@ -13,6 +13,10 @@ function escape(s: string): string {
 
 export async function GET() {
   const notes = getAllNotes();
+  // getAllNotes() is sorted newest-first, so the first item dates the channel.
+  const lastBuildDate = notes.length
+    ? new Date(notes[0].date + "T00:00:00Z").toUTCString()
+    : new Date(0).toUTCString();
   const items = notes
     .map((n) => {
       const url = `${SITE_URL}/notes/${n.slug}`;
@@ -35,11 +39,15 @@ export async function GET() {
     <link>${SITE_URL}/notes</link>
     <description>Field notes from building interfaces.</description>
     <language>en</language>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <atom:link href="${SITE_URL}/notes/rss.xml" rel="self" type="application/rss+xml" />${items}
   </channel>
 </rss>`;
 
   return new Response(xml, {
-    headers: { "Content-Type": "application/rss+xml; charset=utf-8" },
+    headers: {
+      "Content-Type": "application/rss+xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+    },
   });
 }
