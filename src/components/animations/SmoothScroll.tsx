@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+// Side-effect only: Lenis attaches to the document scroll globally, so this
+// renders nothing and lives as a sibling rather than wrapping the tree.
+export default function SmoothScroll() {
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     const lenis = new Lenis({
       duration: 1.1,
@@ -40,5 +42,5 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     };
   }, []);
 
-  return <>{children}</>;
+  return null;
 }

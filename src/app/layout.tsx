@@ -63,9 +63,8 @@ export const viewport: Viewport = {
 };
 
 import { Header } from "@/components/ui/Header";
-import CustomCursor from "@/components/animations/CustomCursor";
-import ScrollProgress from "@/components/animations/ScrollProgress";
-import SmoothScroll from "@/components/animations/SmoothScroll";
+import { SiteFooter } from "@/components/ui/SiteFooter";
+import ClientRuntime from "@/components/animations/ClientRuntime";
 import { Analytics } from "@vercel/analytics/next";
 
 const personJsonLd = {
@@ -122,12 +121,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <SmoothScroll>
-          <ScrollProgress />
-          <CustomCursor />
-          <Header />
-          <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
-        </SmoothScroll>
+        <Header />
+        <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
+        <SiteFooter />
+        <ClientRuntime />
         <Analytics />
       </body>
     </html>
