@@ -185,13 +185,13 @@ export const projects: Project[] = [
         heading: "From Client Work OS to Swift Digital Seva",
         paragraphs: [
           "This project started as Client Work OS, a general-purpose operating system for WhatsApp-based client work: requests, payments, documents, and delivery tracking. The platform worked, but the positioning was broad and the audience abstract.",
-          "The rebrand sharpened it into one hero use-case with real search demand: sarkari form filling. The name change matters too — \"seva\" (service) is the vocabulary of the market it serves, and the whole identity now leads with trust: clear pricing, delivery proof, and documents deleted after the job.",
+          "The rebrand sharpened it into one hero use-case with real search demand: sarkari form filling. The name change matters too, because \"seva\" (service) is the vocabulary of the market it serves, and the whole identity now leads with trust: clear pricing, delivery proof, and documents deleted after the job.",
         ],
       },
       {
         heading: "The Growth Engine",
         paragraphs: [
-          "\"Sarkari result\" and its long-tail variants draw tens of millions of searches a month in India. The strategy is not to win the head term but the long tail: fast, clean, mobile-first pages for results, admit cards, and how-to-fill guides — each one funneling readers into a one-tap WhatsApp CTA: \"Don't want to risk a mistake? We'll fill it for ₹149.\"",
+          "\"Sarkari result\" and its long-tail variants draw tens of millions of searches a month in India. The strategy is not to win the head term but the long tail: fast, clean, mobile-first pages for results, admit cards, and how-to-fill guides, each one funneling readers into a one-tap WhatsApp CTA: \"Don't want to risk a mistake? We'll fill it for ₹149.\"",
           "That turns content into customer acquisition: free recurring search demand feeding a paid micro-service, a channel the established form-filling competitors don't have.",
         ],
       },
@@ -199,7 +199,7 @@ export const projects: Project[] = [
         heading: "Architecture",
         paragraphs: [
           "The project is built as a Bun workspace monorepo with a Next.js web app, a Hono API service, shared domain packages, typed environment validation, and a Drizzle PostgreSQL schema. The shared domain layer owns services, pricing, statuses, schemas, and formatting helpers so the website, admin UI, and API stay aligned.",
-          "The admin workspace mirrors the real back-office flow: request stats, filters, payment status, document context, notes, and delivery tracking — designed around how the work actually moves: document check first, price confirmation second, payment and delivery after scope is clear.",
+          "The admin workspace mirrors the real back-office flow: request stats, filters, payment status, document context, notes, and delivery tracking, all designed around how the work actually moves, with a document check first, price confirmation second, and payment and delivery once the scope is clear.",
         ],
       },
       {
@@ -214,6 +214,64 @@ export const projects: Project[] = [
         paragraphs: [
           "Where it landed: a live, rebranded platform covering the full customer journey from search or referral through service discovery, WhatsApp handoff, request tracking, and admin-side management.",
           "What comes next: a custom domain, real testimonials and delivery-proof samples on the homepage, service bundles to raise order value, a daily-updated Sarkari Result engine with structured data, and WhatsApp Business automation for instant replies and status checks.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "3",
+    slug: "match-tracker",
+    title: "Match Tracker",
+    shortDescription:
+      "A head-to-head win tracker for any game or tournament, from chess to carrom to FIFA. Sign in with GitHub, invite a friend with a 4-digit code, and every result counts only once the other player confirms it.",
+    techStack: ["Next.js 16", "Hono", "Better Auth", "Drizzle ORM"],
+    role: "Founder & Full-stack Engineer",
+    image: "/projects/match-tracker.png",
+    detailImageAspect: "video",
+    githubUrl: "https://github.com/anmolmalhan/Tournament-Score-Tracker",
+    liveUrl: "https://tournament-score-tracker-web.vercel.app",
+    featured: true,
+    summary:
+      "Settling head-to-head bragging rights on a shared scoreboard instead of in the group chat, where no win counts until the other player confirms it.",
+    metrics: [
+      { label: "Status", value: "Live" },
+      { label: "Sign-in", value: "GitHub only" },
+      { label: "Architecture", value: "Bun + Turborepo monorepo" },
+    ],
+    sections: [
+      {
+        heading: "The Problem",
+        paragraphs: [
+          "Every friend group that plays anything competitively runs into the same argument: who is actually winning. Chess, carrom, FIFA, cricket in the parking lot. The score lives in someone's memory or scattered across a group chat, and it is always disputed. One person swears the tally is four to one; the other is certain it is three all. There is no source of truth, so the bragging rights never settle.",
+          "Match Tracker exists to end that argument. It gives casual head-to-head rivalries a proper scoreboard, one that both players trust because neither can quietly edit it.",
+        ],
+      },
+      {
+        heading: "The Product",
+        paragraphs: [
+          "You sign in with GitHub, so your identity is simply your GitHub username and avatar, with no passwords and no guest accounts to muddy who played whom. You start a tournament for whatever you are competing at, name the game, and set a target score. Your opponent joins by typing a 4-digit code, so there are no long invite links to copy and paste on a phone.",
+          "From there the loop is deliberately small. You claim a win, your opponent confirms it, and the tally updates. Every player carries lifetime stats across tournaments, including win rate, matches won and lost, and titles taken. Optional push notifications through ntfy ping you when a result is waiting on your confirmation or when a tournament is decided. The whole thing is built mobile-first, for the phone in your hand while you are still at the table.",
+        ],
+      },
+      {
+        heading: "Fairness by Design",
+        paragraphs: [
+          "The core rule is that a win only counts after the other player confirms it. You can never confirm your own claim, and no one can edit a score alone. That single constraint is what makes the scoreboard trustworthy: it is not one person's word against another's, it is a mutually agreed record.",
+          "Tournaments are private by default. Only the invited GitHub users can view or play; everyone else is locked out. Owners keep full control to fix a miscount, request a reset, start a rematch, or delete a tournament outright, but none of those actions can rewrite a confirmed result behind an opponent's back.",
+        ],
+      },
+      {
+        heading: "Architecture",
+        paragraphs: [
+          "Match Tracker is a Bun and Turborepo monorepo split into a Next.js 16 web app and a Hono API service, backed by a Drizzle schema on Neon Postgres, with GitHub-only login handled by Better Auth. Both halves deploy independently to Vercel, and database migrations run automatically on the API build.",
+          "The most interesting problem was authentication across two subdomains. With the web and API living on separate vercel.app hosts, first-party login cookies would be treated as third-party and blocked by the browser. The fix is a same-origin proxy: the browser only ever talks to the web origin, and the web app proxies every /api request through to the API. Better Auth is configured to match, so the login cookie stays first-party and GitHub sign-in works reliably in production.",
+        ],
+      },
+      {
+        heading: "Outcomes & Roadmap",
+        paragraphs: [
+          "Where it landed: a live product covering the full loop from GitHub sign-in through creating a tournament, inviting a friend by code, claiming and confirming results, and tracking lifetime stats, all backed by a real two-service deployment and a managed Postgres database.",
+          "What comes next: richer stats and head-to-head history between specific rivals, leaderboards across a friend group, and more tournament formats beyond simple first-to-target races.",
         ],
       },
     ],
