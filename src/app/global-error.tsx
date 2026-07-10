@@ -36,8 +36,8 @@ export default function GlobalError({
             Something broke.
           </h1>
           <p style={{ color: "#a1a1aa", fontSize: 16, lineHeight: 1.5, marginBottom: 24 }}>
-            An unexpected error escaped to the root. Try reloading — if it keeps
-            happening, email contact@anmolmalhan.com.
+            An unexpected error escaped to the root. Try reloading, and if it
+            keeps happening, email contact@anmolmalhan.com.
             {error.digest ? ` Reference: ${error.digest}` : ""}
           </p>
           <button

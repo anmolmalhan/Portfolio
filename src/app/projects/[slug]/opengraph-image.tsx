@@ -15,7 +15,7 @@ export function generateImageMetadata({ params }: { params: { slug: string } }) 
     {
       id: "og",
       alt: project
-        ? `${project.title} — case study by Anmol Malhan`
+        ? `${project.title}, a case study by Anmol Malhan`
         : "Project case study",
       size,
       contentType,

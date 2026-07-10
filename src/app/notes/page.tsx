@@ -34,7 +34,7 @@ export default function NotesPage() {
 
       {notes.length === 0 ? (
         <p className="font-mono text-sm text-[var(--syntax-comment)]">
-          {"// no notes yet — first post landing soon"}
+          {"// no notes yet. first post landing soon"}
         </p>
       ) : (
         <ul className="space-y-10">

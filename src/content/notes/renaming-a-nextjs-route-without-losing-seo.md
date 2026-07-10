@@ -1,20 +1,20 @@
 ---
 title: "Renaming a Next.js route without losing SEO"
 date: "2026-07-08"
-excerpt: "A case study rebrand meant changing a slug. Here's how to move a URL without 404-ing the old one or throwing away its link equity."
+excerpt: "A case study rebrand meant changing a slug. Here is how to move a URL without 404-ing the old one or throwing away its link equity."
 tags: ["nextjs", "seo", "redirects"]
 ---
 
-One of my case studies started life as "Client Work OS" and lived at
+One of my case studies began life as "Client Work OS" and lived at
 `/projects/client-work-os`. When the underlying product pivoted and rebranded to
-Swift Digital Seva, the [case study](/projects/swift-digital-seva) had to follow
-— new title, new copy, and, more delicately, a new URL. Changing a slug sounds
-trivial. Doing it without breaking anything a search engine or a shared link
-already knows about takes a little care.
+Swift Digital Seva, the [case study](/projects/swift-digital-seva) had to follow,
+with a new title, new copy, and, more delicately, a new URL. Changing a slug
+sounds trivial. Doing it without breaking anything a search engine or a shared
+link already knows about takes a little care.
 
-## What "changing the slug" actually touches
+## What changing the slug actually touches
 
-My projects are data-driven, so the slug lives in one place:
+My projects are data-driven, so the slug lives in exactly one place:
 
 ```ts
 { id: "2", slug: "swift-digital-seva", title: "Swift Digital Seva", /* ... */ }
@@ -22,14 +22,14 @@ My projects are data-driven, so the slug lives in one place:
 
 `generateStaticParams` reads that array, so the new page prerenders and the old
 `/projects/client-work-os` simply stops existing. The sitemap is generated from
-the same data, so it updates itself. The canonical tag and the auto-generated OG
-image both key off the slug, so they move too. So far so good — except every
-link to the old URL now 404s. Anything Google had indexed, anything I'd shared,
-dead.
+the same data, so it updates itself. The canonical tag and the auto-generated
+Open Graph image both key off the slug, so they move too. All well and good,
+except that every link to the old URL now returns a 404. Anything Google had
+indexed, anything I had shared, dead.
 
 ## The 308 that saves the link equity
 
-The fix is a permanent redirect declared in `next.config.ts`:
+The remedy is a permanent redirect declared in `next.config.ts`:
 
 ```ts
 async redirects() {
@@ -37,17 +37,18 @@ async redirects() {
     {
       source: "/projects/client-work-os",
       destination: "/projects/swift-digital-seva",
-      permanent: true,   // 308 — passes ranking signals to the new URL
+      permanent: true,   // 308, which passes ranking signals to the new URL
     },
   ];
 }
 ```
 
-`permanent: true` emits a **308** (the modern permanent redirect; `permanent:
-false` gives a temporary 307). The distinction matters for SEO: a permanent
-redirect tells search engines "this moved for good — transfer what you knew about
-the old URL to the new one." A temporary one tells them to keep the old URL
-indexed. For a rename, you almost always want permanent.
+Setting `permanent: true` emits a 308, the modern permanent redirect, where
+`permanent: false` would give a temporary 307. The distinction matters for SEO. A
+permanent redirect tells search engines that the page has moved for good and that
+they should transfer everything they knew about the old URL to the new one. A
+temporary redirect tells them to keep the old URL indexed instead. For a rename,
+you almost always want permanent.
 
 I confirmed the behaviour against the running app rather than trusting the config:
 
@@ -58,9 +59,9 @@ I confirmed the behaviour against the running app rather than trusting the confi
 
 ## Lock it down with a test
 
-A redirect is exactly the kind of thing that silently rots — someone deletes the
-rule during a refactor and nobody notices until an old link 404s in production.
-So it gets a smoke test:
+A redirect is precisely the kind of thing that rots in silence. Someone deletes
+the rule during a refactor, nobody notices, and an old link starts returning a 404
+in production. So it earns a smoke test:
 
 ```ts
 test("old client-work-os slug redirects to swift-digital-seva", async ({ page }) => {
@@ -72,19 +73,16 @@ test("old client-work-os slug redirects to swift-digital-seva", async ({ page })
 
 ## The checklist
 
-If you're renaming a route in Next.js and care about not losing traffic:
-
-1. **Change the slug in one place** if your content is data-driven, so the sitemap
-   and static params follow automatically.
-2. **Add a `permanent: true` redirect** from the old path to the new one — never
-   leave the old URL 404-ing.
-3. **Verify the status code** is a 308 (or 301), not a 307, and that it lands on a
-   200, not another redirect hop.
-4. **Point the canonical at the final host**, not one that itself redirects — a
-   canonical to a redirecting URL wastes the signal.
-5. **Write a test** so the redirect can't quietly disappear.
+If you are renaming a route in Next.js and care about keeping your traffic, five
+things matter. Change the slug in one place if your content is data-driven, so the
+sitemap and static params follow on their own. Add a `permanent: true` redirect
+from the old path to the new one, and never leave the old URL returning a 404.
+Verify that the status code is a 308 or a 301 rather than a 307, and that it lands
+on a 200 rather than another redirect hop. Point the canonical at the final host,
+not one that itself redirects, since a canonical aimed at a redirecting URL wastes
+the signal. And write a test, so the redirect cannot quietly disappear.
 
 The rename is commit `22cad16` on
 [anmolmalhan/Portfolio](https://github.com/anmolmalhan/Portfolio). Google will
-follow the 308 on its next crawl and carry the old URL's history over to the new
-one — no ranking reset, no dead links.
+follow the 308 on its next crawl and carry the old URL's history across to the new
+one, with no ranking reset and no dead links.

@@ -86,8 +86,8 @@ translate(0%, 120%) translate(0px, 124.406px)
 
 Two transforms. Stacked.
 
-GSAP's CSS plugin had read the existing computed style — which was the CSS
-rule's `translateY(120%)`, resolved to a pixel matrix — and parsed it back
+GSAP's CSS plugin had read the existing computed style, which was the CSS
+rule's `translateY(120%)` resolved to a pixel matrix, and parsed it back
 into a pixel `y` value. Then my `gsap.set({ yPercent: 120 })` *added* a 120%
 yPercent translation on top, without zeroing the pixel `y` it had inferred.
 
@@ -97,7 +97,7 @@ went to 0, the `y: 124.406` pixel offset remained inline. The spans were
 still hidden.
 
 The CSS fallback animation snapping in at 2.5 seconds was overriding the
-broken inline transform — which is why the text suddenly appeared at exactly
+broken inline transform, which is why the text suddenly appeared at exactly
 that mark.
 
 ## The fix
@@ -125,14 +125,14 @@ plugin order of operations.
 
 **Two: CSS-derived initial states are landmines for transform plugins.** Any
 animation library that reads existing transforms (GSAP, anime.js, Framer
-Motion, Motion One — most of them) will inherit whatever you set in CSS. If
+Motion, Motion One, and most of the rest) will inherit whatever you set in CSS. If
 you mix unit systems, you get stacking. If you avoid mixing, you don't. The
 safest pattern is to either set the initial state entirely in JS or entirely
 in CSS, not split between the two.
 
 **Three: defensive CSS fallbacks deserve scrutiny too.** My
 `hero-line-reveal-fallback` was meant to save users when GSAP failed. In this
-case it actively hid the bug — by snapping the text into view at 2.5 seconds,
+case it actively hid the bug. By snapping the text into view at 2.5 seconds,
 it made the bug *look* like a delay rather than a stuck transform. If I hadn't
 had it, I'd have noticed within seconds. Belt-and-braces patterns can mask
 the very failure they're protecting against.
