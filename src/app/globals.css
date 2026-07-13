@@ -15,7 +15,7 @@
   --syntax-amber: #b45309;
   --syntax-magenta: #be185d;
   --syntax-green: #047857;
-  --syntax-comment: #71717a;
+  --syntax-comment: #636369;
 }
 
 /* Dark palette — applied when the user explicitly selects dark OR when their
@@ -31,7 +31,7 @@
   --syntax-amber: #fbbf24;
   --syntax-magenta: #e879f9;
   --syntax-green: #4ade80;
-  --syntax-comment: #7d7d85;
+  --syntax-comment: #85858e;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,7 +46,7 @@
     --syntax-amber: #fbbf24;
     --syntax-magenta: #e879f9;
     --syntax-green: #4ade80;
-    --syntax-comment: #7d7d85;
+    --syntax-comment: #85858e;
   }
 }
 
