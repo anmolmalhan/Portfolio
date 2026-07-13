@@ -31,7 +31,7 @@
   --syntax-amber: #fbbf24;
   --syntax-magenta: #e879f9;
   --syntax-green: #4ade80;
-  --syntax-comment: #71717a;
+  --syntax-comment: #7d7d85;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,7 +46,7 @@
     --syntax-amber: #fbbf24;
     --syntax-magenta: #e879f9;
     --syntax-green: #4ade80;
-    --syntax-comment: #71717a;
+    --syntax-comment: #7d7d85;
   }
 }
 

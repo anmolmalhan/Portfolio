@@ -41,7 +41,6 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
           <div className="flex items-center gap-4">
             <button
               type="button"
-              aria-label="Next project"
               onClick={() => scrollBy(1)}
               className="font-mono text-sm uppercase opacity-70 hover:opacity-100 flex items-center gap-4 text-background transition-opacity cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-foreground rounded-sm"
             >

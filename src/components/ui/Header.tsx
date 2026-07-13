@@ -131,7 +131,7 @@ export function Header() {
         <Link
           href="/"
           className="flex items-center gap-2 group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          aria-label="Home"
+          aria-label="Anmol Malhan, home"
         >
           <CodeXml
             className={`w-6 h-6 md:w-8 md:h-8 transition-transform duration-500 ease-out group-hover:scale-95 motion-safe:group-hover:-rotate-12 ${
