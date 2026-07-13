@@ -105,7 +105,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex items-center justify-center gap-3 px-8 py-5 bg-[var(--syntax-blue)] text-white overflow-hidden rounded-full font-mono font-bold tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
+                  className="group relative flex items-center justify-center gap-3 px-8 py-5 bg-[var(--syntax-blue)] text-background overflow-hidden rounded-full font-mono font-bold tracking-wider uppercase transition-all hover:scale-105 active:scale-95"
                 >
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
                   <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform" />
