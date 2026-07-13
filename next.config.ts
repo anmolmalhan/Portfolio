@@ -14,8 +14,10 @@ const csp = [
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
-  "connect-src 'self' https://github-contributions-api.jogruber.de https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  // static.cloudflareinsights.com: the site is proxied through Cloudflare,
+  // which auto-injects its Web Analytics beacon script.
+  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://static.cloudflareinsights.com",
+  "connect-src 'self' https://github-contributions-api.jogruber.de https://va.vercel-scripts.com https://vitals.vercel-insights.com https://cloudflareinsights.com",
   "upgrade-insecure-requests",
 ].join("; ");
 
