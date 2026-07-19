@@ -137,8 +137,8 @@ function Ball({
       friction={0.15}
       enabledTranslations={[true, true, false]}
     >
-      <mesh scale={radius} castShadow>
-        <sphereGeometry args={[1, 48, 48]} />
+      <mesh scale={radius}>
+        <sphereGeometry args={[1, 24, 24]} />
         <meshStandardMaterial
           map={texture}
           emissiveMap={texture}
@@ -218,6 +218,7 @@ export default function TechPhysics() {
       <Canvas
         frameloop={active ? "always" : "never"}
         dpr={[1, 1.5]}
+        performance={{ min: 0.5 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 16], fov: 34 }}
         style={{ background: "transparent" }}

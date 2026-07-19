@@ -194,6 +194,8 @@ export default function RobotHero() {
       <Canvas
         frameloop={visible && !scrolling ? "always" : "never"}
         dpr={[1, 1.5]}
+        // Let R3F drop resolution under load instead of dropping frames.
+        performance={{ min: 0.5 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         camera={{ position: [0, 0.4, 6.2], fov: 38 }}
         style={{ background: "transparent" }}
@@ -212,7 +214,11 @@ export default function RobotHero() {
           >
             <Robot reduced={reduced} pointer={pointer} />
           </Float>
+          {/* frames={1} renders the shadow ONCE instead of a full extra
+              render pass every frame — the single biggest per-frame saving in
+              this canvas. The tiny float wobble doesn't need a live shadow. */}
           <ContactShadows
+            frames={1}
             position={[0, -1.55, 0]}
             opacity={0.5}
             scale={9}
