@@ -123,6 +123,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <Header />
+        <div className="grain" aria-hidden />
         <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
         <SiteFooter />
         <ClientRuntime />

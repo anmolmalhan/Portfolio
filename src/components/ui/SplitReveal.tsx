@@ -18,7 +18,17 @@ type SplitRevealProps = {
  * (`.word-reveal` / `.is-visible`) so the <noscript> + reduced-motion overrides
  * apply. Classes are toggled imperatively to avoid setState-in-effect.
  */
-export function SplitReveal({ text, as: Tag = "span", className = "", stagger = 60 }: SplitRevealProps) {
+/* Same narrowing as Reveal: JSX-rendering the raw ElementType union breaks
+   under newer @types/react, so present the tag as a plain function-component
+   signature; strings still render as intrinsic tags. */
+type PolymorphicTag = (props: {
+  children?: React.ReactNode;
+  className?: string;
+  ref?: React.Ref<HTMLElement>;
+}) => React.ReactNode;
+
+export function SplitReveal({ text, as = "span", className = "", stagger = 60 }: SplitRevealProps) {
+  const Tag = as as unknown as PolymorphicTag;
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {

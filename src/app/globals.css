@@ -121,9 +121,14 @@ body {
   }
 }
 
-/* Hide native scrollbar on the horizontal projects carousel. */
-.pin-wrap::-webkit-scrollbar {
+/* Hide native scrollbar on horizontal scrollers. */
+.pin-wrap::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Opt into the View Transitions API for in-app navigation. The
@@ -135,6 +140,57 @@ body {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 250ms;
+}
+
+/* Site-wide film grain: a fixed, non-interactive fractal-noise layer that adds
+   a subtle premium texture over the flat backgrounds. Pure CSS (inline SVG data
+   URI — covered by img-src 'self' data:), promoted to its own layer so it never
+   repaints during scroll. Softer in light mode where noise reads louder. */
+/* NOTE: no mix-blend-mode. A blended fixed layer forces the browser to
+   re-composite the whole viewport on every scroll frame (major stutter). A
+   plain, static, fixed layer is rasterized once and costs nothing while
+   scrolling. Kept faint so plain-white noise still reads as texture. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  contain: strict;
+}
+:root:not([data-theme="dark"]) .grain {
+  opacity: 0.02;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .grain {
+    opacity: 0.035;
+  }
+}
+
+/* Living scroll cue at the foot of the hero: the accent line breathes down. */
+.scroll-cue {
+  transform-origin: top;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue {
+    animation: scroll-cue-pulse 1.8s ease-in-out infinite;
+  }
+}
+@keyframes scroll-cue-pulse {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.35; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* Soft radial vignette behind the hero character — a wide, low-opacity glow
+   that gives the dark hero depth and frames the model. */
+.hero-vignette {
+  background: radial-gradient(
+    60% 55% at 72% 52%,
+    color-mix(in oklab, var(--accent), transparent 82%) 0%,
+    transparent 70%
+  );
 }
 
 /* Typography */
@@ -173,6 +229,16 @@ body {
   to {
     transform: translateY(0);
   }
+}
+
+/* Rotating role slot in the hero. The first role is visible by default (SSR,
+   no-JS, and reduced-motion all show it); the rest wait hidden below the clip.
+   When GSAP runs it hides all of them on mount and drives the loop via inline
+   transforms. Crucially there is NO CSS animation here — a filling CSS
+   animation would pin the first role at translateY(0) and fight the GSAP loop,
+   stacking every title on top of it. */
+.role-line:not(:first-child) {
+  transform: translateY(120%);
 }
 
 /* Mobile nav menu entrance: the panel fades/slides down and its links

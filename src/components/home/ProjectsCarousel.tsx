@@ -15,13 +15,13 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
 
   return (
     <section
-      className="h-[100dvh] w-full bg-foreground text-background flex items-center relative"
+      className="md:h-[100dvh] w-full bg-foreground text-background flex items-center relative py-16 md:py-0"
       aria-label="Selected projects"
     >
       <div
         ref={wrapRef}
         data-lenis-prevent
-        className="pin-wrap flex h-[80dvh] items-center px-6 md:px-12 gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain pr-[20vw]"
+        className="pin-wrap flex md:h-[80dvh] items-center px-6 md:px-12 gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain pr-[20vw]"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         tabIndex={0}
         role="region"
@@ -52,7 +52,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
         {projects.filter((p) => p.featured).map((project, i) => (
           <div
             key={project.id}
-            className="w-[85vw] md:w-[60vw] shrink-0 h-full flex flex-col justify-center group relative text-background snap-center"
+            className="w-[85vw] md:w-[60vw] shrink-0 md:h-full flex flex-col justify-center group relative text-background snap-center"
           >
             <div className="flex font-mono text-sm opacity-50 mb-6 gap-6">
               <span>{String(i + 1).padStart(2, "0")}</span>
