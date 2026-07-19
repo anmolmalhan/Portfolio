@@ -24,15 +24,16 @@ export default function HeroSection() {
     if (prefersReducedMotion()) return;
     if (!ref.current) return;
     const ctx = gsap.context(() => {
-      // Entrance: the top/middle text blocks fade up in a stagger under the
-      // headline's char reveal.
+      // Entrance: the top/middle text blocks rise into place in a stagger.
+      // NOTE: transform-only (no opacity fade) so the largest hero text is
+      // painted immediately — fading it in from opacity:0 delays Largest
+      // Contentful Paint (it counts an invisible element as "not painted").
       gsap.from(".hero-fade", {
-        y: 22,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.09,
+        y: 24,
+        duration: 0.9,
+        stagger: 0.08,
         ease: "power3.out",
-        delay: 0.1,
+        clearProps: "transform",
       });
 
       // Signature reveal: THINK/CODE/SHIP chars rise out of the clipped line
@@ -164,10 +165,13 @@ export default function HeroSection() {
         </div>
 
         <div className="flex items-end justify-between gap-4">
+          {/* role="img" + aria-label so the per-character SplitText spans read
+              as three words, not a stream of letters — and so the aria-label
+              SplitText adds is valid (it's prohibited on a bare span). */}
           <div className="flex flex-col text-giant font-bold tracking-tighter">
-            <div className="reveal-wrapper hero-line"><span className="block">THINK.</span></div>
-            <div className="reveal-wrapper hero-line"><span className="block">CODE.</span></div>
-            <div className="reveal-wrapper hero-line"><span className="block text-[var(--syntax-blue)]">SHIP.</span></div>
+            <div className="reveal-wrapper hero-line"><span className="block" role="img" aria-label="Think.">THINK.</span></div>
+            <div className="reveal-wrapper hero-line"><span className="block" role="img" aria-label="Code.">CODE.</span></div>
+            <div className="reveal-wrapper hero-line"><span className="block text-[var(--syntax-blue)]" role="img" aria-label="Ship.">SHIP.</span></div>
           </div>
           {/* Scroll cue */}
           <div className="hero-fade hidden md:flex flex-col items-center gap-2 pb-3 text-[var(--syntax-comment)]">

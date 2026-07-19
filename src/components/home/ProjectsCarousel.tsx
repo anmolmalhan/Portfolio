@@ -34,9 +34,9 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
         }}
       >
         <div className="w-[85vw] md:w-[60vw] shrink-0 snap-center">
-          <div className="text-huge font-bold leading-none uppercase text-background">
+          <h2 className="text-huge font-bold leading-none uppercase text-background">
             Selected<br />Projects
-          </div>
+          </h2>
           <div className="h-px w-full bg-background/20 mt-12 mb-8" />
           <div className="flex items-center gap-4">
             <button

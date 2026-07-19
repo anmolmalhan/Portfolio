@@ -127,7 +127,12 @@ export default function RootLayout({
         <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
         <SiteFooter />
         <ClientRuntime />
-        <Analytics />
+        {/* Only mount Analytics on Vercel. Its beacon script (/_vercel/…) only
+            exists on Vercel-hosted deployments; loading it anywhere else (a
+            local `next start`, a self-host) 404s and logs a console error that
+            dings the Best-Practices score. VERCEL is set on every Vercel build
+            and runtime, so production analytics is unaffected. */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );
