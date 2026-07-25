@@ -36,7 +36,7 @@ export const siteConfig = {
 
   location: { city: "Rohtak", region: "Haryana", country: "IN", timezone: "UTC+5:30" },
   availability: "Available for new work",
-  email: "hello@anmolmalhan.com",
+  email: "contact@anmolmalhan.com",
 
   /** Roles cycled by the hero's rotating slot. */
   roles: ["Frontend Developer", "Interaction Designer", "Product Builder"],

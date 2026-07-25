@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { siteConfig } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,11 +76,13 @@ const personJsonLd = {
   jobTitle: "Frontend Developer",
   url: siteUrl,
   image: `${siteUrl}/profile.jpg`,
-  address: { "@type": "PostalAddress", addressLocality: "Rohtak", addressRegion: "Haryana", addressCountry: "IN" },
-  sameAs: [
-    "https://github.com/anmolmalhan",
-    "https://www.linkedin.com/in/anmolmalhan/",
-  ],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: siteConfig.location.city,
+    addressRegion: siteConfig.location.region,
+    addressCountry: siteConfig.location.country,
+  },
+  sameAs: [siteConfig.social.github, siteConfig.social.linkedin],
   knowsAbout: ["Next.js", "React", "TypeScript", "Tailwind CSS", "GSAP", "Interaction Design"],
 };
 

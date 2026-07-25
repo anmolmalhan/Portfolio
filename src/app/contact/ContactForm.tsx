@@ -1,10 +1,11 @@
 "use client";
+import { siteConfig } from "@/config/site";
 
 import { useState, useTransition } from "react";
 import { Send, CheckCircle } from "lucide-react";
 import { sendContactMessage, sendContactForm } from "./actions";
 
-const CONTACT_EMAIL = "contact@anmolmalhan.com";
+const CONTACT_EMAIL = siteConfig.email;
 
 type Status = "idle" | "compiling" | "success" | "error";
 

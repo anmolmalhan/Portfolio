@@ -5,6 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "@/lib/motion";
+import { siteConfig } from "@/config/site";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -96,10 +97,10 @@ export default function FooterReveal() {
             </p>
           </div>
           <a
-            href="mailto:contact@anmolmalhan.com"
+            href={`mailto:${siteConfig.email}`}
             className="font-mono text-xs md:text-sm text-white/70 hover:text-white transition-colors break-all md:text-right block py-2 focus-visible:outline-none focus-visible:underline"
           >
-            contact<span className="opacity-50">@anmolmalhan.com</span>
+            {siteConfig.email.split("@")[0]}<span className="opacity-50">@{siteConfig.email.split("@")[1]}</span>
           </a>
         </div>
 
@@ -107,7 +108,7 @@ export default function FooterReveal() {
         <div className="hidden md:grid grid-cols-3 gap-12 relative z-10 max-w-3xl">
           {[
             { k: "Stack", v: "React · Next.js · TS · GSAP" },
-            { k: "Based", v: "Rohtak, IN · UTC+5:30" },
+            { k: "Based", v: `${siteConfig.location.city}, ${siteConfig.location.country} · ${siteConfig.location.timezone}` },
             { k: "Reply", v: "Within 1 to 2 days" },
           ].map((s) => (
             <div key={s.k}>
@@ -138,8 +139,8 @@ export default function FooterReveal() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs text-white/60 uppercase gap-4">
             <div>© {new Date().getFullYear()} Anmol Malhan. All rights reserved.</div>
             <div className="flex gap-6">
-              <Link href="https://github.com/anmolmalhan" target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">GitHub</Link>
-              <Link href="https://www.linkedin.com/in/anmolmalhan/" target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">LinkedIn</Link>
+              <Link href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">GitHub</Link>
+              <Link href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">LinkedIn</Link>
             </div>
           </div>
         </div>

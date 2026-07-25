@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { GithubMark, LinkedinMark } from "@/components/ui/BrandMarks";
 import { siteConfig } from "@/config/site";
 
-const CONTACT_EMAIL = "contact@anmolmalhan.com";
+const CONTACT_EMAIL = siteConfig.email;
 
 // Server Component: reads searchParams on the server so the status banner
 // renders in the initial HTML. That means visitors without JS see the
@@ -118,7 +118,7 @@ export default async function ContactPage({
               </Reveal>
               <Reveal delay={70}>
                 <a
-                  href="https://github.com/anmolmalhan"
+                  href={siteConfig.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -129,7 +129,7 @@ export default async function ContactPage({
               </Reveal>
               <Reveal delay={140}>
                 <a
-                  href="https://www.linkedin.com/in/anmolmalhan/"
+                  href={siteConfig.social.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
