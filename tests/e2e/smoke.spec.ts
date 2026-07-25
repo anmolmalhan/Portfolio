@@ -64,7 +64,7 @@ test.describe("smoke", () => {
 
   test("contact page exposes form and fallback channels", async ({ page }) => {
     await page.goto("/contact");
-    await expect(page.getByRole("heading", { name: "Contact Request" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Contact", level: 1 })).toBeVisible();
     await expect(page.getByLabel(/name/i)).toBeVisible();
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(page.getByLabel(/message/i)).toBeVisible();
@@ -102,23 +102,26 @@ test.describe("smoke", () => {
     await expect(page.getByText("404: route not found")).toBeVisible();
   });
 
-  test("notes listing renders and links to a post", async ({ page }) => {
+  // The notes section was removed. These cover the redirects that replaced it,
+  // so the indexed URLs stay proven rather than silently rotting into 404s.
+  test("removed notes routes redirect home", async ({ page }) => {
     await page.goto("/notes");
-    await expect(page.getByRole("heading", { name: "Notes", level: 1 })).toBeVisible();
-    // First post should be linked
-    const firstPostLink = page.getByRole("link", { name: /Why my hero text/i });
-    await expect(firstPostLink).toBeVisible();
-    await firstPostLink.click();
-    await expect(page).toHaveURL(/\/notes\/hero-text-invisible-for-2-5-seconds$/);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
+
+    await page.goto("/notes/hero-text-invisible-for-2-5-seconds");
+    await expect(page).toHaveURL(/\/$/);
+
+    // Nested paths too — a bare "/notes" redirect source would not catch these.
+    await page.goto("/notes/rss.xml");
+    await expect(page).toHaveURL(/\/$/);
   });
 
-  test("notes RSS feed is valid XML", async ({ page }) => {
-    const res = await page.goto("/notes/rss.xml");
-    expect(res?.status()).toBe(200);
-    expect(res?.headers()["content-type"]).toMatch(/rss\+xml/);
-    const body = await res?.text();
-    expect(body).toContain("<rss");
-    expect(body).toContain("hero-text-invisible-for-2-5-seconds");
+  test("tools nav entry is present but not navigable", async ({ page }) => {
+    await page.goto("/");
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    await expect(nav.getByText("Tools", { exact: true })).toBeVisible();
+    await expect(nav.getByText("Soon", { exact: true })).toBeVisible();
+    // It must not be a link, or it would advertise a route that does not exist.
+    await expect(nav.getByRole("link", { name: /^Tools/ })).toHaveCount(0);
   });
 });

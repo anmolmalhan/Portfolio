@@ -163,7 +163,7 @@ export function Header() {
                     style={{ animationDelay: `${150 + i * 70}ms` }}
                     className="nav-item-reveal inline-flex items-center gap-2 font-sans font-medium text-sm tracking-wide uppercase text-foreground/40 cursor-default select-none"
                   >
-                    {label}
+                    <span>{label}</span>
                     <span className="font-mono text-[9px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
                       Soon
                     </span>
@@ -248,7 +248,7 @@ export function Header() {
                   style={{ animationDelay: `${60 + i * 50}ms` }}
                   className="nav-item-reveal flex items-center gap-2 font-sans font-medium text-lg tracking-wide uppercase py-2 text-foreground/40 cursor-default select-none"
                 >
-                  {label}
+                  <span>{label}</span>
                   <span className="font-mono text-[10px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
                     Soon
                   </span>
