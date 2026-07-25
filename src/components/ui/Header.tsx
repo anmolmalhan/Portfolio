@@ -160,7 +160,6 @@ export function Header() {
                 return (
                   <span
                     key={label}
-                    aria-disabled="true"
                     style={{ animationDelay: `${150 + i * 70}ms` }}
                     className="nav-item-reveal inline-flex items-center gap-2 font-sans font-medium text-sm tracking-wide uppercase text-foreground/40 cursor-default select-none"
                   >
@@ -246,7 +245,6 @@ export function Header() {
               return (
                 <span
                   key={label}
-                  aria-disabled="true"
                   style={{ animationDelay: `${60 + i * 50}ms` }}
                   className="nav-item-reveal flex items-center gap-2 font-sans font-medium text-lg tracking-wide uppercase py-2 text-foreground/40 cursor-default select-none"
                 >

@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 /* Theming here is driven by `data-theme` on <html>, not shadcn's default
@@ -61,7 +60,9 @@
   --secondary: var(--surface);
   --secondary-foreground: var(--foreground);
   --muted: var(--surface);
-  /* 5.9:1 on --background. The old value sat near 3:1 and read as washed out. */
+  /* 6.51:1 on --background. Body copy previously used `text-foreground/55`,
+     which blends to rgb(118,118,119) — 4.39:1, just under the 4.5:1 AA
+     threshold — and read washed out against the near-white background. */
   --muted-foreground: #5b5b63;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;

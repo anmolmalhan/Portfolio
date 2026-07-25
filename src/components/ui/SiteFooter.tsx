@@ -25,7 +25,6 @@ export function SiteFooter() {
             soon ? (
               <span
                 key={href}
-                aria-disabled="true"
                 className="py-2 inline-flex items-center gap-1.5 text-muted-foreground/60 cursor-default select-none"
               >
                 {label}

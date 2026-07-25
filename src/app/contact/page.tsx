@@ -72,74 +72,74 @@ export default async function ContactPage({
             ))}
           </dl>
 
-      <section className="mt-12" aria-labelledby="good-fit-heading">
-        <h2
-          id="good-fit-heading"
-          className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-6"
-        >
-          {"// Good fit if you're after"}
-        </h2>
-        <ul className="space-y-4">
-          {goodFit.map((item, i) => (
-            <Reveal
-              as="li"
-              key={i}
-              delay={i * 80}
-              className="flex gap-4 text-foreground/85 leading-relaxed"
+          <section className="mt-12" aria-labelledby="good-fit-heading">
+            <h2
+              id="good-fit-heading"
+              className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-6"
             >
-              <span
-                className="font-mono text-sm text-[var(--syntax-blue)] shrink-0 pt-1"
-                aria-hidden
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span>{item}</span>
-            </Reveal>
-          ))}
-        </ul>
-      </section>
+              {"// Good fit if you're after"}
+            </h2>
+            <ul className="space-y-4">
+              {goodFit.map((item, i) => (
+                <Reveal
+                  as="li"
+                  key={i}
+                  delay={i * 80}
+                  className="flex gap-4 text-foreground/85 leading-relaxed"
+                >
+                  <span
+                    className="font-mono text-sm text-[var(--syntax-blue)] shrink-0 pt-1"
+                    aria-hidden
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item}</span>
+                </Reveal>
+              ))}
+            </ul>
+          </section>
 
-      <section className="mt-12 pt-10 border-t border-border" aria-labelledby="elsewhere-heading">
-        <h2
-          id="elsewhere-heading"
-          className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-6"
-        >
-          {"// Or reach me elsewhere"}
-        </h2>
-        <div className="flex flex-wrap gap-3">
-          <Reveal delay={0}>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          <section className="mt-12 pt-10 border-t border-border" aria-labelledby="elsewhere-heading">
+            <h2
+              id="elsewhere-heading"
+              className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-6"
             >
-              <Mail className="w-4 h-4 text-[var(--syntax-blue)]" />
-              {CONTACT_EMAIL}
-            </a>
-          </Reveal>
-          <Reveal delay={70}>
-            <a
-              href="https://github.com/anmolmalhan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <GithubMark className="w-4 h-4" />
-              GitHub
-            </a>
-          </Reveal>
-          <Reveal delay={140}>
-            <a
-              href="https://www.linkedin.com/in/anmolmalhan/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <LinkedinMark className="w-4 h-4 text-[var(--syntax-blue)]" />
-              LinkedIn
-            </a>
-          </Reveal>
-        </div>
-      </section>
+              {"// Or reach me elsewhere"}
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              <Reveal delay={0}>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <Mail className="w-4 h-4 text-[var(--syntax-blue)]" />
+                  {CONTACT_EMAIL}
+                </a>
+              </Reveal>
+              <Reveal delay={70}>
+                <a
+                  href="https://github.com/anmolmalhan"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <GithubMark className="w-4 h-4" />
+                  GitHub
+                </a>
+              </Reveal>
+              <Reveal delay={140}>
+                <a
+                  href="https://www.linkedin.com/in/anmolmalhan/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <LinkedinMark className="w-4 h-4 text-[var(--syntax-blue)]" />
+                  LinkedIn
+                </a>
+              </Reveal>
+            </div>
+          </section>
         </div>
       </div>
     </Container>
