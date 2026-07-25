@@ -3,42 +3,25 @@ import { cn } from "@/lib/utils";
 /**
  * The layout spine.
  *
- * Every page previously picked its own max-width (`max-w-5xl` on About,
- * `max-w-6xl` on Projects, `max-w-3xl` on Notes) while the header ran
- * full-bleed at `px-12`. The result was that content started at a different
- * x-offset on every route and nothing lined up with the logo above it.
+ * Every page used to pick its own max-width (`max-w-5xl` on About, `max-w-6xl`
+ * on Projects, `max-w-3xl` on Notes) while the header ran full-bleed, so
+ * content started at a different x-offset on every route and nothing lined up
+ * with the logo above it. All routes now share one padding scale, defined once
+ * as `--page-gutter`, and one of two widths:
  *
- * All of them now share one padding scale and one of three widths, so the left
- * edge of a heading is the left edge of the logo on every route.
+ *   default — the header and the home hero. Spans `--page-max` (1680px) so the
+ *             hero's artwork has room to fill a wide monitor.
+ *   content — text-led inner pages. Without the hero's artwork, 1680px left
+ *             body copy ending hundreds of pixels short of the section rules
+ *             above it and the page reading off-centre; 1152px keeps the
+ *             margins even.
  *
- *   default — standard pages and the header (matches the old max-w-6xl)
- *   prose   — long-form reading measure for notes
- *   narrow  — focused single-column forms
- *   wide    — full-bleed sections that only want the padding, not a max-width
- */
-/**
- * `default` is deliberately generous (1680px) and the padding steps up with
- * the viewport. A 1152px cap looked reasonable on a laptop but stranded the
- * whole site in a narrow ribbon down the middle of a wide monitor, with a
- * third of the screen empty on either side. Reading measure is constrained
- * per-block (`max-w-2xl` on body copy) rather than by squeezing the shell.
- */
-/**
- * `default` inherits --page-max (1680) from .page-container; the rest override
- * it. `.page-container` sets `margin-inline: auto`, so every narrower size
- * centres itself in the viewport.
- *
- * `content` is the measure for text-led inner pages. They don't have the hero's
- * full-bleed artwork to fill 1680px, so stretching them left the body copy
- * ending several hundred pixels short of the section rules above it and the
- * whole page reading off-centre. A centred 1152 column keeps the margins even.
+ * `.page-container` supplies `margin-inline: auto`, so `content` centres
+ * itself. It deliberately does NOT set max-width — see the note in globals.css.
  */
 const widths = {
   default: "max-w-[var(--page-max)]",
   content: "max-w-6xl",
-  prose: "max-w-3xl",
-  narrow: "max-w-2xl",
-  wide: "max-w-none",
 } as const;
 
 export function Container({

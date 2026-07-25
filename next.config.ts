@@ -52,6 +52,21 @@ const nextConfig: NextConfig = {
         destination: "/projects/swift-digital-seva",
         permanent: true,
       },
+      // The notes section was removed. Both /notes and every article URL were
+      // in the sitemap and are indexed, so send them somewhere useful instead
+      // of letting bookmarks and search results dead-end on a 404.
+      // The article rule is listed first: Next matches in order, and a bare
+      // "/notes" source would not catch the nested paths on its own.
+      {
+        source: "/notes/:slug*",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/notes",
+        destination: "/",
+        permanent: true,
+      },
     ];
   },
 };

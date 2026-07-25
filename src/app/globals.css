@@ -66,8 +66,14 @@
   --muted-foreground: #5b5b63;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
-  --border: #e3e4e8;
-  --input: #e3e4e8;
+  /* Hairlines, lifted for legibility. NOT pushed to the 3:1 of WCAG 1.4.11:
+     that needs ~#636363 on the dark background, which reads as a heavy rule
+     rather than a hairline. 1.4.11 covers visuals needed to *identify* a
+     component or its state; these are decorative dividers, and the cards they
+     outline are already identifiable by their own --card background. The
+     focus ring, which the criterion does cover, uses --ring (7.8:1 on dark). */
+  --border: #dcdde2;
+  --input: #dcdde2;
   --ring: var(--accent);
 
   --radius: 0.625rem;
@@ -101,8 +107,8 @@
   --muted-foreground: #a1a1ab;
   --accent-foreground: #09090b;
   --destructive: #f87171;
-  --border: #26262b;
-  --input: #26262b;
+  --border: #33333b;
+  --input: #33333b;
   --ring: var(--accent);
 }
 
@@ -132,8 +138,8 @@
     --muted-foreground: #a1a1ab;
     --accent-foreground: #09090b;
     --destructive: #f87171;
-    --border: #26262b;
-    --input: #26262b;
+    --border: #33333b;
+    --input: #33333b;
     --ring: var(--accent);
   }
 }

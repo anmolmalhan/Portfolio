@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { GitHubCalendar } from "react-github-calendar";
+import dynamic from "next/dynamic";
 import { getResolvedScheme, getServerScheme, subscribeToScheme } from "@/lib/theme";
 import { GithubMark } from "@/components/ui/BrandMarks";
 
@@ -16,6 +16,26 @@ const explicitTheme = {
 };
 
 const calendarStyle = { color: 'var(--foreground)' };
+
+/**
+ * Client-only. The calendar fetches contributions in the browser and renders
+ * different markup than the server does, which threw a hydration mismatch on
+ * every /about load ("server rendered HTML didn't match the client"). Skipping
+ * SSR for this subtree removes the mismatch outright; there is nothing to
+ * prerender anyway, since the data only exists after the client fetch.
+ */
+const GitHubCalendar = dynamic(
+  () => import("react-github-calendar").then((m) => m.GitHubCalendar),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-[140px] w-full animate-pulse rounded-md bg-muted"
+        aria-label="Loading contribution graph"
+      />
+    ),
+  },
+);
 
 export default function GitHubActivity({ username }: GitHubActivityProps) {
   // The calendar must follow the site's active theme, otherwise the empty
