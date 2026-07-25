@@ -5,16 +5,35 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
+import { ArrowDownRight } from "lucide-react";
 import { prefersReducedMotion, useMediaQuery } from "@/lib/motion";
 import { projects } from "@/data/projects";
+import { siteConfig } from "@/config/site";
+import { Container } from "@/components/ui/Container";
 
 gsap.registerPlugin(SplitText);
 
 const RobotHero = dynamic(() => import("./RobotHero"), { ssr: false });
 
-const ROLES = ["Frontend Developer", "Interaction Designer", "Product Builder"];
+const ROLES = siteConfig.roles;
 const NOW_BUILDING = projects.filter((p) => p.featured).slice(0, 3);
 
+/**
+ * The hero is composed as three bands with nothing floating between them:
+ *
+ *   1. IDENTITY RAIL — who, what, and availability, in one mono line.
+ *   2. STATEMENT     — the giant THINK / CODE / SHIP lockup plus one line of
+ *                      positioning copy. This is the only thing competing for
+ *                      attention.
+ *   3. SPEC GRID     — now-building / stack / based, as hairline-separated
+ *                      columns that read like a spec sheet.
+ *
+ * The previous version stacked six independently-styled blocks down the left
+ * edge, each with its own mono label, so nothing was dominant and the eye had
+ * no entry point. The robot also sat *behind* the tech-stack line, which made
+ * that text unreadable — it now occupies its own column and the type never
+ * crosses it.
+ */
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null);
   // The robot is a desktop-only luxury: don't spend a single mobile byte on it.
@@ -24,7 +43,7 @@ export default function HeroSection() {
     if (prefersReducedMotion()) return;
     if (!ref.current) return;
     const ctx = gsap.context(() => {
-      // Entrance: the top/middle text blocks rise into place in a stagger.
+      // Entrance: supporting blocks rise into place in a stagger.
       // NOTE: transform-only (no opacity fade) so the largest hero text is
       // painted immediately — fading it in from opacity:0 delays Largest
       // Contentful Paint (it counts an invisible element as "not painted").
@@ -55,6 +74,16 @@ export default function HeroSection() {
         },
       );
 
+      // Hairline rules draw themselves in, left to right.
+      gsap.from(".hero-rule", {
+        scaleX: 0,
+        transformOrigin: "left center",
+        duration: 1.1,
+        stagger: 0.08,
+        ease: "power3.inOut",
+        delay: 0.5,
+      });
+
       // Rotating role: whole-line slides so word spacing survives. One title
       // visible at a time; screen-reader silent (an sr-only line carries it).
       const roles = gsap.utils.toArray<HTMLElement>(".role-line");
@@ -78,110 +107,146 @@ export default function HeroSection() {
   return (
     <section
       ref={ref}
-      className="min-h-[85dvh] md:h-[100dvh] w-full flex flex-col justify-between pt-24 md:pt-28 pb-14 md:pb-10 px-6 md:px-12 relative overflow-hidden hero-section"
+      className="relative min-h-[92dvh] md:min-h-[100dvh] w-full flex flex-col overflow-hidden hero-section"
     >
-      {/* Atmosphere: soft accent vignette + two drifting colour glows. */}
-      <div className="absolute inset-0 hero-vignette pointer-events-none" />
-      <div className="absolute top-[18%] right-[8%] w-[38vw] h-[38vw] bg-[var(--syntax-blue)] rounded-full blur-[55px] md:blur-[64px] opacity-[0.14] pointer-events-none hero-glow" />
-      <div className="absolute -bottom-[6%] left-[4%] w-[30vw] h-[30vw] bg-[var(--syntax-magenta)] rounded-full blur-[55px] md:blur-[64px] opacity-[0.13] pointer-events-none hero-glow" />
+      {/* Atmosphere. A single directional accent wash instead of the previous
+          two saturated blobs — at light-mode opacities those read as muddy
+          pink/purple smudges over the near-white background. */}
+      <div className="absolute inset-0 hero-wash pointer-events-none" />
+      <div className="absolute inset-0 hero-grid pointer-events-none" />
 
-      {/* Desktop companion: waves on load, tracks the cursor, emotes on click.
-          Enlarged and vertically anchored so it co-stars with the type. */}
-      {showRobot && (
-        <div className="absolute right-0 lg:right-[3vw] bottom-0 w-[50vw] max-w-[680px] h-[82vh] z-[5] robot-wrap">
-          <RobotHero />
-        </div>
-      )}
-
-      {/* Top intro band */}
-      <div className="z-10 w-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 md:gap-12 items-start">
-        <div className="max-w-2xl">
-          <div className="hero-fade font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest mb-3">
-            {"// portfolio.v4 · 2026"}
-          </div>
-          <h1 className="hero-fade text-2xl md:text-4xl font-semibold tracking-tight leading-[1.15]">
-            I build product UIs that feel fast and look intentional.
-          </h1>
-          <p className="hero-fade mt-3 md:mt-4 font-mono text-xs md:text-sm uppercase tracking-widest text-[var(--syntax-comment)]">
+      <Container className="relative z-10 flex flex-1 flex-col pt-28 md:pt-32 pb-10">
+        {/* ── Band 1 — identity rail ─────────────────────────────────────── */}
+        <div className="hero-fade flex items-start justify-between gap-6 font-mono text-xs md:text-[13px] uppercase tracking-widest">
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="text-foreground">{siteConfig.name}</span>
+            <span className="text-border">/</span>
             <span className="sr-only">{ROLES.join(" · ")}</span>
-            <span aria-hidden className="flex items-center gap-2">
-              <span className="text-[var(--accent)]">{">"}</span>
-              <span className="role-slot relative inline-block overflow-hidden h-[1.3em] align-bottom">
-                {ROLES.map((role) => (
-                  <span
-                    key={role}
-                    className="role-line absolute inset-0 whitespace-nowrap leading-[1.3em] text-foreground"
-                  >
-                    {role}
-                  </span>
-                ))}
-                <span className="invisible whitespace-nowrap block h-0 leading-none" aria-hidden>
-                  {ROLES.reduce((a, b) => (a.length >= b.length ? a : b))}
+            <span aria-hidden className="role-slot relative inline-block overflow-hidden h-[1.3em] align-bottom text-muted-foreground">
+              {ROLES.map((role) => (
+                <span
+                  key={role}
+                  className="role-line absolute inset-0 whitespace-nowrap leading-[1.3em]"
+                >
+                  {role}
                 </span>
+              ))}
+              <span className="invisible whitespace-nowrap block h-0 leading-none" aria-hidden>
+                {ROLES.reduce((a, b) => (a.length >= b.length ? a : b))}
               </span>
             </span>
           </p>
-        </div>
-        <div className="hero-fade hidden md:block font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest text-right space-y-1 pt-1">
-          <div>Anmol Malhan</div>
-          <div className="text-foreground/60">Rohtak, IN · UTC+5:30</div>
-          <div className="text-foreground/60">Available for new work</div>
-        </div>
-      </div>
 
-      {/* Middle band — fills what used to be dead space with real substance:
-          a positioning line + the projects currently in flight. */}
-      <div className="hero-fade z-10 max-w-md">
-        <p className="text-sm text-foreground/55 leading-relaxed">
-          Freelance & full-time. I ship marketplaces, dashboards, and tools that
-          load fast on real devices and feel considered end to end.
-        </p>
-        <div className="mt-5 flex items-center gap-2 flex-wrap">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--syntax-comment)] mr-1">
-            Now building
-          </span>
-          {NOW_BUILDING.map((p) => (
-            <Link
-              key={p.id}
-              href={`/projects/${p.slug}`}
-              className="font-mono text-[11px] uppercase tracking-wider px-3 py-1 rounded-full border border-foreground/15 text-foreground/70 hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-            >
-              {p.title}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Bottom statement band */}
-      <div className="z-10 w-full">
-        <div className="hero-fade flex justify-between items-end mb-5 md:mb-8 border-b border-foreground/20 pb-5 w-full">
-          <div className="font-mono text-xs md:text-sm uppercase tracking-widest flex items-center gap-2">
-            <span className="w-2 h-2 bg-[var(--syntax-green)] rounded-full animate-pulse" />
-            Execution Layer
-          </div>
-          <div className="font-mono text-xs md:text-sm text-[var(--syntax-comment)] hidden sm:block">
-            [ Next.js / React / TypeScript ]
-          </div>
-        </div>
-
-        <div className="flex items-end justify-between gap-4">
-          {/* role="img" + aria-label so the per-character SplitText spans read
-              as three words, not a stream of letters — and so the aria-label
-              SplitText adds is valid (it's prohibited on a bare span). */}
-          <div className="flex flex-col text-giant font-bold tracking-tighter">
-            <div className="reveal-wrapper hero-line"><span className="block" role="img" aria-label="Think.">THINK.</span></div>
-            <div className="reveal-wrapper hero-line"><span className="block" role="img" aria-label="Code.">CODE.</span></div>
-            <div className="reveal-wrapper hero-line"><span className="block text-[var(--syntax-blue)]" role="img" aria-label="Ship.">SHIP.</span></div>
-          </div>
-          {/* Scroll cue */}
-          <div className="hero-fade hidden md:flex flex-col items-center gap-2 pb-3 text-[var(--syntax-comment)]">
-            <span className="font-mono text-[10px] uppercase tracking-widest [writing-mode:vertical-rl] rotate-180">
-              Scroll
+          <p className="hidden sm:flex items-center gap-2 shrink-0 text-muted-foreground">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--syntax-green)] opacity-60 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--syntax-green)]" />
             </span>
-            <span className="scroll-cue block w-px h-10 bg-gradient-to-b from-[var(--accent)] to-transparent" />
-          </div>
+            {siteConfig.availability}
+          </p>
         </div>
-      </div>
+
+        <div className="hero-rule mt-5 h-px w-full bg-border" />
+
+        {/* ── Band 2 — the statement ─────────────────────────────────────── */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-y-10 items-center py-10 md:py-0">
+          <div className="md:col-span-7 lg:col-span-6">
+            {/* role="img" + aria-label so the per-character SplitText spans read
+                as three words, not a stream of letters — and so the aria-label
+                SplitText adds is valid (it's prohibited on a bare span). */}
+            <h1 className="flex flex-col text-giant font-bold tracking-tighter">
+              <span className="reveal-wrapper hero-line">
+                <span className="block" role="img" aria-label="Think.">THINK.</span>
+              </span>
+              <span className="reveal-wrapper hero-line">
+                <span className="block" role="img" aria-label="Code.">CODE.</span>
+              </span>
+              <span className="reveal-wrapper hero-line">
+                <span className="block text-accent" role="img" aria-label="Ship.">SHIP.</span>
+              </span>
+            </h1>
+
+            <p className="hero-fade mt-7 max-w-md text-base md:text-lg leading-relaxed text-muted-foreground">
+              {siteConfig.tagline}{" "}
+              <span className="text-foreground">
+                Freelance &amp; full-time — marketplaces, dashboards, and tools that
+                load fast on real devices.
+              </span>
+            </p>
+
+            <div className="hero-fade mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-transform duration-300 ease-out motion-safe:hover:scale-[1.03]"
+              >
+                View work
+                <ArrowDownRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40 hover:bg-foreground/5"
+              >
+                Start a project
+              </Link>
+            </div>
+          </div>
+
+          {/* The robot gets its own column so no type is ever laid over it. */}
+          {showRobot && (
+            <div className="hidden md:block md:col-span-5 lg:col-span-6 relative h-[46vh] lg:h-[58vh] robot-wrap">
+              <RobotHero />
+            </div>
+          )}
+        </div>
+
+        {/* ── Band 3 — spec grid ─────────────────────────────────────────── */}
+        <div className="hero-fade mt-auto">
+          <div className="hero-rule h-px w-full bg-border" />
+          <dl className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+            <div className="py-5 sm:pr-8">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Now building
+              </dt>
+              <dd className="mt-1 flex flex-wrap items-center gap-x-2">
+                {/* Separator trails its item so a wrap can't strand a leading
+                    "·" at the start of the next line. */}
+                {NOW_BUILDING.map((p, i) => (
+                  <span key={p.id} className="flex items-center gap-2">
+                    <Link
+                      href={`/projects/${p.slug}`}
+                      className="py-2 font-mono text-xs uppercase tracking-wide text-foreground/80 underline-offset-4 transition-colors hover:text-accent hover:underline"
+                    >
+                      {p.title}
+                    </Link>
+                    {i < NOW_BUILDING.length - 1 && (
+                      <span aria-hidden className="text-border">·</span>
+                    )}
+                  </span>
+                ))}
+              </dd>
+            </div>
+
+            <div className="py-5 sm:px-8">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Stack
+              </dt>
+              <dd className="mt-2 font-mono text-xs uppercase tracking-wide text-foreground/80">
+                {siteConfig.stack.join(" · ")}
+              </dd>
+            </div>
+
+            <div className="py-5 sm:pl-8">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Based
+              </dt>
+              <dd className="mt-2 font-mono text-xs uppercase tracking-wide text-foreground/80">
+                {siteConfig.location.city}, {siteConfig.location.country} ·{" "}
+                {siteConfig.location.timezone}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </Container>
     </section>
   );
 }

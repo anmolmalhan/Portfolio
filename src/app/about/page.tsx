@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { User, MonitorPlay, BookOpen, Coffee, ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import GitHubActivity from "@/components/about/GitHubActivity";
 import { Reveal } from "@/components/ui/Reveal";
 import { Magnetic } from "@/components/ui/Magnetic";
-import { SplitReveal } from "@/components/ui/SplitReveal";
+import { Container } from "@/components/ui/Container";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "About",
@@ -14,118 +16,136 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
+const MINDSET = [
+  {
+    title: "What I build",
+    desc: "Performance-driven frontend apps, interactive dashboards, and landing pages. I enjoy the space where design meets logic — code that balances readability, performance, and design precision.",
+  },
+  {
+    title: "Currently learning",
+    desc: "Advanced Next.js patterns, backend integration, and system design.",
+  },
+  {
+    title: "Beyond code",
+    desc: "Maintaining discipline, consistency, problem-solving, and staying fit.",
+  },
+];
+
 export default function AboutPage() {
-  const blocks = [
-    { 
-      icon: MonitorPlay, 
-      title: "What I build & focus on", 
-      desc: "Performance-driven frontend apps, interactive dashboards, and sleek landing pages. I enjoy the space where design meets logic, writing code that balances readability, performance, and design precision.", 
-      color: "text-[var(--syntax-amber)]",
-      className: "md:col-span-2"
-    },
-    { 
-      icon: BookOpen, 
-      title: "Currently learning", 
-      desc: "Advanced Next.js patterns, backend integration, and system design.", 
-      color: "text-[var(--syntax-green)]",
-      className: "md:col-span-1"
-    },
-    { 
-      icon: Coffee, 
-      title: "Beyond code", 
-      desc: "Maintaining discipline, consistency, problem-solving, and staying fit.", 
-      color: "text-[var(--syntax-blue)]",
-      className: "md:col-span-1"
-    }
-  ];
-
   return (
-    <div className="max-w-5xl w-full mx-auto px-6 py-20 flex-1 page-reveal">
-      <div className="mb-20 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 items-start">
+    <Container className="py-28 md:py-32 flex-1">
+      <PageHeader
+        eyebrow="studio"
+        title="About"
+        description="I design clean interfaces and build them with production-ready code."
+      />
 
-        {/* Left Column: Text & Meta */}
-        <Reveal as="div">
-          <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
-            <User className="text-foreground w-8 h-8" />
-            <SplitReveal text="About Me" />
-          </h1>
-          <p className="text-xl font-medium text-foreground mb-6">
-            I design clean interfaces and build them with production-ready code.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8 text-sm font-mono text-[var(--syntax-comment)]">
-            <span className="flex items-center gap-1 text-foreground/80">
-              <MapPin className="w-4 h-4"/> Rohtak, Haryana
-            </span>
-            <span className="hidden sm:inline">•</span>
-            <span>Frontend Developer</span>
-            <span className="hidden sm:inline">•</span>
-            <span>React / Next.js / TypeScript</span>
-          </div>
-
-          <div className="space-y-6 text-lg text-foreground/80 leading-relaxed mb-10 border-l-2 border-surface pl-6">
+      {/* Bio + portrait. The portrait is a real column in the grid rather than
+          a floated card, so its top aligns with the first line of the bio. */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        <Reveal as="div" className="lg:col-span-7 order-last lg:order-first">
+          {/* Capped measure — at this container width an unconstrained column
+              runs past a comfortable line length. */}
+          <div className="space-y-6 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
             <p>
-              I’m Anmol, a front-end developer passionate about building visually polished web experiences. I work mainly with React, Next.js, and Tailwind CSS to create clean interfaces that are maintainable for developers and fast for users.
+              I&rsquo;m Anmol, a front-end developer passionate about building visually
+              polished web experiences. I work mainly with React, Next.js, and
+              Tailwind CSS to create clean interfaces that are maintainable for
+              developers and fast for users.
             </p>
             <p>
-              I enjoy turning ideas into structured, reusable UI systems. My goal is to build digital products that feel smooth, intentional, and ready for real-world use.
+              I enjoy turning ideas into structured, reusable UI systems. My goal is
+              to build digital products that feel smooth, intentional, and ready for
+              real-world use.
             </p>
           </div>
-          
-          <div className="flex flex-wrap gap-4">
+
+          <div className="mt-10 flex flex-wrap gap-3">
             <Magnetic>
-              <Link href="/projects" className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 rounded-full text-sm font-bold hover:scale-105 transition-transform">
-                View Projects <ArrowRight className="w-4 h-4" />
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-transform duration-300 ease-out motion-safe:hover:scale-[1.03]"
+              >
+                View projects <ArrowRight className="h-4 w-4" />
               </Link>
             </Magnetic>
             <Magnetic>
-              <Link href="/contact" className="inline-flex items-center gap-2 border border-surface px-6 py-3 rounded-full text-sm font-bold hover:bg-surface/50 transition-colors">
-                Let&apos;s Work Together
+              <Link
+                href="/contact"
+                className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm font-semibold transition-colors hover:border-foreground/40 hover:bg-foreground/5"
+              >
+                Let&apos;s work together
               </Link>
             </Magnetic>
           </div>
         </Reveal>
 
-        {/* Right Column: Photo */}
-        <Reveal as="div" delay={120} className="order-first lg:order-last w-full max-w-sm mx-auto lg:mx-0">
-          <div className="relative aspect-[4/3] sm:aspect-[3/4] w-full border border-surface/50 rounded-2xl overflow-hidden shadow-2xl bg-surface/20 group">
-            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
+        <Reveal as="div" delay={120} className="lg:col-span-5 w-full lg:max-w-[440px] lg:ml-auto">
+          <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted">
             <Image
               src="/profile.jpg"
               alt="Anmol Malhan, Frontend Developer"
               fill
-              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-              sizes="(max-width: 768px) 100vw, 320px"
+              className="object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 motion-safe:group-hover:scale-[1.03]"
+              sizes="(max-width: 1024px) 100vw, 420px"
               priority
             />
           </div>
+          {/* Spec rail under the portrait, matching the hero's language. */}
+          <dl className="mt-4 grid grid-cols-2 divide-x divide-border border border-border rounded-xl overflow-hidden">
+            <div className="p-4">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Based
+              </dt>
+              <dd className="mt-1 font-mono text-xs uppercase tracking-wide">
+                {siteConfig.location.city}, {siteConfig.location.region}
+              </dd>
+            </div>
+            <div className="p-4">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Role
+              </dt>
+              <dd className="mt-1 font-mono text-xs uppercase tracking-wide">
+                {siteConfig.role}
+              </dd>
+            </div>
+          </dl>
         </Reveal>
       </div>
 
-      <div className="pt-8 border-t border-surface/30">
-        <h2 className="font-mono text-sm text-[var(--syntax-comment)] mb-8">
-          {"/* The Builder's Mindset */"}
+      {/* Mindset — numbered index rows, same pattern as the notes list. */}
+      <section className="mt-24 md:mt-32" aria-labelledby="mindset-heading">
+        <h2
+          id="mindset-heading"
+          className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-8"
+        >
+          {"// the builder's mindset"}
         </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {blocks.map((block, i) => {
-            const Icon = block.icon;
-            return (
-              <Reveal key={i} delay={i * 90} className={block.className}>
-                <div className="h-full bg-surface/30 border border-surface p-6 rounded-xl hover:bg-surface/50 transition-[transform,box-shadow,background-color] duration-300 ease-out motion-safe:hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 group">
-                  <Icon className={`w-8 h-8 mb-4 ${block.color} group-hover:-translate-y-1 transition-transform`} />
-                  <h3 className="text-xl font-bold mb-2 text-foreground/90">{block.title}</h3>
-                  <p className="text-[var(--syntax-comment)] text-sm leading-relaxed">{block.desc}</p>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-      </div>
-      
+        <ul className="border-t border-border">
+          {MINDSET.map((block, i) => (
+            <Reveal as="li" key={block.title} delay={i * 80}>
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-2 border-b border-border py-8">
+                <span
+                  aria-hidden
+                  className="md:col-span-1 font-mono text-xs text-muted-foreground tabular-nums"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="md:col-span-4 text-xl font-bold tracking-tight">
+                  {block.title}
+                </h3>
+                <p className="md:col-span-7 text-base leading-relaxed text-muted-foreground">
+                  {block.desc}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </ul>
+      </section>
+
       <Reveal>
-        <GitHubActivity username="anmolmalhan" />
+        <GitHubActivity username={siteConfig.githubUsername} />
       </Reveal>
-    </div>
+    </Container>
   );
 }

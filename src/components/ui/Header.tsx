@@ -5,14 +5,11 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CodeXml, Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { Container } from "./Container";
 import { prefersReducedMotion } from "@/lib/motion";
+import { siteConfig } from "@/config/site";
 
-const NAV = [
-  { label: "Work", href: "/projects" },
-  { label: "Notes", href: "/notes" },
-  { label: "Studio", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
+const NAV = siteConfig.nav;
 
 export function Header() {
   const pathname = usePathname();
@@ -123,8 +120,12 @@ export function Header() {
           : "mix-blend-difference text-white"
       }`}
     >
-      <div
-        className={`container mx-auto px-4 md:px-12 flex items-center justify-between pointer-events-auto transition-[padding] duration-300 ease-out ${
+      {/* Same Container as every page body, so the logo's left edge is the
+          left edge of the page heading underneath it. Tailwind's `container`
+          resolves to a different width (1280 at this breakpoint) than the
+          pages' max-w-6xl, which is why nothing used to line up. */}
+      <Container
+        className={`flex items-center justify-between pointer-events-auto transition-[padding] duration-300 ease-out ${
           scrolled ? "py-2 md:py-3" : "py-4 md:py-6"
         }`}
       >
@@ -208,7 +209,7 @@ export function Header() {
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </nav>
-      </div>
+      </Container>
 
       {/* Mobile Menu */}
       {menuOpen && (

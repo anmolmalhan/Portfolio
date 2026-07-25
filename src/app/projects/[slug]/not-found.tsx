@@ -3,12 +3,12 @@ import { ArrowLeft } from "lucide-react";
 
 export default function ProjectNotFound() {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center px-6 text-center page-reveal">
-      <p className="font-mono text-sm text-[var(--syntax-comment)] mb-4">{"// 404"}</p>
+    <div className="min-h-screen w-full flex flex-col items-center justify-center px-6 text-center">
+      <p className="font-mono text-sm text-muted-foreground mb-4">{"// 404"}</p>
       <h1 className="text-5xl md:text-7xl font-extrabold uppercase tracking-tighter mb-6">
         Project not found
       </h1>
-      <p className="text-lg text-[var(--syntax-comment)] max-w-md mb-10">
+      <p className="text-lg text-muted-foreground max-w-md mb-10">
         The case study you tried to open doesn&apos;t exist or has been moved.
       </p>
       <Link

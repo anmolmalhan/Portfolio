@@ -203,9 +203,12 @@ export default function RobotHero() {
         <ambientLight intensity={0.9} />
         {/* Key from front-right. */}
         <directionalLight position={[4, 6, 5]} intensity={2.4} />
-        {/* Rim lights from behind, raking the silhouette edges. */}
-        <pointLight position={[-3.5, 3, -3]} intensity={40} distance={20} color="#e879f9" />
-        <pointLight position={[3.5, 1.5, -3]} intensity={35} distance={20} color="#60a5fa" />
+        {/* Rim lights from behind, raking the silhouette edges. Both sit in the
+            blue/violet family now and at a fraction of the old intensity: the
+            hot magenta (#e879f9 @ 40) bloomed into a pink cloud that read as a
+            smudge against light mode's near-white background. */}
+        <pointLight position={[-3.5, 3, -3]} intensity={16} distance={20} color="#a78bfa" />
+        <pointLight position={[3.5, 1.5, -3]} intensity={18} distance={20} color="#60a5fa" />
         <Suspense fallback={null}>
           <Float
             speed={reduced ? 0 : 1.3}

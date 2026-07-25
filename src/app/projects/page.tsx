@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { projects } from "@/data/projects";
 import Link from "next/link";
 import Image from "next/image";
-import { FolderGit2 } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { Tilt } from "@/components/ui/Tilt";
-import { SplitReveal } from "@/components/ui/SplitReveal";
+import { Container } from "@/components/ui/Container";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -16,26 +17,21 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <div className="max-w-6xl w-full mx-auto px-6 py-20 flex-1 page-reveal">
-      <div className="mb-12 border-b border-surface pb-6">
-        <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
-          <FolderGit2 className="text-accent w-8 h-8" />
-          <SplitReveal text="Projects" />
-        </h1>
-        <p className="text-[var(--syntax-comment)] max-w-2xl text-lg">
-          A collection of interfaces and applications I&apos;ve built. Focusing on performance,
-          interaction design, and clean code architecture.
-        </p>
-      </div>
+    <Container className="py-28 md:py-32 flex-1">
+      <PageHeader
+        eyebrow="selected work"
+        title="Projects"
+        description="A collection of interfaces and applications I've built, focused on performance, interaction design, and clean code architecture."
+      />
 
       <div className="grid grid-cols-1 gap-12">
         {projects.map((project, i) => (
           <Reveal key={project.id} delay={i * 80}>
           <Tilt
-            className="group flex flex-col md:flex-row gap-8 items-center bg-surface/20 border border-transparent hover:border-surface p-6 rounded-2xl [transition:box-shadow_300ms_ease-out,border-color_300ms_ease-out,background-color_300ms_ease-out,transform_300ms_ease-out] hover:shadow-xl hover:shadow-black/5"
+            className="group flex flex-col md:flex-row gap-8 items-center bg-card border border-border/60 hover:border-border p-6 rounded-2xl [transition:box-shadow_300ms_ease-out,border-color_300ms_ease-out,background-color_300ms_ease-out,transform_300ms_ease-out] hover:shadow-xl hover:shadow-black/5"
             style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}
           >
-            <Link href={`/projects/${project.slug}`} className="w-full md:w-1/2 aspect-video bg-surface overflow-hidden rounded-xl relative border border-surface group-hover:border-accent/40 transition-colors block"
+            <Link href={`/projects/${project.slug}`} className="w-full md:w-1/2 aspect-video bg-muted overflow-hidden rounded-xl relative border border-border group-hover:border-accent/40 transition-colors block"
                  style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
                  {project.image ? (
                    <Image
@@ -46,7 +42,7 @@ export default function ProjectsPage() {
                      className="object-cover group-hover:scale-105 transition-transform duration-700"
                    />
                  ) : (
-                   <div className="w-full h-full flex items-center justify-center font-mono text-[var(--syntax-comment)] bg-surface-hover/50">
+                   <div className="w-full h-full flex items-center justify-center font-mono text-muted-foreground bg-muted">
                      No Image
                    </div>
                  )}
@@ -54,9 +50,9 @@ export default function ProjectsPage() {
             <div className="w-full md:w-1/2 py-4">
               <div className="flex gap-2 mb-4 flex-wrap">
                 {project.techStack.map(tech => (
-                  <span key={tech} className="text-xs font-mono px-2 py-1 rounded bg-background border border-surface text-[var(--syntax-green)]">
+                  <Badge key={tech} variant="secondary" className="font-mono font-normal text-muted-foreground">
                     {tech}
-                  </span>
+                  </Badge>
                 ))}
               </div>
               <Link href={`/projects/${project.slug}`} className="block">
@@ -65,7 +61,7 @@ export default function ProjectsPage() {
                   {project.title}
                 </h2>
               </Link>
-              <p className="text-[var(--syntax-comment)] mb-6 text-lg">{project.shortDescription}</p>
+              <p className="text-muted-foreground mb-6 text-lg leading-relaxed">{project.shortDescription}</p>
               <div className="flex items-center gap-6 mt-6">
                 <Link href={`/projects/${project.slug}`} className="font-mono text-sm text-[var(--syntax-blue)] flex items-center gap-2 group/link cursor-pointer">
                   <span>View Case Study</span>
@@ -73,12 +69,12 @@ export default function ProjectsPage() {
                 </Link>
                 {project.liveUrl && (
                   <>
-                    <div className="h-4 w-px bg-surface-hover" />
+                    <div className="h-4 w-px bg-border" />
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-mono text-sm text-[var(--syntax-comment)] hover:text-foreground flex items-center gap-2 group/external transition-colors"
+                      className="font-mono text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 group/external transition-colors"
                     >
                       Launch App
                       <svg className="w-3 h-3 group-hover/external:-translate-y-0.5 group-hover/external:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,6 +89,6 @@ export default function ProjectsPage() {
           </Reveal>
         ))}
       </div>
-    </div>
+    </Container>
   );
 }

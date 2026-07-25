@@ -79,7 +79,7 @@ export default function FooterReveal() {
         // 3.6s). visibility:hidden removes it as an LCP candidate; it flips
         // visible via the IntersectionObserver ~a viewport before it reveals.
         style={{ visibility: visible ? undefined : "hidden" }}
-        className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-between bg-black text-white -z-10 pt-24 md:pt-32 pb-12 px-6 md:px-12 pointer-events-auto overflow-hidden"
+        className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-between bg-black text-white -z-10 pt-24 md:pt-32 pb-12 page-container pointer-events-auto overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--syntax-blue)]/5 to-transparent pointer-events-none" />
 
@@ -97,7 +97,7 @@ export default function FooterReveal() {
           </div>
           <a
             href="mailto:contact@anmolmalhan.com"
-            className="font-mono text-xs md:text-sm text-white/70 hover:text-white transition-colors break-all md:text-right block focus-visible:outline-none focus-visible:underline"
+            className="font-mono text-xs md:text-sm text-white/70 hover:text-white transition-colors break-all md:text-right block py-2 focus-visible:outline-none focus-visible:underline"
           >
             contact<span className="opacity-50">@anmolmalhan.com</span>
           </a>
@@ -138,8 +138,8 @@ export default function FooterReveal() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs text-white/60 uppercase gap-4">
             <div>© {new Date().getFullYear()} Anmol Malhan. All rights reserved.</div>
             <div className="flex gap-6">
-              <Link href="https://github.com/anmolmalhan" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</Link>
-              <Link href="https://www.linkedin.com/in/anmolmalhan/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</Link>
+              <Link href="https://github.com/anmolmalhan" target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">GitHub</Link>
+              <Link href="https://www.linkedin.com/in/anmolmalhan/" target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">LinkedIn</Link>
             </div>
           </div>
         </div>

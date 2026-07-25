@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, Component, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { useMediaQuery, usePrefersReducedMotion } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { Container } from "@/components/ui/Container";
 import type { TechBall } from "./TechPhysics";
 
 const TechPhysics = dynamic(() => import("./TechPhysics"), { ssr: false });
@@ -97,9 +98,9 @@ export default function TechPlayground() {
       aria-label="Tech stack"
       className="w-full bg-background border-t border-foreground/10 relative overflow-hidden"
     >
-      <div className="px-6 md:px-12 pt-16 md:pt-24 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <Container className="pt-16 md:pt-24 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <div className="font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest mb-3">
+          <div className="font-mono text-xs md:text-sm text-muted-foreground uppercase tracking-widest mb-3">
             {"// dependencies I actually deploy"}
           </div>
           <h2 className="text-huge font-bold tracking-tighter uppercase leading-none">
@@ -107,22 +108,22 @@ export default function TechPlayground() {
           </h2>
         </div>
         {mode === "canvas" && (
-          <div className="font-mono text-xs md:text-sm text-[var(--syntax-comment)] uppercase tracking-widest">
+          <div className="font-mono text-xs md:text-sm text-muted-foreground uppercase tracking-widest">
             [ drag your cursor through it ]
           </div>
         )}
-      </div>
+      </Container>
 
       {mode === "canvas" ? (
         <div className="h-[65dvh] min-h-[420px] w-full">
-          <CanvasBoundary fallback={<div className="px-6 md:px-12 py-16"><FallbackGrid /></div>}>
+          <CanvasBoundary fallback={<Container className="py-16"><FallbackGrid /></Container>}>
             <TechPhysics />
           </CanvasBoundary>
         </div>
       ) : (
-        <div className="px-6 md:px-12 py-16">
+        <Container className="py-16">
           <FallbackGrid />
-        </div>
+        </Container>
       )}
     </section>
   );

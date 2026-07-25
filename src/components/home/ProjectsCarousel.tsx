@@ -20,8 +20,16 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
     >
       <div
         ref={wrapRef}
-        data-lenis-prevent
-        className="pin-wrap flex md:h-[80dvh] items-center px-6 md:px-12 gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain pr-[20vw]"
+        /* NO data-lenis-prevent here. Lenis runs with gestureOrientation
+           'vertical', so that attribute made it ignore the wheel entirely
+           while the pointer was over this track — and because the track only
+           scrolls horizontally, a vertical wheel then did nothing at all and
+           the page felt stuck. Without it, a vertical wheel scrolls the page
+           as normal; horizontal exploration stays available via trackpad
+           swipe, shift+wheel, arrow keys, and the button below. */
+        /* page-inset-left puts the first slide on the same x as the header
+           logo while the track itself still scrolls edge-to-edge. */
+        className="pin-wrap page-inset-left flex md:h-[80dvh] items-center gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain pr-[20vw]"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         tabIndex={0}
         role="region"
@@ -42,7 +50,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
             <button
               type="button"
               onClick={() => scrollBy(1)}
-              className="font-mono text-sm uppercase opacity-70 hover:opacity-100 flex items-center gap-4 text-background transition-opacity cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-foreground rounded-sm"
+              className="font-mono text-sm uppercase py-3 opacity-70 hover:opacity-100 flex items-center gap-4 text-background transition-opacity cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-foreground rounded-sm"
             >
               Scroll to explore <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
             </button>

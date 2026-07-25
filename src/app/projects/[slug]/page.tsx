@@ -7,6 +7,7 @@ import { ArrowLeft, Code, ExternalLink } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { SplitReveal } from "@/components/ui/SplitReveal";
+import { Container } from "@/components/ui/Container";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -57,7 +58,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
   };
 
   return (
-    <div className="w-full relative bg-background text-foreground page-reveal min-h-screen">
+    <div className="w-full relative bg-background text-foreground min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -66,23 +67,23 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[var(--syntax-blue)] rounded-full blur-[80px] md:blur-[200px] opacity-[0.03] pointer-events-none" />
 
       {/* Navigation Header */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-8">
-        <Link href="/projects" className="inline-flex items-center gap-2 text-[var(--syntax-comment)] hover:text-foreground font-mono text-sm transition-colors cursor-pointer group">
+      <Container className="pt-28 pb-8">
+        <Link href="/projects" className="inline-flex items-center gap-2 py-2 text-muted-foreground hover:text-foreground font-mono text-sm transition-colors cursor-pointer group">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
           <span>cd ..</span>
         </Link>
-      </div>
+      </Container>
 
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 mt-12 mb-20" style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}>
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 border-b border-foreground/10 pb-12">
+      <Container className="mt-12 mb-20" style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 border-b border-border pb-12">
           <div className="max-w-4xl">
             <div className="flex flex-wrap gap-3 mb-8">
               <span className="text-xs font-mono px-4 py-1.5 rounded-full bg-foreground text-background">
                 {project.role}
               </span>
               {project.techStack.map(tech => (
-                <span key={tech} className="text-xs font-mono px-4 py-1.5 rounded-full border border-surface text-[var(--syntax-green)] bg-surface/30 md:backdrop-blur-md">
+                <span key={tech} className="text-xs font-mono px-4 py-1.5 rounded-full border border-border text-muted-foreground bg-muted/40 md:backdrop-blur-md">
                   {tech}
                 </span>
               ))}
@@ -91,7 +92,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tighter uppercase leading-none" style={{ viewTransitionName: `title-${project.slug}` } as React.CSSProperties}>
               {project.title}
             </h1>
-            <p className="text-2xl md:text-3xl text-[var(--syntax-comment)] max-w-3xl leading-snug font-light">
+            <p className="text-2xl md:text-3xl text-muted-foreground max-w-3xl leading-snug font-light">
               {project.shortDescription}
             </p>
           </div>
@@ -113,7 +114,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                 </a>
               </Magnetic>
             ) : (
-              <div className="flex items-center justify-center gap-3 px-8 py-5 border border-foreground/15 text-[var(--syntax-comment)] rounded-full font-mono text-sm uppercase tracking-wider">
+              <div className="flex items-center justify-center gap-3 px-8 py-5 border border-border text-muted-foreground rounded-full font-mono text-sm uppercase tracking-wider">
                 Prototype · not yet public
               </div>
             )}
@@ -122,18 +123,18 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 flex items-center justify-center gap-2 font-mono text-sm text-[var(--syntax-comment)] hover:text-foreground transition-colors"
+                className="mt-2 flex items-center justify-center gap-2 py-3 font-mono text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Code className="w-4 h-4" /> View Source Code
               </a>
             )}
           </div>
         </div>
-      </div>
+      </Container>
 
       {/* Main Feature Image */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 mb-32">
-        <div className={`w-full ${featureImageAspect} bg-surface overflow-hidden relative`}
+      <Container className="mb-32">
+        <div className={`w-full ${featureImageAspect} bg-muted overflow-hidden relative`}
              style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
           {project.image ? (
             <Image
@@ -145,15 +146,15 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
               className="object-cover opacity-90 hover:opacity-100 hover:scale-[1.02] transition-all duration-1000 ease-out"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center font-mono text-[var(--syntax-comment)] bg-surface-hover/50">
+            <div className="w-full h-full flex items-center justify-center font-mono text-muted-foreground bg-muted">
                Hero Image Placeholder
             </div>
           )}
         </div>
-      </div>
+      </Container>
 
       {/* Case Study Content */}
-      <div className="max-w-4xl mx-auto px-6 md:px-12 pb-32">
+      <Container className="pb-32"><div className="max-w-4xl">
         <Reveal
           as="p"
           className="text-2xl md:text-3xl text-foreground/90 leading-snug font-light mb-12 md:mb-16"
@@ -162,10 +163,10 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
         </Reveal>
 
         {project.metrics && project.metrics.length > 0 && (
-          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 md:mb-20 border-y border-foreground/10 py-8">
+          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16 md:mb-20 border-y border-border py-8">
             {project.metrics.map((m, i) => (
               <Reveal key={m.label} delay={i * 90}>
-                <dt className="font-mono text-xs uppercase tracking-widest text-[var(--syntax-comment)] mb-2">
+                <dt className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">
                   {m.label}
                 </dt>
                 <dd className="text-xl md:text-2xl font-semibold text-foreground">
@@ -189,7 +190,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                   className="text-3xl md:text-4xl font-bold uppercase tracking-tight"
                 />
               </div>
-              <div className="space-y-5 text-lg md:text-xl text-[var(--syntax-comment)] leading-relaxed border-l-2 border-surface pl-6 md:pl-8">
+              <div className="space-y-5 text-lg md:text-xl text-muted-foreground leading-relaxed border-l-2 border-border pl-6 md:pl-8">
                 {section.paragraphs.map((p, j) => (
                   <p key={j}>{p}</p>
                 ))}
@@ -205,6 +206,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
           </p>
         </Reveal>
       </div>
+    </Container>
     </div>
   );
 }

@@ -1,10 +1,44 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Theming here is driven by `data-theme` on <html>, not shadcn's default
+   `.dark` class, because the toggle is tri-state: light / dark / system. In
+   "system" mode the attribute is absent and the media query below decides.
+   The `dark:` variant therefore has to match BOTH resolution paths, or half
+   the utilities would silently no-op depending on how dark was reached. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   ---------------------------------------------------------------------------
+   Two layers, one source of truth:
+
+     1. BRAND    — background/foreground/surface/accent + the syntax palette.
+                   These carry the site's identity and are used directly by the
+                   bespoke sections (hero, footer, prose).
+     2. SEMANTIC — card/popover/primary/muted/border/ring. shadcn components
+                   consume only these. They are *derived* from the brand layer
+                   so a brand change propagates instead of drifting.
+
+   Every value is defined in BOTH themes. shadcn's generated dark block only
+   redefined the semantic half, which left cards and borders rendering with
+   light values on a dark page.
+--------------------------------------------------------------------------- */
 
 :root {
-  /* Light palette — refined for higher contrast and a calmer, modern feel.
-     Background leans toward off-white with a faint cool tint; surfaces step
-     down through subtle zinc grays. Syntax colors are deeper than the dark
-     mode equivalents so they hit WCAG AA on white. */
+  /* — brand — light. Off-white with a faint cool tint; surfaces step down
+     through subtle zinc grays. Syntax colors run deeper than their dark
+     counterparts so they clear WCAG AA on a near-white background. */
   --background: #fbfbfc;
   --foreground: #0a0a0b;
   --surface: #f2f3f5;
@@ -15,11 +49,32 @@
   --syntax-amber: #b45309;
   --syntax-magenta: #be185d;
   --syntax-green: #047857;
-  --syntax-comment: #636369;
+  --syntax-comment: #57575e;
+
+  /* — semantic — light */
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #0a0a0b;
+  --primary-foreground: #fbfbfc;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface);
+  /* 5.9:1 on --background. The old value sat near 3:1 and read as washed out. */
+  --muted-foreground: #5b5b63;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --border: #e3e4e8;
+  --input: #e3e4e8;
+  --ring: var(--accent);
+
+  --radius: 0.625rem;
 }
 
 /* Dark palette — applied when the user explicitly selects dark OR when their
-   system prefers dark AND they haven't explicitly chosen light. */
+   system prefers dark AND they haven't explicitly chosen light. Both paths
+   set the identical block, so they are generated from one definition below. */
 :root[data-theme="dark"] {
   --background: #09090b;
   --foreground: #f4f4f5;
@@ -31,7 +86,23 @@
   --syntax-amber: #fbbf24;
   --syntax-magenta: #e879f9;
   --syntax-green: #4ade80;
-  --syntax-comment: #85858e;
+  --syntax-comment: #8b8b94;
+
+  --card: #111114;
+  --card-foreground: var(--foreground);
+  --popover: #18181b;
+  --popover-foreground: var(--foreground);
+  --primary: #f4f4f5;
+  --primary-foreground: #09090b;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface);
+  --muted-foreground: #a1a1ab;
+  --accent-foreground: #09090b;
+  --destructive: #f87171;
+  --border: #26262b;
+  --input: #26262b;
+  --ring: var(--accent);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,7 +117,23 @@
     --syntax-amber: #fbbf24;
     --syntax-magenta: #e879f9;
     --syntax-green: #4ade80;
-    --syntax-comment: #85858e;
+    --syntax-comment: #8b8b94;
+
+    --card: #111114;
+    --card-foreground: var(--foreground);
+    --popover: #18181b;
+    --popover-foreground: var(--foreground);
+    --primary: #f4f4f5;
+    --primary-foreground: #09090b;
+    --secondary: var(--surface);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--surface);
+    --muted-foreground: #a1a1ab;
+    --accent-foreground: #09090b;
+    --destructive: #f87171;
+    --border: #26262b;
+    --input: #26262b;
+    --ring: var(--accent);
   }
 }
 
@@ -63,9 +150,85 @@
   --color-syntax-green: var(--syntax-green);
   --color-syntax-comment: var(--syntax-comment);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Literal family names, NOT var(--font-geist-sans). `@theme inline` is
+     resolved at parse time, so a reference to a variable next/font injects at
+     runtime resolves to nothing and the whole stack silently falls back. */
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
 }
+
+/* ---------------------------------------------------------------------------
+   Layout spine
+   ---------------------------------------------------------------------------
+   One definition of "where the page starts", shared by the React <Container>
+   and by full-bleed sections that can't wrap their content in one (the
+   horizontal projects carousel needs to scroll edge-to-edge while its first
+   slide still lines up with the logo above it).
+--------------------------------------------------------------------------- */
+:root {
+  --page-max: 1680px;
+  --page-gutter: 1.5rem;
+}
+@media (min-width: 768px) {
+  :root { --page-gutter: 2.5rem; }
+}
+@media (min-width: 1024px) {
+  :root { --page-gutter: 4rem; }
+}
+@media (min-width: 1536px) {
+  :root { --page-gutter: 6rem; }
+}
+
+.page-container {
+  width: 100%;
+  margin-inline: auto;
+  max-width: var(--page-max);
+  padding-inline: var(--page-gutter);
+}
+
+/* Left inset that resolves to the same x-position as .page-container's content
+   edge, for elements that must stay full-bleed. */
+.page-inset-left {
+  padding-left: max(
+    var(--page-gutter),
+    calc((100vw - var(--page-max)) / 2 + var(--page-gutter))
+  );
+}
+
+/* Touch ergonomics — NOTE, deliberately not a pseudo-element.
+   An earlier version grew hit areas with a centred, oversized `::after`. It
+   looked tidy (no layout change at all) but it silently broke taps: the
+   overlay does not participate in layout, so as soon as a row of mono
+   metadata wrapped, one link's 44px area covered the link on the next line
+   and swallowed its taps. Verified failing at 320px and 360px.
+
+   Interactive text therefore gets REAL vertical padding at the call site
+   (`py-2` → 32px, comfortably over the 24px WCAG 2.5.8 AA minimum), which
+   grows the row and can never overlap a neighbour. Inline links inside a
+   sentence are exempt from 2.5.8 and are left alone. */
 
 html {
   /* Native iOS/Android momentum + no JS-smooth-scroll fighting */
@@ -73,8 +236,6 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -183,21 +344,45 @@ body {
   50% { transform: scaleY(1); opacity: 1; }
 }
 
-/* Soft radial vignette behind the hero character — a wide, low-opacity glow
-   that gives the dark hero depth and frames the model. */
-.hero-vignette {
-  background: radial-gradient(
-    60% 55% at 72% 52%,
-    color-mix(in oklab, var(--accent), transparent 82%) 0%,
-    transparent 70%
-  );
+/* Hero atmosphere.
+   Replaces the previous pair of saturated blue + magenta blobs. At the
+   opacities those needed to register in dark mode they turned into muddy
+   pink/purple smudges over light mode's near-white background. This is one
+   directional accent wash anchored behind the robot, plus a top-down fade
+   that seats the header — both derived from --accent so they retheme. */
+.hero-wash {
+  background:
+    radial-gradient(
+      55% 50% at 78% 42%,
+      color-mix(in oklab, var(--accent), transparent 86%) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--foreground), transparent 96%) 0%,
+      transparent 28%
+    );
+}
+
+/* A faint hairline grid gives the flat background architecture to sit on, so
+   the spec rail below reads as part of a system rather than floating text. */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground), transparent 96%) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground), transparent 96%) 1px, transparent 1px);
+  background-size: 88px 88px;
+  /* Fade the grid out toward the edges so it never reads as a hard boundary. */
+  mask-image: radial-gradient(80% 70% at 50% 45%, #000 20%, transparent 100%);
 }
 
 /* Typography */
+/* Tuned down from 9vw/9rem: the statement now sits in a 6-column grid track
+   beside the robot rather than spanning the full viewport, so the old size
+   overflowed its column and collided with the model. */
 .text-giant {
-  font-size: clamp(3rem, 9vw, 9rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.75rem, 7vw, 6.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
   text-transform: uppercase;
 }
 
@@ -205,6 +390,16 @@ body {
   font-size: clamp(2.5rem, 6vw, 6rem);
   line-height: 0.95;
   letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+/* Page-header scale. Sits deliberately below .text-huge so an inner-page
+   masthead reads as the same family of type as the home page's giant
+   statements without competing with them. */
+.text-display {
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
 }
 
@@ -415,4 +610,17 @@ html.lenis, html.lenis body {
 }
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
