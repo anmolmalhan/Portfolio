@@ -149,8 +149,29 @@ export function Header() {
             className="relative hidden md:flex gap-8 items-center"
             onMouseLeave={() => moveIndicator(activeIndex)}
           >
-            {NAV.map(({ label, href }, i) => {
+            {NAV.map(({ label, href, soon }, i) => {
               const active = i === activeIndex;
+
+              // Unbuilt section: a dimmed label with a "soon" tag rather than a
+              // link, so there is no route to 404 on. It stays out of the
+              // magnetic/indicator wiring (linkRefs[i] is left unset, which
+              // moveIndicator already treats as "hide the indicator").
+              if (soon) {
+                return (
+                  <span
+                    key={label}
+                    aria-disabled="true"
+                    style={{ animationDelay: `${150 + i * 70}ms` }}
+                    className="nav-item-reveal inline-flex items-center gap-2 font-sans font-medium text-sm tracking-wide uppercase text-foreground/40 cursor-default select-none"
+                  >
+                    {label}
+                    <span className="font-mono text-[9px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
+                      Soon
+                    </span>
+                  </span>
+                );
+              }
+
               return (
                 <Link
                   key={label}
@@ -218,8 +239,25 @@ export function Header() {
           ref={menuPanelRef}
           className="menu-panel-reveal md:hidden absolute top-full left-0 w-full bg-background border-b border-foreground/10 py-4 px-4 shadow-lg pointer-events-auto text-foreground flex flex-col gap-4"
         >
-          {NAV.map(({ label, href }, i) => {
+          {NAV.map(({ label, href, soon }, i) => {
             const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
+
+            if (soon) {
+              return (
+                <span
+                  key={label}
+                  aria-disabled="true"
+                  style={{ animationDelay: `${60 + i * 50}ms` }}
+                  className="nav-item-reveal flex items-center gap-2 font-sans font-medium text-lg tracking-wide uppercase py-2 text-foreground/40 cursor-default select-none"
+                >
+                  {label}
+                  <span className="font-mono text-[10px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
+                    Soon
+                  </span>
+                </span>
+              );
+            }
+
             return (
               <Link
                 key={label}

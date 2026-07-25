@@ -8,15 +8,21 @@
  * link was "About" and the two drifted apart.
  */
 
-export type NavItem = { label: string; href: string };
+export type NavItem = {
+  label: string;
+  href: string;
+  /** Announced but not built yet: rendered as a dimmed, non-navigable label
+   *  with a "soon" tag instead of a link, so there's no route to 404 on. */
+  soon?: boolean;
+};
 
 /** Declared outside the `as const` object so `href` stays `string`. Inside it,
  *  the literal union made ordinary checks like `href !== "/"` a type error. */
 const nav: NavItem[] = [
   { label: "Work", href: "/projects" },
+  { label: "Tools", href: "/tools", soon: true },
   { label: "Studio", href: "/about" },
   { label: "Contact", href: "/contact" },
-  // A Tools entry goes here once that section exists.
 ];
 
 export const siteConfig = {

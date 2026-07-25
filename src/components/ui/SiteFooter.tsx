@@ -20,16 +20,29 @@ export function SiteFooter() {
     <footer className="border-t border-border mt-auto pointer-events-auto">
       <Container className="py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 font-mono text-xs text-muted-foreground uppercase tracking-widest">
         <div>© {new Date().getFullYear()} {siteConfig.name}</div>
-        <nav className="flex flex-wrap gap-x-6 gap-y-1" aria-label="Footer">
-          {NAV.map(({ label, href }) => (
-            <Link
-              key={href}
-              href={href}
-              className="py-2 hover:text-foreground transition-colors"
-            >
-              {label}
-            </Link>
-          ))}
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-1" aria-label="Footer">
+          {NAV.map(({ label, href, soon }) =>
+            soon ? (
+              <span
+                key={href}
+                aria-disabled="true"
+                className="py-2 inline-flex items-center gap-1.5 text-muted-foreground/60 cursor-default select-none"
+              >
+                {label}
+                <span className="text-[9px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
+                  Soon
+                </span>
+              </span>
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                className="py-2 hover:text-foreground transition-colors"
+              >
+                {label}
+              </Link>
+            ),
+          )}
         </nav>
         {/* Padding, not a scaled-up overlay: a hit area that doesn't
             participate in layout can cover a neighbouring link. */}
