@@ -154,7 +154,12 @@ export default function HeroSection() {
             {/* role="img" + aria-label so the per-character SplitText spans read
                 as three words, not a stream of letters — and so the aria-label
                 SplitText adds is valid (it's prohibited on a bare span). */}
-            <h1 className="flex flex-col text-giant font-bold tracking-tighter">
+            {/* A div, not the h1. The lockup is the visual centrepiece but it
+                reads as three words with no descriptive content — a poor page
+                heading for search results and for anyone navigating by
+                headings. The positioning line below carries the h1 instead;
+                size does not determine heading level. */}
+            <div className="flex flex-col text-giant font-bold tracking-tighter">
               <span className="reveal-wrapper hero-line">
                 <span className="block" role="img" aria-label="Think.">THINK.</span>
               </span>
@@ -164,15 +169,15 @@ export default function HeroSection() {
               <span className="reveal-wrapper hero-line">
                 <span className="block text-accent" role="img" aria-label="Ship.">SHIP.</span>
               </span>
-            </h1>
+            </div>
 
-            <p className="hero-fade mt-7 max-w-md text-base md:text-lg leading-relaxed text-muted-foreground">
+            <h1 className="hero-fade mt-7 max-w-md text-base md:text-lg leading-relaxed font-normal text-muted-foreground">
               {siteConfig.tagline}{" "}
               <span className="text-foreground">
                 Freelance &amp; full-time — marketplaces, dashboards, and tools that
                 load fast on real devices.
               </span>
-            </p>
+            </h1>
 
             <div className="hero-fade mt-8 flex flex-wrap items-center gap-3">
               <Link
