@@ -1,5 +1,4 @@
-import { Reveal } from "./Reveal";
-import { SplitReveal } from "./SplitReveal";
+import type { CSSProperties } from "react";
 import { Separator } from "./separator";
 
 type PageHeaderProps = {
@@ -18,28 +17,34 @@ type PageHeaderProps = {
  * on a different, plainer website. This gives the inner pages the same voice:
  * mono kicker, display-scale uppercase title, one measured line of support
  * copy, then a rule.
+ *
+ * Entrance is `.rise` (transform only), NOT the opacity-based `Reveal` or the
+ * clipping `SplitReveal`. This block is always above the fold, and LCP does not
+ * count an element as painted while it is transparent or clipped to zero
+ * height — routing it through those took LCP on /projects from ~100ms to
+ * ~1200ms, with a paragraph of plain text as the offending element.
  */
 export function PageHeader({ eyebrow, title, description }: PageHeaderProps) {
   return (
     <header className="mb-14 md:mb-20">
-      <Reveal>
-        <p className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-4">
-          {`// ${eyebrow}`}
-        </p>
-      </Reveal>
+      <p className="rise font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-4">
+        {`// ${eyebrow}`}
+      </p>
 
-      <SplitReveal
-        as="h1"
-        text={title}
-        className="text-display font-bold tracking-tighter block"
-      />
+      <h1
+        className="rise text-display font-bold tracking-tighter"
+        style={{ "--rise-delay": "60ms" } as CSSProperties}
+      >
+        {title}
+      </h1>
 
       {description ? (
-        <Reveal delay={120}>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            {description}
-          </p>
-        </Reveal>
+        <p
+          className="rise mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground"
+          style={{ "--rise-delay": "120ms" } as CSSProperties}
+        >
+          {description}
+        </p>
       ) : null}
 
       <Separator className="mt-10" />

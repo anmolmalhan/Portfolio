@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/projects" },
 };
 
+/** Above-the-fold stand-in for <Reveal>: same shape, transform-only entrance. */
+function FirstCard({ children }: { children: React.ReactNode; delay?: number }) {
+  return <div className="rise">{children}</div>;
+}
+
 export default function ProjectsPage() {
   return (
     <Container size="content" className="py-28 md:py-32 flex-1">
@@ -25,8 +30,12 @@ export default function ProjectsPage() {
       />
 
       <div className="grid grid-cols-1 gap-12">
-        {projects.map((project, i) => (
-          <Reveal key={project.id} delay={i * 80}>
+        {projects.map((project, i) => {
+          // The first card is above the fold, so it gets the transform-only
+          // entrance; the rest can fade in on scroll as normal.
+          const Wrapper = i === 0 ? FirstCard : Reveal;
+          return (
+          <Wrapper key={project.id} delay={i * 80}>
           <Tilt
             className="group flex flex-col md:flex-row gap-8 items-center bg-card border border-border/60 hover:border-border p-6 rounded-2xl [transition:box-shadow_300ms_ease-out,border-color_300ms_ease-out,background-color_300ms_ease-out,transform_300ms_ease-out] hover:shadow-xl hover:shadow-black/5"
             style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}
@@ -86,8 +95,9 @@ export default function ProjectsPage() {
               </div>
             </div>
           </Tilt>
-          </Reveal>
-        ))}
+          </Wrapper>
+          );
+        })}
       </div>
     </Container>
   );

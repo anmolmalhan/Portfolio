@@ -48,7 +48,7 @@ export default function AboutPage() {
           ~490px hole down the middle. The text column is now just wide enough
           for its measure and the portrait track is a fixed 420px. */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] gap-10 lg:gap-16 items-start">
-        <Reveal as="div" className="order-last lg:order-first">
+        <div className="rise order-last lg:order-first">
           <div className="space-y-6 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
             <p>
               I&rsquo;m Anmol, a front-end developer passionate about building visually
@@ -111,9 +111,9 @@ export default function AboutPage() {
               </dd>
             </div>
           </dl>
-        </Reveal>
+        </div>
 
-        <Reveal as="div" delay={120} className="w-full">
+        <div className="rise w-full" style={{ "--rise-delay": "120ms" } as React.CSSProperties}>
           <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted">
             <Image
               src="/profile.jpg"
@@ -124,7 +124,7 @@ export default function AboutPage() {
               priority
             />
           </div>
-        </Reveal>
+        </div>
       </div>
 
       {/* Mindset — numbered index rows, same pattern as the notes list. */}

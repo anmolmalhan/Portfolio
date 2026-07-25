@@ -196,12 +196,16 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* The robot gets its own column so no type is ever laid over it. */}
-          {showRobot && (
-            <div className="hidden md:block md:col-span-5 lg:col-span-6 relative h-[46vh] lg:h-[58vh] robot-wrap">
-              <RobotHero />
-            </div>
-          )}
+          {/* The robot gets its own column so no type is ever laid over it.
+              The column is ALWAYS rendered and sized, with visibility handled
+              in CSS — only the canvas inside is gated on `showRobot`. Gating
+              the wrapper itself meant the column popped into the grid when
+              useMediaQuery resolved after hydration, resizing the row and
+              costing 0.059 CLS. (It never mattered when the robot was
+              absolutely positioned and out of flow.) */}
+          <div className="hidden md:block md:col-span-5 lg:col-span-6 relative h-[46vh] lg:h-[58vh] robot-wrap">
+            {showRobot && <RobotHero />}
+          </div>
         </div>
 
         {/* ── Band 3 — spec grid ─────────────────────────────────────────── */}

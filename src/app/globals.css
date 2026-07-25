@@ -482,10 +482,32 @@ body {
   .nav-indicator { animation: indicator-shimmer 2.4s linear infinite; }
 }
 
+/* Above-the-fold entrance — transform ONLY, never opacity.
+   The same rule the hero follows: Largest Contentful Paint does not count an
+   element with opacity:0 as painted, so fading in content that is visible on
+   load defers LCP until the animation finishes. Wrapping page headers in the
+   opacity-based `.reveal` below pushed LCP on the inner pages from ~100ms to
+   ~1200ms. This animates position only, so the text paints on the first frame
+   and merely settles into place afterwards.
+
+   Pure CSS, so it also works with JS disabled — no IntersectionObserver, no
+   hidden initial state to recover from. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+}
+@keyframes rise {
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
+}
+
 /* Scroll reveal: elements start hidden and fade/slide in when scrolled into
    view (JS adds `.is-visible` via IntersectionObserver). No-JS visitors get
    the visible state via the <noscript> override in the root layout, and
-   reduced-motion users see everything immediately with no transform. */
+   reduced-motion users see everything immediately with no transform.
+   Use `.rise` above instead for anything visible on load. */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
