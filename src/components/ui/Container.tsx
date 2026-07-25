@@ -23,9 +23,19 @@ import { cn } from "@/lib/utils";
  * third of the screen empty on either side. Reading measure is constrained
  * per-block (`max-w-2xl` on body copy) rather than by squeezing the shell.
  */
-/** `default` inherits --page-max from .page-container; the rest override it. */
+/**
+ * `default` inherits --page-max (1680) from .page-container; the rest override
+ * it. `.page-container` sets `margin-inline: auto`, so every narrower size
+ * centres itself in the viewport.
+ *
+ * `content` is the measure for text-led inner pages. They don't have the hero's
+ * full-bleed artwork to fill 1680px, so stretching them left the body copy
+ * ending several hundred pixels short of the section rules above it and the
+ * whole page reading off-centre. A centred 1152 column keeps the margins even.
+ */
 const widths = {
-  default: "",
+  default: "max-w-[var(--page-max)]",
+  content: "max-w-6xl",
   prose: "max-w-3xl",
   narrow: "max-w-2xl",
   wide: "max-w-none",

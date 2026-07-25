@@ -79,7 +79,7 @@ export default function FooterReveal() {
         // 3.6s). visibility:hidden removes it as an LCP candidate; it flips
         // visible via the IntersectionObserver ~a viewport before it reveals.
         style={{ visibility: visible ? undefined : "hidden" }}
-        className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-between bg-black text-white -z-10 pt-24 md:pt-32 pb-12 page-container pointer-events-auto overflow-hidden"
+        className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-between bg-black text-white -z-10 pt-24 md:pt-32 pb-12 page-container max-w-[var(--page-max)] pointer-events-auto overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--syntax-blue)]/5 to-transparent pointer-events-none" />
 

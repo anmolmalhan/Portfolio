@@ -40,7 +40,7 @@ export default async function ContactPage({
        logo. The body is a two-column grid rather than one narrow measure:
        constraining the whole page to max-w-2xl left the entire right half of
        a wide monitor empty. */
-    <Container className="py-28 md:py-32 flex-1">
+    <Container size="content" className="py-28 md:py-32 flex-1">
       <PageHeader
         eyebrow="get in touch"
         title="Contact"

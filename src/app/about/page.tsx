@@ -33,19 +33,22 @@ const MINDSET = [
 
 export default function AboutPage() {
   return (
-    <Container className="py-28 md:py-32 flex-1">
+    <Container size="content" className="py-28 md:py-32 flex-1">
       <PageHeader
         eyebrow="studio"
         title="About"
         description="I design clean interfaces and build them with production-ready code."
       />
 
-      {/* Bio + portrait. The portrait is a real column in the grid rather than
-          a floated card, so its top aligns with the first line of the bio. */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-        <Reveal as="div" className="lg:col-span-7 order-last lg:order-first">
-          {/* Capped measure — at this container width an unconstrained column
-              runs past a comfortable line length. */}
+      {/* Bio + portrait.
+          Sized by CONTENT, not by fractions of the full container. A 7/12
+          column is ~870px here, but the prose is capped at a readable ~62ch
+          (~620px) and the portrait was pushed to the far edge with ml-auto —
+          so both columns carried slack and the two pockets compounded into a
+          ~490px hole down the middle. The text column is now just wide enough
+          for its measure and the portrait track is a fixed 420px. */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] gap-10 lg:gap-16 items-start">
+        <Reveal as="div" className="order-last lg:order-first">
           <div className="space-y-6 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
             <p>
               I&rsquo;m Anmol, a front-end developer passionate about building visually
@@ -78,9 +81,39 @@ export default function AboutPage() {
               </Link>
             </Magnetic>
           </div>
+
+          {/* Spec rail sits under the copy rather than under the portrait: it
+              gives the text column the height to stand level with the image
+              instead of leaving a void beneath the buttons. */}
+          <dl className="mt-12 grid grid-cols-2 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border border-y border-border">
+            <div className="py-4 sm:pr-6">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Based
+              </dt>
+              <dd className="mt-1.5 font-mono text-xs uppercase tracking-wide">
+                {siteConfig.location.city}, {siteConfig.location.region}
+              </dd>
+            </div>
+            <div className="py-4 sm:px-6">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Role
+              </dt>
+              <dd className="mt-1.5 font-mono text-xs uppercase tracking-wide">
+                {siteConfig.role}
+              </dd>
+            </div>
+            <div className="py-4 sm:pl-6 col-span-2 sm:col-span-1">
+              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Stack
+              </dt>
+              <dd className="mt-1.5 font-mono text-xs uppercase tracking-wide">
+                {siteConfig.stack.join(" · ")}
+              </dd>
+            </div>
+          </dl>
         </Reveal>
 
-        <Reveal as="div" delay={120} className="lg:col-span-5 w-full lg:max-w-[440px] lg:ml-auto">
+        <Reveal as="div" delay={120} className="w-full">
           <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted">
             <Image
               src="/profile.jpg"
@@ -91,25 +124,6 @@ export default function AboutPage() {
               priority
             />
           </div>
-          {/* Spec rail under the portrait, matching the hero's language. */}
-          <dl className="mt-4 grid grid-cols-2 divide-x divide-border border border-border rounded-xl overflow-hidden">
-            <div className="p-4">
-              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                Based
-              </dt>
-              <dd className="mt-1 font-mono text-xs uppercase tracking-wide">
-                {siteConfig.location.city}, {siteConfig.location.region}
-              </dd>
-            </div>
-            <div className="p-4">
-              <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                Role
-              </dt>
-              <dd className="mt-1 font-mono text-xs uppercase tracking-wide">
-                {siteConfig.role}
-              </dd>
-            </div>
-          </dl>
         </Reveal>
       </div>
 
@@ -124,17 +138,18 @@ export default function AboutPage() {
         <ul className="border-t border-border">
           {MINDSET.map((block, i) => (
             <Reveal as="li" key={block.title} delay={i * 80}>
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-2 border-b border-border py-8">
+              {/* Content-sized tracks, not 12ths: a 4/12 title track is ~500px
+                  wide while "What I build" is ~110px, which reopened the same
+                  gap the bio had. */}
+              <div className="grid grid-cols-1 md:grid-cols-[2.5rem_minmax(0,15rem)_minmax(0,1fr)] gap-x-8 gap-y-2 border-b border-border py-8">
                 <span
                   aria-hidden
-                  className="md:col-span-1 font-mono text-xs text-muted-foreground tabular-nums"
+                  className="font-mono text-xs text-muted-foreground tabular-nums pt-1.5"
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="md:col-span-4 text-xl font-bold tracking-tight">
-                  {block.title}
-                </h3>
-                <p className="md:col-span-7 text-base leading-relaxed text-muted-foreground">
+                <h3 className="text-xl font-bold tracking-tight">{block.title}</h3>
+                <p className="text-base leading-relaxed text-muted-foreground">
                   {block.desc}
                 </p>
               </div>

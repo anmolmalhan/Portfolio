@@ -67,7 +67,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[var(--syntax-blue)] rounded-full blur-[80px] md:blur-[200px] opacity-[0.03] pointer-events-none" />
 
       {/* Navigation Header */}
-      <Container className="pt-28 pb-8">
+      <Container size="content" className="pt-28 pb-8">
         <Link href="/projects" className="inline-flex items-center gap-2 py-2 text-muted-foreground hover:text-foreground font-mono text-sm transition-colors cursor-pointer group">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
           <span>cd ..</span>
@@ -75,7 +75,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       </Container>
 
       {/* Hero Section */}
-      <Container className="mt-12 mb-20" style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}>
+      <Container size="content" className="mt-12 mb-20" style={{ viewTransitionName: `project-${project.slug}` } as React.CSSProperties}>
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 border-b border-border pb-12">
           <div className="max-w-4xl">
             <div className="flex flex-wrap gap-3 mb-8">
@@ -133,7 +133,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       </Container>
 
       {/* Main Feature Image */}
-      <Container className="mb-32">
+      <Container size="content" className="mb-32">
         <div className={`w-full ${featureImageAspect} bg-muted overflow-hidden relative`}
              style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
           {project.image ? (
@@ -154,7 +154,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       </Container>
 
       {/* Case Study Content */}
-      <Container className="pb-32"><div className="max-w-4xl">
+      <Container size="content" className="pb-32"><div className="max-w-4xl">
         <Reveal
           as="p"
           className="text-2xl md:text-3xl text-foreground/90 leading-snug font-light mb-12 md:mb-16"

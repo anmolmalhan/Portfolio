@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <Container className="py-28 md:py-32 flex-1">
+    <Container size="content" className="py-28 md:py-32 flex-1">
       <PageHeader
         eyebrow="selected work"
         title="Projects"

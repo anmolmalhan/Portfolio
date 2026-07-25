@@ -56,7 +56,7 @@ export default async function NotePage({
   };
 
   return (
-    <Container className="py-28 md:py-32 flex-1">
+    <Container size="content" className="py-28 md:py-32 flex-1">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

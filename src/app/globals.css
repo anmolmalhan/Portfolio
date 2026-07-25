@@ -202,10 +202,13 @@
   :root { --page-gutter: 6rem; }
 }
 
+/* Deliberately does NOT set max-width. This rule is defined after
+   `@import "tailwindcss"`, so a max-width here beats any `max-w-*` utility of
+   equal specificity — which silently neutralised <Container size="content">
+   and friends. The width now comes from the size map in Container.tsx. */
 .page-container {
   width: 100%;
   margin-inline: auto;
-  max-width: var(--page-max);
   padding-inline: var(--page-gutter);
 }
 
