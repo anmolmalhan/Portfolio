@@ -14,9 +14,9 @@ export type NavItem = { label: string; href: string };
  *  the literal union made ordinary checks like `href !== "/"` a type error. */
 const nav: NavItem[] = [
   { label: "Work", href: "/projects" },
-  { label: "Notes", href: "/notes" },
   { label: "Studio", href: "/about" },
   { label: "Contact", href: "/contact" },
+  // A Tools entry goes here once that section exists.
 ];
 
 export const siteConfig = {
