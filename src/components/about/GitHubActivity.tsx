@@ -29,8 +29,10 @@ const GitHubCalendar = dynamic(
   {
     ssr: false,
     loading: () => (
+      /* Matches the min-h-[160px] its container reserves, so swapping the real
+         calendar in doesn't nudge the panel. */
       <div
-        className="h-[140px] w-full animate-pulse rounded-md bg-muted"
+        className="h-[160px] w-full animate-pulse rounded-md bg-muted"
         aria-label="Loading contribution graph"
       />
     ),
