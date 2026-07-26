@@ -118,7 +118,7 @@ export default function HeroSection() {
       <Container className="relative z-10 flex flex-1 flex-col pt-28 md:pt-32 pb-10">
         {/* ── Band 1 — identity rail ─────────────────────────────────────── */}
         <div className="hero-fade flex items-start justify-between gap-6 font-mono text-xs md:text-[13px] uppercase tracking-widest">
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="flex flex-nowrap items-center gap-x-3 whitespace-nowrap min-w-0">
             <span className="text-foreground">{siteConfig.name}</span>
             <span className="text-border">/</span>
             <span className="sr-only">{ROLES.join(" · ")}</span>
@@ -216,7 +216,7 @@ export default function HeroSection() {
               <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 Now building
               </dt>
-              <dd className="mt-1 flex flex-wrap items-center gap-x-2">
+              <dd className="mt-1 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-2">
                 {/* Separator trails its item so a wrap can't strand a leading
                     "·" at the start of the next line. */}
                 {NOW_BUILDING.map((p, i) => (
@@ -228,7 +228,7 @@ export default function HeroSection() {
                       {p.title}
                     </Link>
                     {i < NOW_BUILDING.length - 1 && (
-                      <span aria-hidden className="text-border">·</span>
+                      <span aria-hidden className="hidden sm:inline text-border">·</span>
                     )}
                   </span>
                 ))}
