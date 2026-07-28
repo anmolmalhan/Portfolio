@@ -1,10 +1,11 @@
 "use client";
+import { siteConfig } from "@/config/site";
 
 import { useState, useTransition } from "react";
 import { Send, CheckCircle } from "lucide-react";
 import { sendContactMessage, sendContactForm } from "./actions";
 
-const CONTACT_EMAIL = "contact@anmolmalhan.com";
+const CONTACT_EMAIL = siteConfig.email;
 
 type Status = "idle" | "compiling" | "success" | "error";
 
@@ -71,14 +72,14 @@ export function ContactForm() {
   const showTerminal = status === "compiling" || status === "success";
 
   return (
-    <div className="rounded-xl border border-surface bg-background overflow-hidden shadow-2xl">
-      <div className="bg-surface px-4 py-3 flex items-center gap-2 border-b border-surface">
+    <div className="rounded-xl border border-border bg-background overflow-hidden shadow-2xl">
+      <div className="bg-muted px-4 py-3 flex items-center gap-2 border-b border-border">
         <div className="flex gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
           <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
           <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
         </div>
-        <div className="text-xs font-mono text-[var(--syntax-comment)] mx-auto">
+        <div className="text-xs font-mono text-muted-foreground mx-auto">
           <span className="text-[var(--syntax-green)]">anmol@portfolio</span>
           <span className="opacity-60">:</span>
           <span className="text-[var(--syntax-blue)]">~</span>
@@ -105,7 +106,7 @@ export function ContactForm() {
               required
               autoComplete="name"
               type="text"
-              className="w-full bg-surface/30 border border-surface rounded-md p-3 text-foreground font-mono text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent focus:border-accent transition-colors"
+              className="w-full bg-muted/40 border border-border rounded-md p-3 text-foreground font-mono text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent focus:border-accent transition-colors"
               placeholder='"Enter your name"'
             />
           </div>
@@ -120,7 +121,7 @@ export function ContactForm() {
               required
               autoComplete="email"
               type="email"
-              className="w-full bg-surface/30 border border-surface rounded-md p-3 text-foreground font-mono text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent focus:border-accent transition-colors"
+              className="w-full bg-muted/40 border border-border rounded-md p-3 text-foreground font-mono text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent focus:border-accent transition-colors"
               placeholder='"Email address"'
             />
           </div>
@@ -134,7 +135,7 @@ export function ContactForm() {
               name="message"
               required
               rows={4}
-              className="w-full bg-surface/30 border border-surface rounded-md p-3 text-foreground font-mono text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent focus:border-accent transition-colors resize-none"
+              className="w-full bg-muted/40 border border-border rounded-md p-3 text-foreground font-mono text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent focus:border-accent transition-colors resize-none"
               placeholder="`Hello, I'd like to discuss...`"
             />
           </div>
@@ -158,7 +159,7 @@ export function ContactForm() {
             <Send className="w-4 h-4" /> await transmit()
           </button>
 
-          <p className="font-mono text-xs text-[var(--syntax-comment)] text-center leading-relaxed">
+          <p className="font-mono text-xs text-muted-foreground text-center leading-relaxed">
             This form sends straight to my inbox. If it doesn&apos;t work for you, email{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
@@ -172,7 +173,7 @@ export function ContactForm() {
 
         {showTerminal && (
           <div className="min-h-[300px] flex flex-col font-mono text-sm relative z-10 bg-background">
-            <div className="flex-1 space-y-2 text-[var(--syntax-comment)]" aria-live="polite">
+            <div className="flex-1 space-y-2 text-muted-foreground" aria-live="polite">
               {logs.map((log, i) => (
                 <div
                   key={i}
@@ -203,7 +204,7 @@ export function ContactForm() {
                     setStatus("idle");
                     setLogs([]);
                   }}
-                  className="border border-surface-hover hover:bg-surface px-6 py-2 rounded-md font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="border border-border hover:bg-surface-hover px-6 py-2 rounded-md font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   reset()
                 </button>

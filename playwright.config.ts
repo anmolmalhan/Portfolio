@@ -8,6 +8,11 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  // Compiles every route once before the workers start. `next dev` builds
+  // routes on first request, and parallel workers hitting cold routes could
+  // outlast the expect timeout — failures that passed on re-run and read as
+  // flakiness. See the file for why this beats adding retries.
+  globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",

@@ -1,4 +1,5 @@
 "use client";
+import { siteConfig } from "@/config/site";
 
 import { useEffect } from "react";
 
@@ -37,7 +38,7 @@ export default function GlobalError({
           </h1>
           <p style={{ color: "#a1a1aa", fontSize: 16, lineHeight: 1.5, marginBottom: 24 }}>
             An unexpected error escaped to the root. Try reloading, and if it
-            keeps happening, email contact@anmolmalhan.com.
+            keeps happening, email {siteConfig.email}.
             {error.digest ? ` Reference: ${error.digest}` : ""}
           </p>
           <button

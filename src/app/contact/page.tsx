@@ -1,11 +1,13 @@
-import { Terminal, Clock, MapPin, Briefcase, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { StatusBanner } from "./StatusBanner";
 import { ContactForm } from "./ContactForm";
 import { Reveal } from "@/components/ui/Reveal";
-import { SplitReveal } from "@/components/ui/SplitReveal";
+import { Container } from "@/components/ui/Container";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { GithubMark, LinkedinMark } from "@/components/ui/BrandMarks";
+import { siteConfig } from "@/config/site";
 
-const CONTACT_EMAIL = "contact@anmolmalhan.com";
+const CONTACT_EMAIL = siteConfig.email;
 
 // Server Component: reads searchParams on the server so the status banner
 // renders in the initial HTML. That means visitors without JS see the
@@ -19,21 +21,12 @@ export default async function ContactPage({
   const sp = await searchParams;
 
   const meta = [
+    { label: "Response time", value: "1 to 2 business days" },
     {
-      icon: Clock,
-      label: "Response time",
-      value: "1 to 2 business days",
-    },
-    {
-      icon: MapPin,
       label: "Based in",
-      value: "Rohtak, IST (UTC+5:30)",
+      value: `${siteConfig.location.city}, IST (${siteConfig.location.timezone})`,
     },
-    {
-      icon: Briefcase,
-      label: "Open to",
-      value: "Freelance · Full-time",
-    },
+    { label: "Open to", value: "Freelance · Full-time" },
   ];
 
   const goodFit = [
@@ -43,110 +36,112 @@ export default async function ContactPage({
   ];
 
   return (
-    <div className="max-w-2xl w-full mx-auto px-6 py-20 flex-1 page-reveal">
-      <div className="mb-10">
-        <div className="font-mono text-xs uppercase tracking-widest flex items-center gap-2 text-[var(--syntax-comment)] mb-6">
-          <span className="w-2 h-2 bg-[var(--syntax-green)] rounded-full animate-pulse" />
-          Available for new work · May 2026
-        </div>
-        <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
-          <Terminal className="text-accent w-8 h-8" />
-          <SplitReveal text="Contact Request" />
-        </h1>
-        <p className="text-[var(--syntax-comment)] text-lg">
-          Tell me what you&apos;re building, the rough shape of the timeline, and how
-          I can help. The more concrete, the faster I can reply with something useful.
-        </p>
-      </div>
+    /* Full-width container so the left edge still lines up with the header
+       logo. The body is a two-column grid rather than one narrow measure:
+       constraining the whole page to max-w-2xl left the entire right half of
+       a wide monitor empty. */
+    <Container size="content" className="py-28 md:py-32 flex-1">
+      <PageHeader
+        eyebrow="get in touch"
+        title="Contact"
+        description="Tell me what you're building, the rough shape of the timeline, and how I can help. The more concrete, the faster I can reply with something useful."
+      />
 
-      <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        {meta.map(({ icon: Icon, label, value }, i) => (
-          <Reveal key={label} delay={i * 80}>
-            <div className="h-full border border-surface bg-surface/20 rounded-lg p-4">
-              <Icon className="w-4 h-4 text-[var(--syntax-blue)] mb-3" />
-              <dt className="font-mono text-[10px] uppercase tracking-widest text-[var(--syntax-comment)] mb-1">
-                {label}
-              </dt>
-              <dd className="text-sm font-medium text-foreground/90">{value}</dd>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        {/* Form column */}
+        <div className="lg:col-span-7">
+          <StatusBanner status={sp.status} mode={sp.mode} msg={sp.msg} />
+          <Reveal>
+            <ContactForm />
+          </Reveal>
+        </div>
+
+        {/* Supporting column */}
+        <div className="lg:col-span-5 lg:sticky lg:top-28">
+          {/* Spec rail — same hairline-divided language as the hero. */}
+          <Reveal>
+            <dl className="grid grid-cols-1 divide-y divide-border border-y border-border">
+              {meta.map(({ label, value }) => (
+                <div key={label} className="flex items-baseline justify-between gap-4 py-4">
+                  <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {label}
+                  </dt>
+                  <dd className="text-sm font-medium text-right">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          <section className="mt-12" aria-labelledby="good-fit-heading">
+            <h2
+              id="good-fit-heading"
+              className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-6"
+            >
+              {"// Good fit if you're after"}
+            </h2>
+            <ul className="space-y-4">
+              {goodFit.map((item, i) => (
+                <Reveal
+                  as="li"
+                  key={i}
+                  delay={i * 80}
+                  className="flex gap-4 text-foreground/85 leading-relaxed"
+                >
+                  <span
+                    className="font-mono text-sm text-[var(--syntax-blue)] shrink-0 pt-1"
+                    aria-hidden
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item}</span>
+                </Reveal>
+              ))}
+            </ul>
+          </section>
+
+          <section className="mt-12 pt-10 border-t border-border" aria-labelledby="elsewhere-heading">
+            <h2
+              id="elsewhere-heading"
+              className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-6"
+            >
+              {"// Or reach me elsewhere"}
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              <Reveal delay={0}>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <Mail className="w-4 h-4 text-[var(--syntax-blue)]" />
+                  {CONTACT_EMAIL}
+                </a>
+              </Reveal>
+              <Reveal delay={70}>
+                <a
+                  href={siteConfig.social.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <GithubMark className="w-4 h-4" />
+                  GitHub
+                </a>
+              </Reveal>
+              <Reveal delay={140}>
+                <a
+                  href={siteConfig.social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-border hover:border-foreground/40 hover:bg-foreground/5 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <LinkedinMark className="w-4 h-4 text-[var(--syntax-blue)]" />
+                  LinkedIn
+                </a>
+              </Reveal>
             </div>
-          </Reveal>
-        ))}
-      </dl>
-
-      <StatusBanner status={sp.status} mode={sp.mode} msg={sp.msg} />
-
-      <Reveal>
-        <ContactForm />
-      </Reveal>
-
-      <section className="mt-16" aria-labelledby="good-fit-heading">
-        <h2
-          id="good-fit-heading"
-          className="font-mono text-sm uppercase tracking-widest text-[var(--syntax-comment)] mb-6"
-        >
-          {"// Good fit if you're after"}
-        </h2>
-        <ul className="space-y-4">
-          {goodFit.map((item, i) => (
-            <Reveal
-              as="li"
-              key={i}
-              delay={i * 80}
-              className="flex gap-4 text-foreground/85 leading-relaxed"
-            >
-              <span
-                className="font-mono text-sm text-[var(--syntax-blue)] shrink-0 pt-1"
-                aria-hidden
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span>{item}</span>
-            </Reveal>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mt-16 pt-10 border-t border-surface" aria-labelledby="elsewhere-heading">
-        <h2
-          id="elsewhere-heading"
-          className="font-mono text-sm uppercase tracking-widest text-[var(--syntax-comment)] mb-6"
-        >
-          {"// Or reach me elsewhere"}
-        </h2>
-        <div className="flex flex-wrap gap-3">
-          <Reveal delay={0}>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <Mail className="w-4 h-4 text-[var(--syntax-blue)]" />
-              {CONTACT_EMAIL}
-            </a>
-          </Reveal>
-          <Reveal delay={70}>
-            <a
-              href="https://github.com/anmolmalhan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <GithubMark className="w-4 h-4" />
-              GitHub
-            </a>
-          </Reveal>
-          <Reveal delay={140}>
-            <a
-              href="https://www.linkedin.com/in/anmolmalhan/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-surface hover:border-foreground/40 transition-colors font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              <LinkedinMark className="w-4 h-4 text-[var(--syntax-blue)]" />
-              LinkedIn
-            </a>
-          </Reveal>
+          </section>
         </div>
-      </section>
-    </div>
+      </div>
+    </Container>
   );
 }

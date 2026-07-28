@@ -5,6 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "@/lib/motion";
+import { siteConfig } from "@/config/site";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,27 +15,21 @@ export default function FooterReveal() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Observe both the sentinel (catches early reveal on tall viewports) and
-    // the footer itself (catches the case where the footer is visually visible
-    // before the sentinel intersects).
+    // Observe ONLY the sentinel — a normal-flow 100dvh spacer that sits right
+    // before the footer, so it enters the viewport only as you approach the
+    // bottom. (The footer itself is position:fixed and fills the viewport, so
+    // observing it always reports "intersecting" and the reveal would trigger
+    // immediately — which also made its big text the page's LCP element.)
+    // The positive bottom rootMargin flips `visible` ~300px early so the footer
+    // is already painted behind the content before it's revealed — no pop.
     const sentinel = sentinelRef.current;
-    const footer = footerRef.current;
-    const targets = [sentinel, footer].filter(Boolean) as Element[];
-    if (targets.length === 0) return;
+    if (!sentinel) return;
 
     const io = new IntersectionObserver(
-      (entries) => {
-        // Visible if any observed target is intersecting.
-        const anyVisible = entries.some((e) => e.isIntersecting) ||
-          targets.some((t) => {
-            const r = (t as HTMLElement).getBoundingClientRect();
-            return r.top < window.innerHeight && r.bottom > 0;
-          });
-        setVisible(anyVisible);
-      },
-      { threshold: 0.1, rootMargin: "-10% 0px" }
+      (entries) => setVisible(entries.some((e) => e.isIntersecting)),
+      { threshold: 0, rootMargin: "0px 0px 300px 0px" }
     );
-    targets.forEach((t) => io.observe(t));
+    io.observe(sentinel);
     return () => io.disconnect();
   }, []);
 
@@ -79,7 +74,13 @@ export default function FooterReveal() {
         ref={footerRef}
         inert={!visible}
         aria-hidden={!visible}
-        className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-between bg-black text-white -z-10 pt-24 md:pt-32 pb-12 px-6 md:px-12 pointer-events-auto overflow-hidden"
+        // Hidden until the reveal is near. As a fixed, full-viewport element
+        // with large text, it was otherwise painted behind the page from load
+        // and picked up as the Largest Contentful Paint element (mobile LCP
+        // 3.6s). visibility:hidden removes it as an LCP candidate; it flips
+        // visible via the IntersectionObserver ~a viewport before it reveals.
+        style={{ visibility: visible ? undefined : "hidden" }}
+        className="fixed bottom-0 left-0 h-[100dvh] w-full flex flex-col justify-between bg-black text-white -z-10 pt-24 md:pt-32 pb-12 page-container max-w-[var(--page-max)] pointer-events-auto overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--syntax-blue)]/5 to-transparent pointer-events-none" />
 
@@ -96,10 +97,10 @@ export default function FooterReveal() {
             </p>
           </div>
           <a
-            href="mailto:contact@anmolmalhan.com"
-            className="font-mono text-xs md:text-sm text-white/70 hover:text-white transition-colors break-all md:text-right block focus-visible:outline-none focus-visible:underline"
+            href={`mailto:${siteConfig.email}`}
+            className="font-mono text-xs md:text-sm text-white/70 hover:text-white transition-colors break-all md:text-right block py-2 focus-visible:outline-none focus-visible:underline"
           >
-            contact<span className="opacity-50">@anmolmalhan.com</span>
+            {siteConfig.email.split("@")[0]}<span className="opacity-50">@{siteConfig.email.split("@")[1]}</span>
           </a>
         </div>
 
@@ -107,7 +108,7 @@ export default function FooterReveal() {
         <div className="hidden md:grid grid-cols-3 gap-12 relative z-10 max-w-3xl">
           {[
             { k: "Stack", v: "React · Next.js · TS · GSAP" },
-            { k: "Based", v: "Rohtak, IN · UTC+5:30" },
+            { k: "Based", v: `${siteConfig.location.city}, ${siteConfig.location.country} · ${siteConfig.location.timezone}` },
             { k: "Reply", v: "Within 1 to 2 days" },
           ].map((s) => (
             <div key={s.k}>
@@ -138,8 +139,8 @@ export default function FooterReveal() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center font-mono text-xs text-white/60 uppercase gap-4">
             <div>© {new Date().getFullYear()} Anmol Malhan. All rights reserved.</div>
             <div className="flex gap-6">
-              <Link href="https://github.com/anmolmalhan" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</Link>
-              <Link href="https://www.linkedin.com/in/anmolmalhan/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</Link>
+              <Link href={siteConfig.social.github} target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">GitHub</Link>
+              <Link href={siteConfig.social.linkedin} target="_blank" rel="noopener noreferrer" className="py-2 hover:text-white transition-colors">LinkedIn</Link>
             </div>
           </div>
         </div>

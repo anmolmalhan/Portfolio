@@ -16,7 +16,10 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   // static.cloudflareinsights.com: the site is proxied through Cloudflare,
   // which auto-injects its Web Analytics beacon script.
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://static.cloudflareinsights.com",
+  // 'wasm-unsafe-eval': the tech-stack physics section runs Rapier, which is
+  // compiled WebAssembly. This permits ONLY WebAssembly.instantiate — JS
+  // eval()/Function() remain blocked.
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://va.vercel-scripts.com https://static.cloudflareinsights.com",
   "connect-src 'self' https://github-contributions-api.jogruber.de https://va.vercel-scripts.com https://vitals.vercel-insights.com https://cloudflareinsights.com",
   "upgrade-insecure-requests",
 ].join("; ");
@@ -31,6 +34,16 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    // Next negotiates WebP by default; adding AVIF ahead of it means modern
+    // browsers get the smaller encode. The /about portrait is the LCP element
+    // there and was shipping 107kB of WebP.
+    formats: ["image/avif", "image/webp"],
+    // Next 16 only serves qualities listed here. 68 is for the /about
+    // portrait, which is the LCP element on that route and renders grayscale
+    // at rest, so it tolerates more compression than the default 75.
+    qualities: [68, 75],
+  },
   experimental: {
     viewTransition: true,
   },
@@ -47,6 +60,21 @@ const nextConfig: NextConfig = {
       {
         source: "/projects/client-work-os",
         destination: "/projects/swift-digital-seva",
+        permanent: true,
+      },
+      // The notes section was removed. Both /notes and every article URL were
+      // in the sitemap and are indexed, so send them somewhere useful instead
+      // of letting bookmarks and search results dead-end on a 404.
+      // The article rule is listed first: Next matches in order, and a bare
+      // "/notes" source would not catch the nested paths on its own.
+      {
+        source: "/notes/:slug*",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/notes",
+        destination: "/",
         permanent: true,
       },
     ];

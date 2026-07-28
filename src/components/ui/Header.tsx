@@ -5,14 +5,11 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CodeXml, Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { Container } from "./Container";
 import { prefersReducedMotion } from "@/lib/motion";
+import { siteConfig } from "@/config/site";
 
-const NAV = [
-  { label: "Work", href: "/projects" },
-  { label: "Notes", href: "/notes" },
-  { label: "Studio", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
+const NAV = siteConfig.nav;
 
 export function Header() {
   const pathname = usePathname();
@@ -123,8 +120,12 @@ export function Header() {
           : "mix-blend-difference text-white"
       }`}
     >
-      <div
-        className={`container mx-auto px-4 md:px-12 flex items-center justify-between pointer-events-auto transition-[padding] duration-300 ease-out ${
+      {/* Same Container as every page body, so the logo's left edge is the
+          left edge of the page heading underneath it. Tailwind's `container`
+          resolves to a different width (1280 at this breakpoint) than the
+          pages' max-w-6xl, which is why nothing used to line up. */}
+      <Container
+        className={`flex items-center justify-between pointer-events-auto transition-[padding] duration-300 ease-out ${
           scrolled ? "py-2 md:py-3" : "py-4 md:py-6"
         }`}
       >
@@ -148,8 +149,28 @@ export function Header() {
             className="relative hidden md:flex gap-8 items-center"
             onMouseLeave={() => moveIndicator(activeIndex)}
           >
-            {NAV.map(({ label, href }, i) => {
+            {NAV.map(({ label, href, soon }, i) => {
               const active = i === activeIndex;
+
+              // Unbuilt section: a dimmed label with a "soon" tag rather than a
+              // link, so there is no route to 404 on. It stays out of the
+              // magnetic/indicator wiring (linkRefs[i] is left unset, which
+              // moveIndicator already treats as "hide the indicator").
+              if (soon) {
+                return (
+                  <span
+                    key={label}
+                    style={{ animationDelay: `${150 + i * 70}ms` }}
+                    className="nav-item-reveal inline-flex items-center gap-2 font-sans font-medium text-sm tracking-wide uppercase text-foreground/60 cursor-default select-none"
+                  >
+                    <span>{label}</span>
+                    <span className="font-mono text-[9px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
+                      Soon
+                    </span>
+                  </span>
+                );
+              }
+
               return (
                 <Link
                   key={label}
@@ -208,7 +229,7 @@ export function Header() {
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </nav>
-      </div>
+      </Container>
 
       {/* Mobile Menu */}
       {menuOpen && (
@@ -217,8 +238,24 @@ export function Header() {
           ref={menuPanelRef}
           className="menu-panel-reveal md:hidden absolute top-full left-0 w-full bg-background border-b border-foreground/10 py-4 px-4 shadow-lg pointer-events-auto text-foreground flex flex-col gap-4"
         >
-          {NAV.map(({ label, href }, i) => {
+          {NAV.map(({ label, href, soon }, i) => {
             const active = pathname === href || (href !== "/" && pathname?.startsWith(href));
+
+            if (soon) {
+              return (
+                <span
+                  key={label}
+                  style={{ animationDelay: `${60 + i * 50}ms` }}
+                  className="nav-item-reveal flex items-center gap-2 font-sans font-medium text-lg tracking-wide uppercase py-2 text-foreground/60 cursor-default select-none"
+                >
+                  <span>{label}</span>
+                  <span className="font-mono text-[10px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
+                    Soon
+                  </span>
+                </span>
+              );
+            }
+
             return (
               <Link
                 key={label}

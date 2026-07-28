@@ -1,10 +1,43 @@
 @import "tailwindcss";
+@import "shadcn/tailwind.css";
+
+/* Theming here is driven by `data-theme` on <html>, not shadcn's default
+   `.dark` class, because the toggle is tri-state: light / dark / system. In
+   "system" mode the attribute is absent and the media query below decides.
+   The `dark:` variant therefore has to match BOTH resolution paths, or half
+   the utilities would silently no-op depending on how dark was reached. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   ---------------------------------------------------------------------------
+   Two layers, one source of truth:
+
+     1. BRAND    — background/foreground/surface/accent + the syntax palette.
+                   These carry the site's identity and are used directly by the
+                   bespoke sections (hero, footer, prose).
+     2. SEMANTIC — card/popover/primary/muted/border/ring. shadcn components
+                   consume only these. They are *derived* from the brand layer
+                   so a brand change propagates instead of drifting.
+
+   Every value is defined in BOTH themes. shadcn's generated dark block only
+   redefined the semantic half, which left cards and borders rendering with
+   light values on a dark page.
+--------------------------------------------------------------------------- */
 
 :root {
-  /* Light palette — refined for higher contrast and a calmer, modern feel.
-     Background leans toward off-white with a faint cool tint; surfaces step
-     down through subtle zinc grays. Syntax colors are deeper than the dark
-     mode equivalents so they hit WCAG AA on white. */
+  /* — brand — light. Off-white with a faint cool tint; surfaces step down
+     through subtle zinc grays. Syntax colors run deeper than their dark
+     counterparts so they clear WCAG AA on a near-white background. */
   --background: #fbfbfc;
   --foreground: #0a0a0b;
   --surface: #f2f3f5;
@@ -15,11 +48,40 @@
   --syntax-amber: #b45309;
   --syntax-magenta: #be185d;
   --syntax-green: #047857;
-  --syntax-comment: #636369;
+  --syntax-comment: #57575e;
+
+  /* — semantic — light */
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #0a0a0b;
+  --primary-foreground: #fbfbfc;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface);
+  /* 6.51:1 on --background. Body copy previously used `text-foreground/55`,
+     which blends to rgb(118,118,119) — 4.39:1, just under the 4.5:1 AA
+     threshold — and read washed out against the near-white background. */
+  --muted-foreground: #5b5b63;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  /* Hairlines, lifted for legibility. NOT pushed to the 3:1 of WCAG 1.4.11:
+     that needs ~#636363 on the dark background, which reads as a heavy rule
+     rather than a hairline. 1.4.11 covers visuals needed to *identify* a
+     component or its state; these are decorative dividers, and the cards they
+     outline are already identifiable by their own --card background. The
+     focus ring, which the criterion does cover, uses --ring (7.8:1 on dark). */
+  --border: #dcdde2;
+  --input: #dcdde2;
+  --ring: var(--accent);
+
+  --radius: 0.625rem;
 }
 
 /* Dark palette — applied when the user explicitly selects dark OR when their
-   system prefers dark AND they haven't explicitly chosen light. */
+   system prefers dark AND they haven't explicitly chosen light. Both paths
+   set the identical block, so they are generated from one definition below. */
 :root[data-theme="dark"] {
   --background: #09090b;
   --foreground: #f4f4f5;
@@ -31,7 +93,23 @@
   --syntax-amber: #fbbf24;
   --syntax-magenta: #e879f9;
   --syntax-green: #4ade80;
-  --syntax-comment: #85858e;
+  --syntax-comment: #8b8b94;
+
+  --card: #111114;
+  --card-foreground: var(--foreground);
+  --popover: #18181b;
+  --popover-foreground: var(--foreground);
+  --primary: #f4f4f5;
+  --primary-foreground: #09090b;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface);
+  --muted-foreground: #a1a1ab;
+  --accent-foreground: #09090b;
+  --destructive: #f87171;
+  --border: #33333b;
+  --input: #33333b;
+  --ring: var(--accent);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,7 +124,23 @@
     --syntax-amber: #fbbf24;
     --syntax-magenta: #e879f9;
     --syntax-green: #4ade80;
-    --syntax-comment: #85858e;
+    --syntax-comment: #8b8b94;
+
+    --card: #111114;
+    --card-foreground: var(--foreground);
+    --popover: #18181b;
+    --popover-foreground: var(--foreground);
+    --primary: #f4f4f5;
+    --primary-foreground: #09090b;
+    --secondary: var(--surface);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--surface);
+    --muted-foreground: #a1a1ab;
+    --accent-foreground: #09090b;
+    --destructive: #f87171;
+    --border: #33333b;
+    --input: #33333b;
+    --ring: var(--accent);
   }
 }
 
@@ -63,9 +157,88 @@
   --color-syntax-green: var(--syntax-green);
   --color-syntax-comment: var(--syntax-comment);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Literal family names, NOT var(--font-geist-sans). `@theme inline` is
+     resolved at parse time, so a reference to a variable next/font injects at
+     runtime resolves to nothing and the whole stack silently falls back. */
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
 }
+
+/* ---------------------------------------------------------------------------
+   Layout spine
+   ---------------------------------------------------------------------------
+   One definition of "where the page starts", shared by the React <Container>
+   and by full-bleed sections that can't wrap their content in one (the
+   horizontal projects carousel needs to scroll edge-to-edge while its first
+   slide still lines up with the logo above it).
+--------------------------------------------------------------------------- */
+:root {
+  --page-max: 1680px;
+  --page-gutter: 1.5rem;
+}
+@media (min-width: 768px) {
+  :root { --page-gutter: 2.5rem; }
+}
+@media (min-width: 1024px) {
+  :root { --page-gutter: 4rem; }
+}
+@media (min-width: 1536px) {
+  :root { --page-gutter: 6rem; }
+}
+
+/* Deliberately does NOT set max-width. This rule is defined after
+   `@import "tailwindcss"`, so a max-width here beats any `max-w-*` utility of
+   equal specificity — which silently neutralised <Container size="content">
+   and friends. The width now comes from the size map in Container.tsx. */
+.page-container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* Left inset that resolves to the same x-position as .page-container's content
+   edge, for elements that must stay full-bleed. */
+.page-inset-left {
+  padding-left: max(
+    var(--page-gutter),
+    calc((100vw - var(--page-max)) / 2 + var(--page-gutter))
+  );
+}
+
+/* Touch ergonomics — NOTE, deliberately not a pseudo-element.
+   An earlier version grew hit areas with a centred, oversized `::after`. It
+   looked tidy (no layout change at all) but it silently broke taps: the
+   overlay does not participate in layout, so as soon as a row of mono
+   metadata wrapped, one link's 44px area covered the link on the next line
+   and swallowed its taps. Verified failing at 320px and 360px.
+
+   Interactive text therefore gets REAL vertical padding at the call site
+   (`py-2` → 32px, comfortably over the 24px WCAG 2.5.8 AA minimum), which
+   grows the row and can never overlap a neighbour. Inline links inside a
+   sentence are exempt from 2.5.8 and are left alone. */
 
 html {
   /* Native iOS/Android momentum + no JS-smooth-scroll fighting */
@@ -73,8 +246,6 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -121,9 +292,14 @@ body {
   }
 }
 
-/* Hide native scrollbar on the horizontal projects carousel. */
-.pin-wrap::-webkit-scrollbar {
+/* Hide native scrollbar on horizontal scrollers. */
+.pin-wrap::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* Opt into the View Transitions API for in-app navigation. The
@@ -137,11 +313,86 @@ body {
   animation-duration: 250ms;
 }
 
+/* Site-wide film grain: a fixed, non-interactive fractal-noise layer that adds
+   a subtle premium texture over the flat backgrounds. Pure CSS (inline SVG data
+   URI — covered by img-src 'self' data:), promoted to its own layer so it never
+   repaints during scroll. Softer in light mode where noise reads louder. */
+/* NOTE: no mix-blend-mode. A blended fixed layer forces the browser to
+   re-composite the whole viewport on every scroll frame (major stutter). A
+   plain, static, fixed layer is rasterized once and costs nothing while
+   scrolling. Kept faint so plain-white noise still reads as texture. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  contain: strict;
+}
+:root:not([data-theme="dark"]) .grain {
+  opacity: 0.02;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .grain {
+    opacity: 0.035;
+  }
+}
+
+/* Living scroll cue at the foot of the hero: the accent line breathes down. */
+.scroll-cue {
+  transform-origin: top;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue {
+    animation: scroll-cue-pulse 1.8s ease-in-out infinite;
+  }
+}
+@keyframes scroll-cue-pulse {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.35; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* Hero atmosphere.
+   Replaces the previous pair of saturated blue + magenta blobs. At the
+   opacities those needed to register in dark mode they turned into muddy
+   pink/purple smudges over light mode's near-white background. This is one
+   directional accent wash anchored behind the robot, plus a top-down fade
+   that seats the header — both derived from --accent so they retheme. */
+.hero-wash {
+  background:
+    radial-gradient(
+      55% 50% at 78% 42%,
+      color-mix(in oklab, var(--accent), transparent 86%) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--foreground), transparent 96%) 0%,
+      transparent 28%
+    );
+}
+
+/* A faint hairline grid gives the flat background architecture to sit on, so
+   the spec rail below reads as part of a system rather than floating text. */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground), transparent 96%) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground), transparent 96%) 1px, transparent 1px);
+  background-size: 88px 88px;
+  /* Fade the grid out toward the edges so it never reads as a hard boundary. */
+  mask-image: radial-gradient(80% 70% at 50% 45%, #000 20%, transparent 100%);
+}
+
 /* Typography */
+/* Tuned down from 9vw/9rem: the statement now sits in a 6-column grid track
+   beside the robot rather than spanning the full viewport, so the old size
+   overflowed its column and collided with the model. */
 .text-giant {
-  font-size: clamp(3rem, 9vw, 9rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.75rem, 7vw, 6.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
   text-transform: uppercase;
 }
 
@@ -149,6 +400,16 @@ body {
   font-size: clamp(2.5rem, 6vw, 6rem);
   line-height: 0.95;
   letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+/* Page-header scale. Sits deliberately below .text-huge so an inner-page
+   masthead reads as the same family of type as the home page's giant
+   statements without competing with them. */
+.text-display {
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
 }
 
@@ -173,6 +434,16 @@ body {
   to {
     transform: translateY(0);
   }
+}
+
+/* Rotating role slot in the hero. The first role is visible by default (SSR,
+   no-JS, and reduced-motion all show it); the rest wait hidden below the clip.
+   When GSAP runs it hides all of them on mount and drives the loop via inline
+   transforms. Crucially there is NO CSS animation here — a filling CSS
+   animation would pin the first role at translateY(0) and fight the GSAP loop,
+   stacking every title on top of it. */
+.role-line:not(:first-child) {
+  transform: translateY(120%);
 }
 
 /* Mobile nav menu entrance: the panel fades/slides down and its links
@@ -211,10 +482,32 @@ body {
   .nav-indicator { animation: indicator-shimmer 2.4s linear infinite; }
 }
 
+/* Above-the-fold entrance — transform ONLY, never opacity.
+   The same rule the hero follows: Largest Contentful Paint does not count an
+   element with opacity:0 as painted, so fading in content that is visible on
+   load defers LCP until the animation finishes. Wrapping page headers in the
+   opacity-based `.reveal` below pushed LCP on the inner pages from ~100ms to
+   ~1200ms. This animates position only, so the text paints on the first frame
+   and merely settles into place afterwards.
+
+   Pure CSS, so it also works with JS disabled — no IntersectionObserver, no
+   hidden initial state to recover from. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+}
+@keyframes rise {
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
+}
+
 /* Scroll reveal: elements start hidden and fade/slide in when scrolled into
    view (JS adds `.is-visible` via IntersectionObserver). No-JS visitors get
    the visible state via the <noscript> override in the root layout, and
-   reduced-motion users see everything immediately with no transform. */
+   reduced-motion users see everything immediately with no transform.
+   Use `.rise` above instead for anything visible on load. */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -259,80 +552,6 @@ body {
   }
 }
 
-/* Notes / markdown typography */
-.prose-note {
-  font-size: 1.0625rem;
-  line-height: 1.75;
-  color: color-mix(in oklab, var(--foreground), transparent 10%);
-}
-.prose-note > * + * { margin-top: 1.25em; }
-.prose-note h2 {
-  font-size: 1.75rem;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--foreground);
-  margin-top: 2.5em;
-  margin-bottom: 0.6em;
-  border-top: 1px solid color-mix(in oklab, var(--foreground), transparent 90%);
-  padding-top: 1.5em;
-}
-.prose-note h3 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-top: 2em;
-  margin-bottom: 0.4em;
-}
-.prose-note p { color: color-mix(in oklab, var(--foreground), transparent 25%); }
-.prose-note strong { color: var(--foreground); font-weight: 600; }
-.prose-note a {
-  color: var(--syntax-blue);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
-}
-.prose-note a:hover { text-decoration-thickness: 2px; }
-.prose-note ul, .prose-note ol { padding-left: 1.5em; }
-.prose-note ul { list-style-type: disc; }
-.prose-note ol { list-style-type: decimal; }
-.prose-note li::marker { color: color-mix(in oklab, var(--foreground), transparent 60%); }
-.prose-note blockquote {
-  border-left: 3px solid var(--syntax-blue);
-  padding-left: 1.25em;
-  font-style: italic;
-  color: color-mix(in oklab, var(--foreground), transparent 30%);
-}
-.prose-note code:not(pre code) {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  background: var(--surface);
-  padding: 0.15em 0.4em;
-  border-radius: 0.3em;
-  color: var(--syntax-magenta);
-}
-.prose-note pre {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  background: #0d1117;
-  color: #c9d1d9;
-  padding: 1.25rem 1.5rem;
-  border-radius: 0.6rem;
-  overflow-x: auto;
-  border: 1px solid color-mix(in oklab, var(--foreground), transparent 90%);
-}
-.prose-note pre code {
-  background: transparent;
-  padding: 0;
-  color: inherit;
-  font-size: inherit;
-}
-.prose-note hr {
-  border: 0;
-  border-top: 1px solid color-mix(in oklab, var(--foreground), transparent 85%);
-  margin: 2.5em 0;
-}
 
 /* Lenis smooth scrolling config */
 html.lenis, html.lenis body {
@@ -349,4 +568,17 @@ html.lenis, html.lenis body {
 }
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

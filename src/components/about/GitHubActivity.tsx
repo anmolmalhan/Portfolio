@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { GitHubCalendar } from "react-github-calendar";
+import dynamic from "next/dynamic";
 import { getResolvedScheme, getServerScheme, subscribeToScheme } from "@/lib/theme";
 import { GithubMark } from "@/components/ui/BrandMarks";
 
@@ -17,6 +17,28 @@ const explicitTheme = {
 
 const calendarStyle = { color: 'var(--foreground)' };
 
+/**
+ * Client-only. The calendar fetches contributions in the browser and renders
+ * different markup than the server does, which threw a hydration mismatch on
+ * every /about load ("server rendered HTML didn't match the client"). Skipping
+ * SSR for this subtree removes the mismatch outright; there is nothing to
+ * prerender anyway, since the data only exists after the client fetch.
+ */
+const GitHubCalendar = dynamic(
+  () => import("react-github-calendar").then((m) => m.GitHubCalendar),
+  {
+    ssr: false,
+    loading: () => (
+      /* Matches the min-h-[160px] its container reserves, so swapping the real
+         calendar in doesn't nudge the panel. */
+      <div
+        className="h-[160px] w-full animate-pulse rounded-md bg-muted"
+        aria-label="Loading contribution graph"
+      />
+    ),
+  },
+);
+
 export default function GitHubActivity({ username }: GitHubActivityProps) {
   // The calendar must follow the site's active theme, otherwise the empty
   // cells (near-black in the dark palette) clash with the light card. Track
@@ -24,15 +46,20 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
   const scheme = useSyncExternalStore(subscribeToScheme, getResolvedScheme, getServerScheme);
 
   return (
-    <div className="mt-20 pt-8 border-t border-surface/30">
-      <div className="flex items-center gap-3 mb-8">
-        <GithubMark className="w-6 h-6 text-foreground" />
-        <h2 className="text-2xl font-bold text-foreground">Open Source Activity</h2>
-      </div>
-      
-      <div className="bg-surface/30 border border-surface p-6 sm:p-8 rounded-xl overflow-hidden">
+    <section className="mt-24 md:mt-32" aria-labelledby="activity-heading">
+      <h2
+        id="activity-heading"
+        className="font-mono text-xs md:text-sm uppercase tracking-widest text-muted-foreground mb-8"
+      >
+        {"// open source activity"}
+      </h2>
+
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+        {/* The calendar is fetched client-side from GitHub's API. Reserve its
+            height so a slow or failed request doesn't collapse the panel and
+            then shove the footer down when it resolves. */}
         <div className="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="min-w-[800px] flex justify-center">
+          <div className="min-w-[800px] min-h-[160px] flex justify-center">
             <GitHubCalendar
               username={username}
               colorScheme={scheme}
@@ -41,13 +68,18 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
               blockSize={12}
               blockMargin={4}
               style={calendarStyle}
+              /* Without this the component renders nothing on a failed fetch,
+                 leaving an unexplained blank slab on the page. */
+              errorMessage="Couldn't reach GitHub just now — the contribution graph is live at github.com/anmolmalhan."
             />
           </div>
         </div>
-        <p className="mt-4 text-sm text-[var(--syntax-comment)] text-center sm:text-left">
-          Contributions to public repositories on GitHub.
-        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <GithubMark className="h-4 w-4" aria-hidden />
+          <span>Contributions to public repositories on GitHub.</span>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

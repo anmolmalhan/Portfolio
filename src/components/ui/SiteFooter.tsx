@@ -3,13 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GithubMark, LinkedinMark } from "@/components/ui/BrandMarks";
+import { Container } from "@/components/ui/Container";
+import { siteConfig } from "@/config/site";
 
-const NAV = [
-  { label: "Work", href: "/projects" },
-  { label: "Notes", href: "/notes" },
-  { label: "Studio", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
+const NAV = siteConfig.nav;
 
 /**
  * Compact site-wide footer for the inner pages. The home route is excluded —
@@ -20,37 +17,55 @@ export function SiteFooter() {
   if (pathname === "/") return null;
 
   return (
-    <footer className="border-t border-surface mt-auto pointer-events-auto">
-      <div className="max-w-5xl mx-auto px-6 py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 font-mono text-xs text-[var(--syntax-comment)] uppercase tracking-widest">
-        <div>© {new Date().getFullYear()} Anmol Malhan</div>
-        <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Footer">
-          {NAV.map(({ label, href }) => (
-            <Link key={href} href={href} className="hover:text-foreground transition-colors">
-              {label}
-            </Link>
-          ))}
+    <footer className="border-t border-border mt-auto pointer-events-auto">
+      <Container className="py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 font-mono text-xs text-muted-foreground uppercase tracking-widest">
+        <div>© {new Date().getFullYear()} {siteConfig.name}</div>
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-1" aria-label="Footer">
+          {NAV.map(({ label, href, soon }) =>
+            soon ? (
+              <span
+                key={href}
+                className="py-2 inline-flex items-center gap-1.5 text-muted-foreground cursor-default select-none"
+              >
+                <span>{label}</span>
+                <span className="text-[9px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">
+                  Soon
+                </span>
+              </span>
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                className="py-2 hover:text-foreground transition-colors"
+              >
+                {label}
+              </Link>
+            ),
+          )}
         </nav>
-        <div className="flex items-center gap-4">
+        {/* Padding, not a scaled-up overlay: a hit area that doesn't
+            participate in layout can cover a neighbouring link. */}
+        <div className="flex items-center gap-2 -ml-3">
           <a
-            href="https://github.com/anmolmalhan"
+            href={siteConfig.social.github}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
+            className="p-3 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md"
           >
             <GithubMark className="w-4 h-4" />
           </a>
           <a
-            href="https://www.linkedin.com/in/anmolmalhan/"
+            href={siteConfig.social.linkedin}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
-            className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
+            className="p-3 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-md"
           >
             <LinkedinMark className="w-4 h-4" />
           </a>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

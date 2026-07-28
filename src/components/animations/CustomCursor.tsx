@@ -6,7 +6,7 @@ import { prefersReducedMotion } from "@/lib/motion";
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) return;
@@ -15,33 +15,42 @@ export default function CustomCursor() {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    // Use GSAP to enforce strict centering independent of other transforms
     gsap.set(cursor, { xPercent: -50, yPercent: -50 });
 
-    const onPointerMove = (e: PointerEvent) => {
-      gsap.to(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.15,
-        ease: "power2.out",
-      });
+    // quickTo reuses ONE tween per axis instead of allocating a new gsap.to on
+    // every pointermove — far less per-move overhead (the old approach was a
+    // jitter source when moving fast).
+    const xTo = gsap.quickTo(cursor, "x", { duration: 0.15, ease: "power3.out" });
+    const yTo = gsap.quickTo(cursor, "y", { duration: 0.15, ease: "power3.out" });
 
-      // Hit-test on every move instead of subscribing to per-element
-      // pointerenter/leave. handles dynamically inserted/removed targets
-      // without re-binding listeners and avoids the thrash from bubbling
-      // mouseover firing on every nested child transition.
-      const target = e.target as HTMLElement | null;
-      const interactive = target?.closest('a, button, [role="button"], .cursor-pointer');
-      const wantsLarge = !!interactive;
-      const currentScale = Number(cursor.dataset.scale ?? "1");
-      const nextScale = wantsLarge ? 3 : 1;
-      if (currentScale !== nextScale) {
-        cursor.dataset.scale = String(nextScale);
-        gsap.to(cursor, { scale: nextScale, opacity: wantsLarge ? 0.3 : 1, duration: 0.3 });
+    let latestTarget: EventTarget | null = null;
+    let hitTestQueued = false;
+    let currentScale = 1;
+
+    // The expensive part — walking the DOM with closest() — runs at most once
+    // per animation frame, not once per pointer event.
+    const runHitTest = () => {
+      hitTestQueued = false;
+      const el = latestTarget as HTMLElement | null;
+      const interactive = !!el?.closest?.('a, button, [role="button"], .cursor-pointer');
+      const next = interactive ? 3 : 1;
+      if (next !== currentScale) {
+        currentScale = next;
+        gsap.to(cursor, { scale: next, opacity: interactive ? 0.3 : 1, duration: 0.3 });
       }
     };
 
-    window.addEventListener("pointermove", onPointerMove);
+    const onPointerMove = (e: PointerEvent) => {
+      xTo(e.clientX);
+      yTo(e.clientY);
+      latestTarget = e.target;
+      if (!hitTestQueued) {
+        hitTestQueued = true;
+        requestAnimationFrame(runHitTest);
+      }
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
     return () => window.removeEventListener("pointermove", onPointerMove);
   }, []);
 

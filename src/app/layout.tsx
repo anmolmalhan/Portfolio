@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { siteConfig } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,11 +76,13 @@ const personJsonLd = {
   jobTitle: "Frontend Developer",
   url: siteUrl,
   image: `${siteUrl}/profile.jpg`,
-  address: { "@type": "PostalAddress", addressLocality: "Rohtak", addressRegion: "Haryana", addressCountry: "IN" },
-  sameAs: [
-    "https://github.com/anmolmalhan",
-    "https://www.linkedin.com/in/anmolmalhan/",
-  ],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: siteConfig.location.city,
+    addressRegion: siteConfig.location.region,
+    addressCountry: siteConfig.location.country,
+  },
+  sameAs: [siteConfig.social.github, siteConfig.social.linkedin],
   knowsAbout: ["Next.js", "React", "TypeScript", "Tailwind CSS", "GSAP", "Interaction Design"],
 };
 
@@ -123,10 +126,16 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <Header />
+        <div className="grain" aria-hidden />
         <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
         <SiteFooter />
         <ClientRuntime />
-        <Analytics />
+        {/* Only mount Analytics on Vercel. Its beacon script (/_vercel/…) only
+            exists on Vercel-hosted deployments; loading it anywhere else (a
+            local `next start`, a self-host) 404s and logs a console error that
+            dings the Best-Practices score. VERCEL is set on every Vercel build
+            and runtime, so production analytics is unaffected. */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );
