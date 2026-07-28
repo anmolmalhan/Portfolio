@@ -59,18 +59,18 @@ export default async function ContactPage({
         {/* Supporting column */}
         <div className="lg:col-span-5 lg:sticky lg:top-28">
           {/* Spec rail — same hairline-divided language as the hero. */}
-          <dl className="grid grid-cols-1 divide-y divide-border border-y border-border">
-            {meta.map(({ label, value }, i) => (
-              <Reveal key={label} delay={i * 80}>
-                <div className="flex items-baseline justify-between gap-4 py-4">
+          <Reveal>
+            <dl className="grid grid-cols-1 divide-y divide-border border-y border-border">
+              {meta.map(({ label, value }) => (
+                <div key={label} className="flex items-baseline justify-between gap-4 py-4">
                   <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                     {label}
                   </dt>
                   <dd className="text-sm font-medium text-right">{value}</dd>
                 </div>
-              </Reveal>
-            ))}
-          </dl>
+              ))}
+            </dl>
+          </Reveal>
 
           <section className="mt-12" aria-labelledby="good-fit-heading">
             <h2

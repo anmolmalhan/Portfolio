@@ -121,6 +121,7 @@ export default function AboutPage() {
               fill
               className="object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 motion-safe:group-hover:scale-[1.03]"
               sizes="(max-width: 1024px) 100vw, 420px"
+              quality={68}
               priority
             />
           </div>

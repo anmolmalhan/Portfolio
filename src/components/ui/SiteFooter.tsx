@@ -25,7 +25,7 @@ export function SiteFooter() {
             soon ? (
               <span
                 key={href}
-                className="py-2 inline-flex items-center gap-1.5 text-muted-foreground/60 cursor-default select-none"
+                className="py-2 inline-flex items-center gap-1.5 text-muted-foreground cursor-default select-none"
               >
                 <span>{label}</span>
                 <span className="text-[9px] tracking-widest rounded-full border border-current px-1.5 py-0.5 leading-none">

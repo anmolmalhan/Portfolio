@@ -39,6 +39,10 @@ export default function ProjectsPage() {
                      alt={project.title}
                      fill
                      sizes="(max-width: 768px) 100vw, 50vw"
+                     // The first card is above the fold and was the LCP
+                     // element, but lazy by default — so it wasn't even
+                     // discovered until 1.5s in. The rest stay lazy.
+                     priority={i === 0}
                      className="object-cover group-hover:scale-105 transition-transform duration-700"
                    />
                  ) : (

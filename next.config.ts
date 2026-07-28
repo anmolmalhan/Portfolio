@@ -34,6 +34,16 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    // Next negotiates WebP by default; adding AVIF ahead of it means modern
+    // browsers get the smaller encode. The /about portrait is the LCP element
+    // there and was shipping 107kB of WebP.
+    formats: ["image/avif", "image/webp"],
+    // Next 16 only serves qualities listed here. 68 is for the /about
+    // portrait, which is the LCP element on that route and renders grayscale
+    // at rest, so it tolerates more compression than the default 75.
+    qualities: [68, 75],
+  },
   experimental: {
     viewTransition: true,
   },
