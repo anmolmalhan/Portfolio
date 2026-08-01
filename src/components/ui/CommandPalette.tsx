@@ -78,6 +78,15 @@ function Hint({ keys, label }: { keys: string[]; label: string }) {
  *
  * Mounted once in the root layout. Renders no markup until opened, so it costs
  * a keydown listener and nothing on first paint.
+ *
+ * Known limitation: cmdk derives `aria-activedescendant` from its internal
+ * `selectedItemId`, which stays empty until the first arrow press. On open a
+ * row is therefore highlighted visually while a screen reader has nothing to
+ * announce; it corrects itself as soon as the user navigates. Controlling the
+ * `value` prop was tried and does not populate it. Mirroring the selection into
+ * the attribute by hand would mean observing cmdk's DOM and fighting the
+ * library, for a surface that is a shortcut to destinations the normal nav
+ * already exposes, so it is left as is.
  */
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
