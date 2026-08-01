@@ -70,7 +70,7 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
               style={calendarStyle}
               /* Without this the component renders nothing on a failed fetch,
                  leaving an unexplained blank slab on the page. */
-              errorMessage="Couldn't reach GitHub just now — the contribution graph is live at github.com/anmolmalhan."
+              errorMessage="Couldn't reach GitHub just now. The contribution graph is live at github.com/anmolmalhan."
             />
           </div>
         </div>

@@ -1,0 +1,42 @@
+# Git hooks. Installed by the `prepare` script, so a fresh `npm install` wires
+# them up with no extra step.
+#
+# The split is by cost. Everything on pre-commit finishes in a couple of
+# seconds, so it can run on every commit without becoming the kind of hook
+# people start passing --no-verify to. The slow checks move to pre-push, which
+# still catches problems before anything reaches CI.
+#
+# This exists because both failure modes below actually happened here: a commit
+# landed with a stale e2e assertion, and another desynced the lockfile so
+# `npm ci` broke on Linux. CI caught them, but only after review had started.
+
+pre-commit:
+  parallel: false
+  jobs:
+    - name: lint-staged
+      run: npx lint-staged
+      stage_fixed: true
+
+    - name: typecheck
+      # Project-wide, not just staged files: a change in one file routinely
+      # breaks types in another that isn't part of the commit.
+      run: npx tsc --noEmit
+
+    - name: unit
+      run: npm test
+
+pre-push:
+  parallel: false
+  jobs:
+    - name: lockfile
+      # `npm ci` is what CI runs, and it fails when package.json and the lock
+      # disagree. That disagreement is invisible to `npm install`, so it only
+      # ever surfaced on Linux CI. --dry-run gives the same verdict in seconds
+      # without touching node_modules.
+      run: npm ci --dry-run
+
+    - name: build
+      run: npm run build
+
+    - name: e2e
+      run: npm run test:e2e
