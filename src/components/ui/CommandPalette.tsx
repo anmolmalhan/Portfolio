@@ -2,7 +2,20 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Copy, Moon, Monitor, Sun } from "lucide-react";
+import Image from "next/image";
+import {
+  ArrowUpRight,
+  AtSign,
+  Check,
+  FolderGit2,
+  Home,
+  Mail,
+  Monitor,
+  Moon,
+  Sun,
+  User,
+  type LucideIcon,
+} from "lucide-react";
 import {
   Command,
   CommandDialog,
@@ -12,22 +25,59 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "./command";
 import { GithubMark, LinkedinMark } from "./BrandMarks";
 import { projects } from "@/data/projects";
 import { siteConfig } from "@/config/site";
 import { applyTheme, getServerTheme, getThemeSnapshot, subscribeToTheme } from "@/lib/theme";
 
+/** Route icons, so every row is scannable by shape before it is read. */
+const ROUTE_ICONS: Record<string, LucideIcon> = {
+  "/": Home,
+  "/projects": FolderGit2,
+  "/about": User,
+  "/contact": Mail,
+};
+
+/** Right-hand metadata. Deliberately quiet: it annotates, it does not compete. */
+function Meta({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      data-slot="command-shortcut"
+      className="ml-auto shrink-0 pl-4 font-mono text-[11px] tracking-wide text-muted-foreground/70"
+    >
+      {children}
+    </span>
+  );
+}
+
+function Hint({ keys, label }: { keys: string[]; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      {keys.map((k) => (
+        <kbd
+          key={k}
+          className="flex h-5 min-w-5 items-center justify-center rounded border border-border bg-muted px-1 font-mono text-[10px] text-muted-foreground"
+        >
+          {k}
+        </kbd>
+      ))}
+      <span className="text-[11px] text-muted-foreground">{label}</span>
+    </span>
+  );
+}
+
 /**
  * Keyboard-first navigation, opened with ⌘K / Ctrl+K.
  *
- * The site already speaks in terminal idiom — mono type, `// comments`,
- * `cd ../projects` — but navigation was a conventional nav bar, so the
- * aesthetic was decorative. This makes it operable.
+ * The site speaks in terminal idiom, but the palette does not lean on it:
+ * an earlier pass prefixed every row with a mono `cd` / `open`, which read as
+ * filler, made the left edge ragged and gave nothing to scan by. Rows now lead
+ * with an icon, metadata sits quietly on the right, and a hint bar spells out
+ * the keys — the shape people already expect from a command surface.
  *
- * Mounted once in the root layout. It renders nothing until opened, so it
- * costs a keydown listener and no markup on first paint.
+ * Mounted once in the root layout. Renders no markup until opened, so it costs
+ * a keydown listener and nothing on first paint.
  */
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -39,8 +89,8 @@ export function CommandPalette() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      // metaKey covers ⌘ on macOS, ctrlKey the rest. Ignore repeats so
-      // holding the chord doesn't flip it open and shut.
+      // metaKey covers ⌘ on macOS, ctrlKey the rest. Ignore repeats so holding
+      // the chord doesn't flip it open and shut.
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey) && !e.repeat) {
         e.preventDefault();
         setOpen((v) => !v);
@@ -57,49 +107,52 @@ export function CommandPalette() {
     action();
   }, []);
 
+  const navItems = siteConfig.nav.filter((item) => !item.soon);
+
   return (
     <CommandDialog
       open={open}
       onOpenChange={setOpen}
       title="Command palette"
       description="Search for a page, project, or action"
-      className="border-border"
+      className="max-w-xl! overflow-hidden rounded-2xl! border-border p-0 shadow-2xl shadow-black/40"
     >
       {/* shadcn's CommandDialog renders children straight into DialogContent
           without a <Command> root, so cmdk's store context is undefined and
-          every CommandInput/CommandList throws "reading 'subscribe'". Supply
-          the root here. */}
-      <Command>
-        <CommandInput placeholder="Type a command or search…" />
-      <CommandList>
-          <CommandEmpty>
+          every CommandInput/CommandList throws "reading 'subscribe'". */}
+      <Command className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted-foreground/60 [&_[cmdk-item]]:gap-3 [&_[cmdk-item]]:rounded-lg [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:size-4 [&_[cmdk-item]_svg]:text-muted-foreground [&_[cmdk-item][data-selected=true]_svg]:text-foreground">
+        <CommandInput placeholder="Search pages, projects, and actions…" />
+
+        <CommandList className="max-h-[22rem] p-2">
+          <CommandEmpty className="py-10 text-center">
             <span className="font-mono text-sm text-muted-foreground">
               {"// no matches"}
             </span>
           </CommandEmpty>
 
-          <CommandGroup heading="Go to">
-            {siteConfig.nav
-              .filter((item) => !item.soon)
-              .map((item) => (
+          <CommandGroup heading="Pages">
+            <CommandItem value="home overview" onSelect={() => run(() => router.push("/"))}>
+              <Home />
+              <span>Home</span>
+              <Meta>/</Meta>
+            </CommandItem>
+            {navItems.map((item) => {
+              const Icon = ROUTE_ICONS[item.href] ?? FolderGit2;
+              return (
                 <CommandItem
                   key={item.href}
                   value={`${item.label} ${item.href}`}
                   onSelect={() => run(() => router.push(item.href))}
                 >
-                  <span className="font-mono text-muted-foreground">cd</span>
+                  <Icon />
                   <span>{item.label}</span>
-                  <CommandShortcut className="font-mono">{item.href}</CommandShortcut>
+                  <Meta>{item.href}</Meta>
                 </CommandItem>
-              ))}
-            <CommandItem value="home /" onSelect={() => run(() => router.push("/"))}>
-              <span className="font-mono text-muted-foreground">cd</span>
-              <span>Home</span>
-              <CommandShortcut className="font-mono">/</CommandShortcut>
-            </CommandItem>
+              );
+            })}
           </CommandGroup>
 
-          <CommandSeparator />
+          <CommandSeparator className="my-2" />
 
           <CommandGroup heading="Projects">
             {projects.map((project) => (
@@ -108,18 +161,30 @@ export function CommandPalette() {
                 value={`${project.title} ${project.techStack.join(" ")}`}
                 onSelect={() => run(() => router.push(`/projects/${project.slug}`))}
               >
-                <span className="font-mono text-muted-foreground">open</span>
+                {/* The project's own thumbnail rather than a shared folder
+                    glyph. Four identical icons gave the eye nothing to sort
+                    by; the artwork makes each row identifiable at a glance.
+                    Loaded only when the palette opens. */}
+                {project.image ? (
+                  <Image
+                    src={project.image}
+                    alt=""
+                    width={40}
+                    height={24}
+                    className="size-auto h-6 w-10 shrink-0 rounded-[3px] border border-border/60 object-cover"
+                  />
+                ) : (
+                  <FolderGit2 />
+                )}
                 <span>{project.title}</span>
-                <CommandShortcut className="font-mono">
-                  {project.techStack[0]}
-                </CommandShortcut>
+                <Meta>{project.techStack.slice(0, 2).join(" · ")}</Meta>
               </CommandItem>
             ))}
           </CommandGroup>
 
-          <CommandSeparator />
+          <CommandSeparator className="my-2" />
 
-          <CommandGroup heading="Theme">
+          <CommandGroup heading="Appearance">
             {(
               [
                 { value: "light", label: "Light", Icon: Sun },
@@ -134,16 +199,14 @@ export function CommandPalette() {
               >
                 <Icon />
                 <span>{label}</span>
-                {theme === value && (
-                  <CommandShortcut className="font-mono">active</CommandShortcut>
-                )}
+                {theme === value && <Check className="ml-auto text-accent!" />}
               </CommandItem>
             ))}
           </CommandGroup>
 
-          <CommandSeparator />
+          <CommandSeparator className="my-2" />
 
-          <CommandGroup heading="Elsewhere">
+          <CommandGroup heading="Connect">
             <CommandItem
               value="copy email address"
               onSelect={() =>
@@ -152,28 +215,39 @@ export function CommandPalette() {
                 })
               }
             >
-              <Copy />
+              <AtSign />
               <span>Copy email</span>
-              <CommandShortcut className="font-mono">{siteConfig.email}</CommandShortcut>
+              <Meta>{siteConfig.email}</Meta>
             </CommandItem>
             <CommandItem
               value="github profile"
-              onSelect={() => run(() => window.open(siteConfig.social.github, "_blank", "noopener,noreferrer"))}
+              onSelect={() =>
+                run(() => window.open(siteConfig.social.github, "_blank", "noopener,noreferrer"))
+              }
             >
               <GithubMark className="size-4" />
               <span>GitHub</span>
-              <ArrowUpRight className="ml-auto size-3.5 text-muted-foreground" />
+              <ArrowUpRight className="ml-auto" />
             </CommandItem>
             <CommandItem
               value="linkedin profile"
-              onSelect={() => run(() => window.open(siteConfig.social.linkedin, "_blank", "noopener,noreferrer"))}
+              onSelect={() =>
+                run(() => window.open(siteConfig.social.linkedin, "_blank", "noopener,noreferrer"))
+              }
             >
               <LinkedinMark className="size-4" />
               <span>LinkedIn</span>
-              <ArrowUpRight className="ml-auto size-3.5 text-muted-foreground" />
+              <ArrowUpRight className="ml-auto" />
             </CommandItem>
           </CommandGroup>
-          </CommandList>
+        </CommandList>
+
+        {/* Spells out the interaction rather than assuming it. */}
+        <div className="flex items-center gap-4 border-t border-border px-4 py-2.5">
+          <Hint keys={["↑", "↓"]} label="Navigate" />
+          <Hint keys={["↵"]} label="Select" />
+          <Hint keys={["esc"]} label="Close" />
+        </div>
       </Command>
     </CommandDialog>
   );
