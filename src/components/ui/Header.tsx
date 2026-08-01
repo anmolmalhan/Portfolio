@@ -217,6 +217,24 @@ export function Header() {
               className="nav-indicator pointer-events-none absolute -bottom-1 h-0.5 rounded-full opacity-0 transition-[left,width,opacity] duration-300 ease-out"
             />
           </div>
+          {/* Affordance for the ⌘K palette. Without a visible trigger the
+              shortcut is invisible to anyone who doesn't already expect it,
+              and it would go unused. Dispatches the same chord the palette
+              listens for, so there is one code path rather than shared state.
+              Desktop only — the shortcut needs a keyboard to be useful. */}
+          <button
+            type="button"
+            onClick={() =>
+              document.dispatchEvent(
+                new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }),
+              )
+            }
+            aria-label="Open command palette"
+            className="hidden md:inline-flex items-center gap-1.5 rounded-md border border-current/25 px-2 py-1 font-mono text-[11px] uppercase tracking-widest opacity-60 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <kbd className="font-mono">⌘</kbd>
+            <kbd className="font-mono">K</kbd>
+          </button>
           <ThemeToggle />
           <button
             ref={menuButtonRef}

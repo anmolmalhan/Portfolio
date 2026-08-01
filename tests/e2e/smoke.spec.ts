@@ -116,6 +116,39 @@ test.describe("smoke", () => {
     await expect(page).toHaveURL(/\/$/);
   });
 
+  test("command palette opens, filters, and navigates", async ({ page }) => {
+    await page.goto("/");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeHidden();
+
+    // The chord is the primary entry point. ControlOrMeta keeps this passing on
+    // both the macOS dev machine and the Linux CI runner.
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(dialog).toBeVisible();
+
+    await page.keyboard.type("speedo");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/projects\/speedometx$/);
+
+    // Escape must close it, or keyboard users get trapped.
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  });
+
+  test("command palette has a visible trigger and can set the theme", async ({ page }) => {
+    await page.goto("/");
+    // A shortcut with no affordance is undiscoverable, so the header button
+    // must open the same palette.
+    await page.getByRole("button", { name: /open command palette/i }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+
+    await page.keyboard.type("light");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  });
+
   test("tools nav entry is present but not navigable", async ({ page }) => {
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Primary" });
