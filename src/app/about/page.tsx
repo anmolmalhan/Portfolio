@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const MINDSET = [
   {
     title: "What I build",
-    desc: "Performance-driven frontend apps, interactive dashboards, and landing pages. I enjoy the space where design meets logic — code that balances readability, performance, and design precision.",
+    desc: "Performance-driven frontend apps, interactive dashboards, and landing pages. I enjoy the space where design meets logic, writing code that balances readability, performance, and design precision.",
   },
   {
     title: "Currently learning",

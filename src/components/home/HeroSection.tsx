@@ -174,7 +174,7 @@ export default function HeroSection() {
             <h1 className="hero-fade mt-7 max-w-md text-base md:text-lg leading-relaxed font-normal text-muted-foreground">
               {siteConfig.tagline}{" "}
               <span className="text-foreground">
-                Freelance &amp; full-time — marketplaces, dashboards, and tools that
+                Freelance &amp; full-time. Marketplaces, dashboards, and tools that
                 load fast on real devices.
               </span>
             </h1>
