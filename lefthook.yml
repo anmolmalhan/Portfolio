@@ -33,7 +33,11 @@ pre-push:
       # disagree. That disagreement is invisible to `npm install`, so it only
       # ever surfaced on Linux CI. --dry-run gives the same verdict in seconds
       # without touching node_modules.
-      run: npm ci --dry-run
+      #
+      # --prefer-offline so this does not block a push on a train or a bad
+      # connection. Verified it still reports EUSAGE on a deliberate desync,
+      # so resolving from cache costs nothing in coverage.
+      run: npm ci --dry-run --prefer-offline
 
     - name: build
       run: npm run build
