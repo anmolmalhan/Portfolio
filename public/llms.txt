@@ -1,0 +1,30 @@
+# Anmol Malhan — Frontend Portfolio
+
+> Portfolio site for Anmol Malhan, a frontend developer in Rohtak, India, building
+> motion-heavy product interfaces with Next.js, React, TypeScript and GSAP.
+
+Next.js App Router, Tailwind CSS v4, shadcn/ui, GSAP, React Three Fiber, Lenis.
+Statically generated and deployed on Vercel. No database, no auth, no API layer:
+project and site data are typed modules under `src/data` and `src/config`.
+
+## Pages
+
+- [Home](https://anmolmalhan.com/): Hero with an interactive 3D robot, selected-projects carousel, approach statement, and a physics-driven tech stack.
+- [Projects](https://anmolmalhan.com/projects): Index of shipped work with stack, summary and links.
+- [Case studies](https://anmolmalhan.com/projects/tripmates): Per-project write-ups covering the problem, approach, architecture and metrics.
+- [About](https://anmolmalhan.com/about): Background, working principles and GitHub contribution activity.
+- [Contact](https://anmolmalhan.com/contact): Terminal-styled form posting to a Next.js Server Action, with mailto fallback.
+
+## Projects
+
+- [Tripmates](https://anmolmalhan.com/projects/tripmates): Group-travel marketplace for India. Solo travellers join curated trips with verified hosts, fixed dates and pre-booked hotels.
+- [SpeedometX](https://anmolmalhan.com/projects/speedometx): Edge network telemetry dashboard with high-precision, motion-driven readouts.
+- [Swift Digital Seva](https://anmolmalhan.com/projects/swift-digital-seva): Client work OS covering request intake, document checks, payment status and delivery tracking.
+- [Match Tracker](https://anmolmalhan.com/projects/match-tracker): Tournament scoring app with GitHub authentication.
+
+## Conventions
+
+- `src/config/site.ts` is the single source for brand, navigation, socials and location.
+- Design tokens live in `src/app/globals.css` as a brand layer plus a shadcn semantic layer, defined for both themes.
+- Theming is tri-state through a `data-theme` attribute: light, dark, or absent for system.
+- `AGENTS.md` in the repository root carries the working conventions and the non-obvious traps.
