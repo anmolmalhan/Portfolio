@@ -156,4 +156,62 @@ test.describe("smoke", () => {
     await expect(page).toHaveURL(/\/blog$/);
     await expect(page.getByRole("heading", { level: 1, name: "Blog" })).toBeVisible();
   });
+
+  test("blog index lists posts and each one opens", async ({ page }) => {
+    await page.goto("/blog");
+
+    // The index reads frontmatter through gray-matter without compiling any
+    // MDX. If that path breaks it renders the "First post is on its way."
+    // empty state rather than throwing, so assert on real entries.
+    const entries = page.locator('a[href^="/blog/"]');
+    const count = await entries.count();
+    expect(count).toBeGreaterThan(0);
+
+    await entries.first().click();
+    await expect(page).toHaveURL(/\/blog\/[a-z0-9-]+$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("a post renders body copy, MDX components, and highlighted code", async ({ page }) => {
+    await page.goto("/blog/run-claude-code-from-your-phone");
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: /Run Claude Code From Your Phone/i })
+    ).toBeVisible();
+
+    // The body is pulled in by a templated dynamic import
+    // (`@/content/blog/${slug}.mdx`). Nothing else in the suite exercises it,
+    // and a broken specifier fails at request time, not at build time.
+    await expect(page.getByRole("heading", { level: 2, name: "The setup" })).toBeVisible();
+
+    // Custom components resolved through mdx-components.tsx. A missing mapping
+    // renders the raw tag name instead of the component and would otherwise
+    // pass unnoticed.
+    await expect(page.locator("figure").first()).toBeVisible();
+
+    // rehype-pretty-code runs Shiki at build time and tags each token with
+    // --shiki-light/--shiki-dark. If highlighting silently stops, the block
+    // still renders as plain text, so assert on a coloured token specifically.
+    const code = page.locator("pre.mdx-code").first();
+    await expect(code).toBeVisible();
+    await expect(code.locator('span[style*="--shiki"]').first()).toBeVisible();
+
+    // Code inside a fence must not inherit the 0.875em inline-code scaling.
+    // Regression guard: `[pre_&]:text-inherit` sets colour, not font-size, so
+    // this silently rendered at 11.4px on mobile.
+    const preSize = await code.evaluate((el) => getComputedStyle(el).fontSize);
+    const codeSize = await code
+      .locator("code")
+      .first()
+      .evaluate((el) => getComputedStyle(el).fontSize);
+    expect(codeSize).toBe(preSize);
+  });
+
+  test("unknown post slug 404s rather than erroring", async ({ page }) => {
+    // dynamicParams = false, so anything outside generateStaticParams must be
+    // a clean 404 and never a failed module resolution.
+    const res = await page.goto("/blog/no-such-post");
+    expect(res?.status()).toBe(404);
+    await expect(page.getByText("404: route not found")).toBeVisible();
+  });
 });

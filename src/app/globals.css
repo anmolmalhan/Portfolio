@@ -599,6 +599,16 @@ html.lenis, html.lenis body {
 .mdx-code code {
   display: grid;          /* one grid row per line, so highlighted lines span full width */
   background: transparent;
+  /* The <code> component styles inline code, where text-[0.875em] correctly
+     shrinks it relative to the surrounding prose. Inside a fenced block that
+     scaling is wrong: the <pre> has already set the size, and 0.875 of it
+     rendered code at 11.4px on mobile.
+
+     This lives here rather than as a `[pre_&]:` utility because the obvious
+     spelling does not work. Tailwind's `text-inherit` is a COLOUR utility, so
+     `[pre_&]:text-inherit` compiles to `color: inherit` and silently leaves
+     font-size alone. That was the actual bug. */
+  font-size: inherit;
 }
 .mdx-code span[data-line] {
   padding-inline: 0.15rem;

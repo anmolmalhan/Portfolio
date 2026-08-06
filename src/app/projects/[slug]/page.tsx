@@ -136,20 +136,17 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       <Container size="content" className="mb-32">
         <div className={`w-full ${featureImageAspect} bg-muted overflow-hidden relative`}
              style={{ viewTransitionName: `image-${project.slug}` } as React.CSSProperties}>
-          {project.image ? (
-            <Image
-              src={project.image}
-              alt={`${project.title} Interface`}
-              fill
-              sizes="(max-width: 1024px) 100vw, 1280px"
-              priority
-              className="object-cover opacity-90 hover:opacity-100 hover:scale-[1.02] transition-all duration-1000 ease-out"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center font-mono text-muted-foreground bg-muted">
-               Hero Image Placeholder
-            </div>
-          )}
+          {/* No empty-state branch: `image` is a required string on Project, so
+              the fallback that used to sit here was unreachable. If the field
+              ever becomes optional, the placeholder needs to come back with it. */}
+          <Image
+            src={project.image}
+            alt={`${project.title} Interface`}
+            fill
+            sizes="(max-width: 1024px) 100vw, 1280px"
+            priority
+            className="object-cover opacity-90 hover:opacity-100 hover:scale-[1.02] transition-all duration-1000 ease-out"
+          />
         </div>
       </Container>
 

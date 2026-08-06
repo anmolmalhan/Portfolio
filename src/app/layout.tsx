@@ -3,14 +3,34 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 
+/**
+ * `display: "optional"` is load-bearing, not a default worth changing casually.
+ *
+ * next/font already generates a metric-adjusted fallback (Arial with
+ * ascent/descent/size-adjust overrides), which matches Geist VERTICALLY. What
+ * it cannot match is per-glyph advance width, so under `swap` a paragraph of
+ * body copy re-wraps the moment the real font arrives: a five-line paragraph
+ * becomes four, and everything below it jumps. That measured 0.106 CLS on the
+ * blog post, over Google's 0.1 threshold, while the rest of the site sat at
+ * 0.001. Long prose is the one place the fix used elsewhere here (nowrap rails,
+ * count-based heights) does not apply, because re-wrapping is the point.
+ *
+ * `optional` gives the font ~100ms to arrive and otherwise keeps the fallback
+ * for that navigation rather than swapping mid-paint, which takes font-driven
+ * CLS to zero. The trade: a first-time visitor on a slow connection reads that
+ * one page in the fallback. The font is self-hosted, same-origin and preloaded,
+ * so it usually wins the race, and it is cached for every later navigation.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "optional",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "optional",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";

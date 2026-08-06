@@ -94,7 +94,7 @@ const components: MDXComponents = {
   // a data-language attribute; this only supplies the surface around it.
   pre: ({ children, ...props }) => (
     <pre
-      className="mdx-code my-8 overflow-x-auto rounded-xl border border-border bg-card p-4 md:p-5 text-[13px] leading-relaxed"
+      className="mdx-code my-8 overflow-x-auto rounded-xl border border-border bg-card p-4 md:p-5 text-[13.5px] md:text-[14px] leading-relaxed"
       {...props}
     >
       {children}
