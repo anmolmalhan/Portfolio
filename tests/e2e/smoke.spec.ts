@@ -185,9 +185,15 @@ test.describe("smoke", () => {
     await expect(page.getByRole("heading", { level: 2, name: "The setup" })).toBeVisible();
 
     // Custom components resolved through mdx-components.tsx. A missing mapping
-    // renders the raw tag name instead of the component and would otherwise
-    // pass unnoticed.
-    await expect(page.locator("figure").first()).toBeVisible();
+    // renders the raw tag name as text instead of the component, which is easy
+    // to miss. Assert on two specific components rather than a generic
+    // `figure`, which several of them emit: a loose locator here would keep
+    // passing after the one component under test stopped rendering.
+    await expect(page.getByRole("complementary").first()).toBeVisible(); // <Callout> -> <aside>
+    await expect(page.locator("figure").first()).toBeVisible(); // <ConnectionFlow> diagram
+
+    // The raw tag name leaking through as text is the actual failure mode.
+    await expect(page.getByText("<Callout", { exact: false })).toHaveCount(0);
 
     // rehype-pretty-code runs Shiki at build time and tags each token with
     // --shiki-light/--shiki-dark. If highlighting silently stops, the block
@@ -198,13 +204,18 @@ test.describe("smoke", () => {
 
     // Code inside a fence must not inherit the 0.875em inline-code scaling.
     // Regression guard: `[pre_&]:text-inherit` sets colour, not font-size, so
-    // this silently rendered at 11.4px on mobile.
-    const preSize = await code.evaluate((el) => getComputedStyle(el).fontSize);
+    // this silently rendered at 11.4px. Checked at a PHONE viewport, because
+    // the <pre> steps up at md and the desktop path would hide the bug.
+    await page.setViewportSize({ width: 390, height: 844 });
+    const preSize = await code.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     const codeSize = await code
       .locator("code")
       .first()
-      .evaluate((el) => getComputedStyle(el).fontSize);
+      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(codeSize).toBe(preSize);
+    // Absolute floor as well as parity: both inheriting a too-small size would
+    // satisfy the equality above while still being unreadable.
+    expect(codeSize).toBeGreaterThanOrEqual(13);
   });
 
   test("unknown post slug 404s rather than erroring", async ({ page }) => {
