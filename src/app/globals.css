@@ -582,3 +582,67 @@ html.lenis, html.lenis body {
     @apply font-sans;
   }
 }
+/* ---------------------------------------------------------------------------
+   Shiki output (rehype-pretty-code)
+   ---------------------------------------------------------------------------
+   Highlighting happens at build time and emits BOTH themes at once: every token
+   carries a --shiki-light and a --shiki-dark custom property. Switching theme
+   is then a CSS swap with no re-highlight and no client JS, which is the whole
+   reason for the dual-theme config in next.config.ts.
+
+   The two selectors below mirror how the `dark:` variant is wired at the top of
+   this file: an explicit [data-theme="dark"], plus the system-preference path
+   for when no attribute is set. Miss the second one and code blocks stay in
+   light colours for every visitor on system dark who has never touched the
+   toggle.
+   --------------------------------------------------------------------------- */
+.mdx-code code {
+  display: grid;          /* one grid row per line, so highlighted lines span full width */
+  background: transparent;
+}
+.mdx-code span[data-line] {
+  padding-inline: 0.15rem;
+}
+.mdx-code,
+.mdx-code span {
+  color: var(--shiki-light);
+}
+
+:root[data-theme="dark"] .mdx-code,
+:root[data-theme="dark"] .mdx-code span {
+  color: var(--shiki-dark);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .mdx-code,
+  :root:not([data-theme="light"]) .mdx-code span {
+    color: var(--shiki-dark);
+  }
+}
+
+/* Line numbers are off by default; opt in per block with showLineNumbers. */
+.mdx-code code[data-line-numbers] {
+  counter-reset: line;
+}
+.mdx-code code[data-line-numbers] > span[data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 1.5rem;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--syntax-comment);
+}
+
+/* Comment tokens: contrast fix.
+   github-light and github-dark both paint comments #6A737D, the same grey in
+   either theme. On our card surface that measures 3.91:1, under the 4.5:1
+   WCAG AA floor, and pa11y flagged five instances on the first blog post.
+   Remap comments onto the site's own --syntax-comment, which is tuned per
+   theme (#57575e light, #8b8b94 dark) and clears the threshold.
+
+   Keyed on the hex because rehype-pretty-code emits no token-type class. If the
+   Shiki theme in next.config.ts changes, re-check this selector: the failure
+   mode is silent, so the pa11y run is what catches it. */
+.mdx-code span[style*="#6A737D"] {
+  color: var(--syntax-comment) !important;
+}

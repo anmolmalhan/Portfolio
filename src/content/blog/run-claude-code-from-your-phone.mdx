@@ -1,0 +1,314 @@
+---
+title: "Run Claude Code From Your Phone"
+date: 2026-08-02
+summary: "Leave an AI coding agent running on your Mac, walk away, and pick the same session back up from your phone. Termius, Tailscale and tmux, plus the macOS Keychain trap that breaks it."
+tags: ["macOS", "SSH", "tmux", "Tailscale"]
+---
+
+An agent task that takes twenty minutes is a strange length of time. Too long to
+watch, too short to be worth abandoning. You start a refactor, it starts working,
+and then you need to leave.
+
+The fix is not a new tool. It is three old ones, each doing exactly one job:
+[tmux](https://github.com/tmux/tmux/wiki) keeps the session alive when your
+terminal goes away, [Tailscale](https://tailscale.com) makes your Mac reachable
+without exposing it to the internet, and [Termius](https://termius.com) is a
+decent SSH client for a phone. None of them knows the others exist.
+
+<ConnectionFlow />
+
+I set this up on a MacBook Air and an iPhone. Below is what actually worked,
+including the one failure that cost me the most time and has nothing to do with
+any of the three tools.
+
+## What this gets you
+
+You type a command at your desk. You close the laptop lid, get on a train, open
+an app on your phone, and you are looking at the same terminal, mid task, with
+the agent still working. Nothing reconnects, nothing restarts, nothing is lost.
+
+It also means your phone is not running anything. It is a window onto a session
+that lives on the Mac. The battery cost is the cost of drawing text.
+
+## Before you start
+
+| You need | Why |
+| --- | --- |
+| A Mac that stays awake | The session dies with the machine. See the sleep section below. |
+| A Tailscale account | The free plan covers this comfortably: 6 users and unlimited personal devices. |
+| Termius on your phone | iOS, iPadOS or Android. The free Starter plan is enough for everything here except one optional convenience, noted where it comes up. |
+| Five minutes | Genuinely. The setup is short. The gotcha is the long part. |
+
+<Callout type="note">
+  Tailscale is doing the security work here. You are not opening port 22 to the
+  internet, and you are not forwarding anything on your router. Your Mac becomes
+  reachable only from devices signed into your own tailnet.
+</Callout>
+
+## The setup
+
+<Steps>
+  <Step title="Turn on Remote Login">
+    This starts the SSH server that ships with macOS. Open System Settings,
+    go to General, then Sharing, and switch on Remote Login.
+
+    Click the small info button next to it and set access to your user account
+    only, rather than to all users. There is no reason for the guest account to
+    be able to log in.
+
+    <SharingPaneSketch />
+
+    You can confirm it is listening without leaving the terminal. A refusal here
+    means the toggle did not take:
+
+    <Terminal>{`$ nc -z -G 3 127.0.0.1 22 && echo "port 22 open"
+Connection to 127.0.0.1 port 22 [tcp/ssh] succeeded!
+port 22 open`}</Terminal>
+  </Step>
+
+  <Step title="Connect Tailscale on both devices">
+    Install Tailscale on the Mac and sign in, then install it on your phone and
+    sign in with the same account. That is the entire network configuration.
+
+    On the Mac, the menu bar icon needs to say Connected. An installed but
+    disconnected Tailscale is the single most common reason this setup appears
+    broken later, because everything else looks fine.
+
+    <TailscaleMenuSketch />
+
+    Now find the address your phone will dial. The CLI lives inside the app
+    bundle on macOS:
+
+    <Terminal>{`$ /Applications/Tailscale.app/Contents/MacOS/Tailscale status
+100.64.0.12    my-macbook   you@   macOS   -
+100.64.0.21    my-iphone    you@   iOS     -
+
+$ /Applications/Tailscale.app/Contents/MacOS/Tailscale ip -4
+100.64.0.12`}</Terminal>
+
+    That 100.x.x.x address is stable. It does not change when you move between
+    networks, which is the entire point. The machine name works too if you have
+    MagicDNS on.
+  </Step>
+
+  <Step title="Install tmux">
+    tmux is what makes the session survive your SSH connection closing. Without
+    it, quitting Termius kills whatever was running.
+
+    <Terminal>{`$ brew install tmux
+$ tmux -V
+tmux 3.7b`}</Terminal>
+  </Step>
+
+  <Step title="Add a key and a host in Termius">
+    In Termius on your phone, open Keychain and generate a new key. Ed25519 is
+    the right default. Then copy the public half of it.
+
+    <TermiusKeySketch />
+
+    On the Mac, append that public key to the authorised keys file. The
+    permissions matter: sshd silently ignores these files if they are writable
+    by anyone else, and it does not tell you why.
+
+    <Terminal>{`$ mkdir -p ~/.ssh && chmod 700 ~/.ssh
+$ pbpaste >> ~/.ssh/authorized_keys
+$ chmod 600 ~/.ssh/authorized_keys`}</Terminal>
+
+    Then add the host in Termius: the 100.x address as the hostname, port 22,
+    your Mac username, and the key you just made.
+
+    <TermiusHostSketch />
+  </Step>
+
+  <Step title="Start the session at the desk">
+    This step has an order that matters, and it is the reason for the next
+    section. Start tmux from a terminal on the Mac itself, not over SSH.
+
+    <Terminal>{`$ tmux new -s claude
+$ claude
+# work normally, then press Ctrl-b then d to detach`}</Terminal>
+
+    Detaching leaves everything running. You can close the terminal window
+    entirely and the session is untouched.
+  </Step>
+
+  <Step title="Attach from the phone">
+    Open the host in Termius and attach to the session you left:
+
+    <Terminal title="termius">{`$ tmux attach -t claude`}</Terminal>
+
+    You land exactly where you were.
+
+    <Callout type="note" title="Optional, and this one is paid">
+      Termius can run that command automatically when you open the host, so a
+      single tap resumes the session. It lives under the host's startup snippet
+      setting, and snippets are a Pro feature rather than part of the free
+      Starter plan. Typing the attach command yourself works identically, it is
+      just three more seconds.
+    </Callout>
+
+    <TermiusAttachedSketch />
+  </Step>
+</Steps>
+
+## The part that will catch you out
+
+Here is the failure I hit, and it is worth understanding because nothing in the
+error message points at the cause.
+
+I connected from my phone, ran the agent, and it asked me to log in. On a
+machine that was already logged in. Running it again at the desk worked fine.
+
+The reason is that the credentials live in the macOS login Keychain, and **a
+process started over SSH is not allowed to unseal them**. It is not that the
+Keychain is missing or locked. The SSH session can see the very same
+`login.keychain-db`, and it can read an item's metadata quite happily. What it
+cannot do is retrieve the secret material, because that requires an
+authorisation it does not hold and cannot ask for: there is no GUI on the other
+end of an SSH pipe to show the permission dialog to.
+
+You can watch this happen with a throwaway item, no real credential involved:
+
+<Terminal>{`# create a dummy item, then read it from the desktop session
+$ security add-generic-password -a "$USER" -s demo -w "hello" -U
+$ security find-generic-password -w -s demo
+hello
+
+# now the identical read, over SSH to the same machine
+$ ssh localhost 'security find-generic-password -w -s demo; echo "exit=$?"'
+exit=36`}</Terminal>
+
+No error text, no prompt, just a non-zero exit. An application hitting that gets
+nothing back and does the only thing left: it asks you to sign in again.
+
+<SessionOwnership />
+
+The tmux server inherits the security session of whatever launched it, and every
+pane in that server inherits it in turn. So if you start tmux from Terminal.app
+at your desk, panes you later type into from your phone still have desktop
+Keychain access, because they belong to a server that was born in the right
+place.
+
+Start tmux for the first time over SSH and every pane in it is stuck in the
+wrong session, no matter where you connect from afterwards.
+
+<Callout type="warning" title="The rule">
+  Create the tmux session at the desk. From the phone, only ever attach to it.
+  If you are ever unsure which you are doing, `tmux ls` on the Mac tells you
+  whether a server is already running.
+</Callout>
+
+To check whether your own tool stores credentials this way, look for a Keychain
+entry rather than a dotfile. This particular read is metadata only, so it works
+from either session:
+
+<Terminal>{`$ security find-generic-password -s "Claude Code-credentials" 2>&1 | grep svce
+    "svce"<blob>="Claude Code-credentials"`}</Terminal>
+
+If that comes back with an entry, the tool is Keychain-backed and this section
+applies to it.
+
+## The other thing that will catch you out
+
+**The Mac sleeping breaks the connection.** Not the session: tmux survives sleep
+perfectly well. But sshd cannot answer while the machine is asleep, so your
+phone just sees a connection timeout and it looks like the whole thing is
+broken.
+
+With the lid open, this keeps the machine up until you kill it:
+
+<Terminal>{`$ caffeinate -dis`}</Terminal>
+
+Those are three separate assertions: `-d` holds the display awake, `-i` blocks
+idle sleep, and `-s` blocks system sleep while on mains power. Leave it running
+in its own tmux window.
+
+<Callout type="warning" title="caffeinate does not beat a closed lid">
+  Closing the lid is a separate mechanism, and no `caffeinate` invocation
+  overrides it. A MacBook stays awake with the lid shut only in clamshell mode,
+  which needs mains power and an external display attached. With no monitor to
+  hand, the reliable answer is to leave the lid open. Undocumented `pmset`
+  flags and various menu bar utilities are often suggested for this; they are
+  outside what Apple documents, so treat them as your own risk rather than part
+  of this setup.
+</Callout>
+
+<Callout type="note">
+  A tmux server does not survive a reboot. Sessions are process state, not files.
+  After every restart you have to create the session again at the desk, which is
+  a small habit to build but an annoying one to discover remotely.
+</Callout>
+
+## Making it pleasant to actually use
+
+Default tmux on a phone screen is usable but not good. A few settings help more
+than their length suggests. In `~/.tmux.conf`:
+
+```bash
+set -g mouse on              # scroll and select panes by touch
+set -g history-limit 100000  # agent output is long
+set -sg escape-time 10       # stops ESC feeling laggy in editors
+```
+
+A word on window sizing, because plenty of guides tell you to set
+`aggressive-resize` here and it is the wrong advice for this setup. On tmux 3.x
+the relevant option is `window-size`, and it already defaults to `latest`,
+meaning the window follows whichever client was last active. Attach from your
+phone and it fits the phone; sit back down and type at the desk and it fits the
+desk again. Nothing is permanently squashed, so there is nothing to fix. tmux's
+own manual calls `aggressive-resize` "poor for interactive programs such as
+shells", which is precisely what you are running here.
+
+Verify the default rather than take my word for it:
+
+<Terminal>{`$ tmux show-options -g window-size
+window-size latest`}</Terminal>
+
+Two shell helpers worth having, in `~/.zshrc`:
+
+```bash
+# attach if it exists, create if it does not
+cc() { tmux attach -t "${1:-claude}" 2>/dev/null || tmux new -s "${1:-claude}"; }
+
+# keep the Mac awake while you are away (lid open)
+alias stayawake='caffeinate -dis'
+```
+
+Now the whole workflow is `cc` at the desk, and `cc` again from the phone.
+
+## When it does not work
+
+Work down this list. It is ordered by how often each one is the actual problem.
+
+| Symptom | Check |
+| --- | --- |
+| Connection times out | Is Tailscale Connected on the Mac? Is the Mac asleep? |
+| Connection refused | Remote Login got switched off. Re-check the Sharing pane. |
+| Permission denied (publickey) | Wrong username, or `authorized_keys` permissions are too open. It must be 600, inside a 700 directory. |
+| Asks you to log in to the agent | The tmux server was started over SSH. Kill it and recreate at the desk. |
+| Session is gone entirely | The Mac rebooted. tmux servers do not persist across restarts. |
+| Layout looks wrong after switching device | Type something on the device you are actually using. `window-size latest` follows the last active client. |
+
+A quick way to tell a network problem from an SSH problem is to ping the phone
+from the Mac over the tailnet. Note the full path: the macOS app ships its CLI
+inside the bundle and does not put `tailscale` on your `PATH`.
+
+<Terminal>{`$ /Applications/Tailscale.app/Contents/MacOS/Tailscale ping my-iphone
+pong from my-iphone (100.64.0.21) via 192.0.2.10:41641 in 284ms`}</Terminal>
+
+If that answers, the tailnet is fine and the problem is on the SSH side. Worth
+adding to your shell profile if you use it often:
+
+```bash
+alias tailscale='/Applications/Tailscale.app/Contents/MacOS/Tailscale'
+```
+
+## Worth saying
+
+None of this is specific to one agent. It is just a persistent remote shell, so
+it works the same for a long build, a training run, a database migration, or
+anything else you would rather not babysit from a chair.
+
+The interesting part is how little there is to it. Three tools that predate the
+problem by decades, one line of config each, and the only genuinely tricky bit is
+a macOS security detail that has nothing to do with any of them.

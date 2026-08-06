@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
 
 // Content-Security-Policy allowlist. 'unsafe-inline' is required for scripts
 // (Next.js hydration payloads and the pre-paint inline theme script) and for
@@ -34,6 +35,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // NOTE: `pageExtensions` is deliberately NOT extended with md/mdx. Posts in
+  // content/blog are *imported* by the [slug] route, not routed to directly,
+  // so registering the extensions would only make Next scan for MDX pages that
+  // do not exist.
   images: {
     // Next negotiates WebP by default; adding AVIF ahead of it means modern
     // browsers get the smaller encode. The /about portrait is the LCP element
@@ -81,4 +86,35 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/**
+ * Plugins are named as STRINGS, not imported functions. Turbopack runs the MDX
+ * pipeline in Rust and cannot receive JS function references across that
+ * boundary; passing `[remarkGfm]` here builds under webpack and then fails
+ * under `next dev`. Every option below has to stay JSON-serialisable for the
+ * same reason.
+ *
+ * - remark-frontmatter: parses the YAML block so it is not rendered as body
+ *   text. The values are read separately by src/lib/posts.ts via gray-matter.
+ * - rehype-slug: gives headings ids, which the in-post contents list links to.
+ * - rehype-pretty-code: build-time Shiki highlighting. Emits both themes as
+ *   CSS variables (--shiki-light / --shiki-dark) so a theme switch needs no
+ *   re-highlight and ships no client JS. `keepBackground: false` hands the
+ *   surface colour back to our own design tokens.
+ */
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: ["remark-frontmatter", "remark-gfm"],
+    rehypePlugins: [
+      "rehype-slug",
+      [
+        "rehype-pretty-code",
+        {
+          theme: { light: "github-light", dark: "github-dark" },
+          keepBackground: false,
+        },
+      ],
+    ],
+  },
+});
+
+export default withMDX(nextConfig);

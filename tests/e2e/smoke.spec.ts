@@ -149,12 +149,11 @@ test.describe("smoke", () => {
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   });
 
-  test("tools nav entry is present but not navigable", async ({ page }) => {
+  test("blog nav entry navigates to the post index", async ({ page }) => {
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Primary" });
-    await expect(nav.getByText("Tools", { exact: true })).toBeVisible();
-    await expect(nav.getByText("Soon", { exact: true })).toBeVisible();
-    // It must not be a link, or it would advertise a route that does not exist.
-    await expect(nav.getByRole("link", { name: /^Tools/ })).toHaveCount(0);
+    await nav.getByRole("link", { name: /^Blog/ }).click();
+    await expect(page).toHaveURL(/\/blog$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Blog" })).toBeVisible();
   });
 });

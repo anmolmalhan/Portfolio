@@ -20,7 +20,7 @@ export type NavItem = {
  *  the literal union made ordinary checks like `href !== "/"` a type error. */
 const nav: NavItem[] = [
   { label: "Work", href: "/projects" },
-  { label: "Tools", href: "/tools", soon: true },
+  { label: "Blog", href: "/blog" },
   { label: "Studio", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
