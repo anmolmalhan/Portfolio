@@ -49,9 +49,21 @@ const nextConfig: NextConfig = {
     // at rest, so it tolerates more compression than the default 75.
     qualities: [68, 75],
   },
-  experimental: {
-    viewTransition: true,
-  },
+  // NOTE: `experimental.viewTransition: true` used to sit here. Next 16.3
+  // removed the flag, so keeping it is now a type error, and view transitions
+  // need no configuration in the App Router.
+  //
+  // Removing it changed nothing observable, because the morphs it was meant to
+  // enable were never firing. Measured on BOTH 16.2.10-with-flag and
+  // 16.3.1-without: navigating /projects -> /projects/[slug] calls
+  // document.startViewTransition exactly 0 times, while 12 elements on the
+  // listing and 3 on the detail carry a viewTransitionName. Those style props
+  // are inert until something activates a transition.
+  //
+  // To actually get the shared-element morph, the paired elements have to be
+  // wrapped in React's <ViewTransition> with a matching `name`; a bare CSS
+  // view-transition-name is not enough. See
+  // node_modules/next/dist/docs/01-app/02-guides/view-transitions.md.
   // Playwright hits 127.0.0.1 rather than localhost; whitelist it so the
   // dev-server doesn't spam a cross-origin warning during E2E runs.
   allowedDevOrigins: ["127.0.0.1"],
