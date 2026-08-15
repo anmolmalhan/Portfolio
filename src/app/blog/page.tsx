@@ -60,9 +60,10 @@ export default function BlogPage() {
 
                   <div className="shrink-0 font-mono text-xs uppercase tracking-widest text-muted-foreground md:text-right">
                     <time dateTime={post.date}>{formatPostDate(post.date)}</time>
-                    <span className="mt-1 block text-muted-foreground/70">
-                      {post.readingTime} min read
-                    </span>
+                    {/* Full --muted-foreground, not /70. At 12px the faded
+                        variant measured 3.27:1 in light and 4.23:1 in dark,
+                        both under the 4.5:1 AA floor for body text. */}
+                    <span className="mt-1 block">{post.readingTime} min read</span>
                   </div>
                 </div>
               </Link>

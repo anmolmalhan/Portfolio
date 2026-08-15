@@ -218,6 +218,58 @@ test.describe("smoke", () => {
     expect(codeSize).toBeGreaterThanOrEqual(13);
   });
 
+  test("command palette finds blog posts", async ({ page }) => {
+    await page.goto("/");
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(page.getByRole("dialog")).toBeVisible();
+
+    // The palette is a client component and cannot read posts itself, so the
+    // root layout passes them down. If that prop is ever dropped the blog
+    // silently disappears from the one surface built for finding things.
+    await page.keyboard.type("claude");
+    await expect(page.getByText("// no matches")).toBeHidden();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/blog\/run-claude-code-from-your-phone$/);
+  });
+
+  test("command palette returns focus to its trigger on close", async ({ page }) => {
+    await page.goto("/");
+    const trigger = page.getByRole("button", { name: /open command palette/i });
+    await trigger.click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toBeHidden();
+
+    // Without this the trigger opens via a synthetic keydown that Radix never
+    // sees, focus falls to <body>, and a keyboard user restarts from the top
+    // of the document.
+    await expect(trigger).toBeFocused();
+  });
+
+  test("scrollable code regions are reachable by keyboard", async ({ page }) => {
+    await page.goto("/blog/run-claude-code-from-your-phone");
+    const pre = page.locator("pre").first();
+    await expect(pre).toHaveAttribute("tabindex", "0");
+    await pre.focus();
+    await expect(pre).toBeFocused();
+  });
+
+  test("site is readable when JavaScript is unavailable", async ({ browser }) => {
+    // React streams the route-level loading fallback into the visible tree and
+    // parks the page inside <div hidden id="S:...">, swapping them with an
+    // inline script. No JS, no swap: every route used to sit on the preloader
+    // forever with the whole page present but hidden.
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto("/");
+
+    const text = await page.evaluate(() => document.body.innerText.replace(/\s+/g, " ").trim());
+    expect(text).not.toContain("booting");
+    expect(text.length).toBeGreaterThan(1000);
+    expect(text).toContain("THINK.");
+    await context.close();
+  });
+
   test("unknown post slug 404s rather than erroring", async ({ page }) => {
     // dynamicParams = false, so anything outside generateStaticParams must be
     // a clean 404 and never a failed module resolution.

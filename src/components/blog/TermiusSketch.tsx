@@ -59,7 +59,7 @@ export function TermiusKeySketch() {
             className="mt-3 flex items-center justify-center gap-1.5 rounded-lg py-2 text-[11px] font-medium"
             style={{
               backgroundColor: "color-mix(in oklab, var(--syntax-blue) 12%, transparent)",
-              color: "var(--syntax-blue)",
+              color: "var(--syntax-blue-on-tint)",
             }}
           >
             <Copy className="h-3 w-3" aria-hidden />
@@ -111,7 +111,7 @@ export function TermiusHostSketch() {
             className="mt-3 flex items-center justify-center gap-1.5 rounded-lg py-2 text-[11px] font-medium"
             style={{
               backgroundColor: "color-mix(in oklab, var(--syntax-blue) 12%, transparent)",
-              color: "var(--syntax-blue)",
+              color: "var(--syntax-blue-on-tint)",
             }}
           >
             <Plus className="h-3 w-3" aria-hidden />

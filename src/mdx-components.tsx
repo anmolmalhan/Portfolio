@@ -93,8 +93,11 @@ const components: MDXComponents = {
   // rehype-pretty-code hands back a <pre> already carrying the Shiki spans and
   // a data-language attribute; this only supplies the surface around it.
   pre: ({ children, ...props }) => (
+    // tabIndex: long lines scroll sideways, and without a focusable container a
+    // keyboard user cannot reach the part that overflows. WCAG 2.1.1.
     <pre
-      className="mdx-code my-8 overflow-x-auto rounded-xl border border-border bg-card p-4 md:p-5 text-[13.5px] md:text-[14px] leading-relaxed"
+      tabIndex={0}
+      className="mdx-code my-8 overflow-x-auto rounded-xl border border-border bg-card p-4 md:p-5 text-[13.5px] md:text-[14px] leading-relaxed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
       {...props}
     >
       {children}

@@ -58,7 +58,14 @@ export default function GitHubActivity({ username }: GitHubActivityProps) {
         {/* The calendar is fetched client-side from GitHub's API. Reserve its
             height so a slow or failed request doesn't collapse the panel and
             then shove the footer down when it resolves. */}
-        <div className="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
+        {/* tabIndex + a name: the calendar is 800px wide and scrolls sideways
+            on a phone, so it needs to be reachable and announced. WCAG 2.1.1. */}
+        <div
+          tabIndex={0}
+          role="group"
+          aria-label="GitHub contribution calendar"
+          className="overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
+        >
           <div className="min-w-[800px] min-h-[160px] flex justify-center">
             <GitHubCalendar
               username={username}
