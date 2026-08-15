@@ -87,6 +87,7 @@ export const viewport: Viewport = {
 import { Header } from "@/components/ui/Header";
 import { SiteFooter } from "@/components/ui/SiteFooter";
 import { CommandPalette } from "@/components/ui/CommandPalette";
+import { getAllPosts } from "@/lib/posts";
 import ClientRuntime from "@/components/animations/ClientRuntime";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -149,7 +150,7 @@ export default function RootLayout({
         <Header />
         {/* Renders nothing until opened — a keydown listener and no markup on
             first paint, so it stays clear of the LCP path. */}
-        <CommandPalette />
+        <CommandPalette posts={getAllPosts()} />
         <div className="grain" aria-hidden />
         <main id="main" className="flex-1 flex flex-col w-full relative z-10">{children}</main>
         <SiteFooter />

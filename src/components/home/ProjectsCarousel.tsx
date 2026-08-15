@@ -62,7 +62,10 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
             key={project.id}
             className="w-[85vw] md:w-[60vw] shrink-0 md:h-full flex flex-col justify-center group relative text-background snap-center"
           >
-            <div className="flex font-mono text-sm opacity-50 mb-6 gap-6">
+            {/* opacity-75, not opacity-50. The slide paints text-background on
+                the inverted panel, and halving it measured 3.63:1 against that
+                surface: under the AA floor for the index and stack line. */}
+            <div className="flex font-mono text-sm opacity-75 mb-6 gap-6">
               <span>{String(i + 1).padStart(2, "0")}</span>
               <span>[ {project.techStack.slice(0, 2).join(" / ")} ]</span>
             </div>

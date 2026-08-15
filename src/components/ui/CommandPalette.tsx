@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowUpRight,
   AtSign,
   Check,
+  FileText,
   FolderGit2,
   Home,
   Mail,
@@ -28,6 +29,7 @@ import {
 } from "./command";
 import { GithubMark, LinkedinMark } from "./BrandMarks";
 import { projects } from "@/data/projects";
+import type { PostMeta } from "@/lib/posts";
 import { siteConfig } from "@/config/site";
 import { applyTheme, getServerTheme, getThemeSnapshot, subscribeToTheme } from "@/lib/theme";
 
@@ -88,9 +90,18 @@ function Hint({ keys, label }: { keys: string[]; label: string }) {
  * library, for a surface that is a shortcut to destinations the normal nav
  * already exposes, so it is left as is.
  */
-export function CommandPalette() {
+export function CommandPalette({ posts = [] }: { posts?: PostMeta[] }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
+  /** Element focused at the moment the palette opened.
+   *
+   *  Radix restores focus on close by itself, but the header trigger opens the
+   *  palette by dispatching a synthetic ⌘K keydown rather than by being a
+   *  DialogTrigger, so Radix never learns which control it came from and focus
+   *  lands on <body>. A keyboard user then has to tab from the top of the
+   *  document again. Capture it here and put it back ourselves. */
+  const restoreFocusTo = useRef<HTMLElement | null>(null);
 
   // The toggle is tri-state (light / dark / system); read it from the same
   // external store the header toggle uses so the two never disagree.
@@ -102,7 +113,14 @@ export function CommandPalette() {
       // the chord doesn't flip it open and shut.
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey) && !e.repeat) {
         e.preventDefault();
-        setOpen((v) => !v);
+        setOpen((v) => {
+          const next = !v;
+          if (next) {
+            const active = document.activeElement;
+            restoreFocusTo.current = active instanceof HTMLElement && active !== document.body ? active : null;
+          }
+          return next;
+        });
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -112,8 +130,22 @@ export function CommandPalette() {
   /** Close first, then act — otherwise the dialog's focus restore fights the
    *  route change and the new page loads with focus still on the trigger. */
   const run = useCallback((action: () => void) => {
+    // Dismissing to go somewhere else: the destination owns focus from here,
+    // so drop the saved trigger rather than yanking focus back to the header.
+    restoreFocusTo.current = null;
     setOpen(false);
     action();
+  }, []);
+
+  /** Plain dismissal (Escape, outside click): hand focus back where it was. */
+  const onOpenChange = useCallback((next: boolean) => {
+    setOpen(next);
+    if (next) return;
+    const target = restoreFocusTo.current;
+    restoreFocusTo.current = null;
+    // Queued so it runs after Radix's own close-time focus handling, which
+    // would otherwise overwrite this a tick later.
+    if (target?.isConnected) requestAnimationFrame(() => target.focus());
   }, []);
 
   const navItems = siteConfig.nav.filter((item) => !item.soon);
@@ -121,7 +153,7 @@ export function CommandPalette() {
   return (
     <CommandDialog
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={onOpenChange}
       title="Command palette"
       description="Search for a page, project, or action"
       className="max-w-xl! overflow-hidden rounded-2xl! border-border p-0 shadow-2xl shadow-black/40"
@@ -190,6 +222,35 @@ export function CommandPalette() {
               </CommandItem>
             ))}
           </CommandGroup>
+
+          {/* Posts are passed down from the root layout: reading them needs
+              node:fs, which a client component cannot do. Without this group
+              the blog was reachable from the nav and the sitemap but invisible
+              to the one surface built for finding things. */}
+          {posts.length > 0 ? (
+            <>
+              <CommandSeparator className="my-2" />
+              <CommandGroup heading="Writing">
+                {posts.map((post) => (
+                  <CommandItem
+                    key={post.slug}
+                    /* Title and tags only. cmdk scores by subsequence, so
+                       folding the summary in here made every post match almost
+                       anything: a sentence of prose contains the letters of
+                       "light" in order, which put this group (rendered above
+                       Appearance) ahead of the theme commands and hijacked
+                       Enter. Keep the haystack small enough to stay precise. */
+                    value={`${post.title} ${post.tags.join(" ")}`}
+                    onSelect={() => run(() => router.push(`/blog/${post.slug}`))}
+                  >
+                    <FileText />
+                    <span className="truncate">{post.title}</span>
+                    <Meta>{post.readingTime} min</Meta>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
+          ) : null}
 
           <CommandSeparator className="my-2" />
 

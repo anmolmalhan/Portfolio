@@ -30,7 +30,13 @@ export function Terminal({
         <span className="ml-1 font-mono text-xs text-muted-foreground">{title}</span>
       </div>
 
-      <pre className="overflow-x-auto p-4 md:p-5 text-[13px] leading-relaxed">
+      {/* tabIndex: a region that scrolls sideways has to be reachable by
+          keyboard, or the commands running off the right edge are readable
+          only with a mouse. WCAG 2.1.1. */}
+      <pre
+        tabIndex={0}
+        className="overflow-x-auto p-4 md:p-5 text-[13px] leading-relaxed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
+      >
         <code className="font-mono">
           {lines.map((line, i) => {
             const isCommand = line.startsWith("$ ");

@@ -161,9 +161,13 @@ export function ContactForm() {
 
           <p className="font-mono text-xs text-muted-foreground text-center leading-relaxed">
             This form sends straight to my inbox. If it doesn&apos;t work for you, email{" "}
+            {/* Underlined at rest, not only on hover. This link sits inside a
+                paragraph and was distinguished from the surrounding copy by
+                colour alone at 1.3:1, so anyone who cannot separate the blue
+                from the grey had no way to see it was a link. WCAG 1.4.1. */}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-[var(--syntax-blue)] hover:underline focus-visible:outline-none focus-visible:underline"
+              className="text-[var(--syntax-blue)] underline decoration-[var(--syntax-blue)]/40 underline-offset-2 hover:decoration-[var(--syntax-blue)] focus-visible:outline-none focus-visible:decoration-[var(--syntax-blue)]"
             >
               {CONTACT_EMAIL}
             </a>{" "}

@@ -45,7 +45,14 @@
   --accent: #2563eb;
 
   --syntax-blue: #2563eb;
-  --syntax-amber: #b45309;
+  /* Blue text sitting ON a blue-tinted chip (the blog's UI sketches mix the
+     accent at 12% for the fill). --syntax-blue against that fill measures
+     4.37:1, under the AA floor, while the same blue on the page background is
+     a comfortable 5.0:1 — so this is a second, darker step used only where the
+     backdrop is already tinted. Dark mode needs no change: the light-on-dark
+     pairing already clears the threshold, so it maps back to --syntax-blue. */
+  --syntax-blue-on-tint: #1d4ed8;
+  --syntax-amber: #92400e;
   --syntax-magenta: #be185d;
   --syntax-green: #047857;
   --syntax-comment: #57575e;
@@ -90,6 +97,7 @@
   --accent: #60a5fa;
 
   --syntax-blue: #60a5fa;
+  --syntax-blue-on-tint: #60a5fa;
   --syntax-amber: #fbbf24;
   --syntax-magenta: #e879f9;
   --syntax-green: #4ade80;
@@ -121,6 +129,7 @@
     --accent: #60a5fa;
 
     --syntax-blue: #60a5fa;
+    --syntax-blue-on-tint: #60a5fa;
     --syntax-amber: #fbbf24;
     --syntax-magenta: #e879f9;
     --syntax-green: #4ade80;
@@ -152,6 +161,7 @@
   --color-accent: var(--accent);
 
   --color-syntax-blue: var(--syntax-blue);
+  --color-syntax-blue-on-tint: var(--syntax-blue-on-tint);
   --color-syntax-amber: var(--syntax-amber);
   --color-syntax-magenta: var(--syntax-magenta);
   --color-syntax-green: var(--syntax-green);
@@ -655,4 +665,14 @@ html.lenis, html.lenis body {
    mode is silent, so the pa11y run is what catches it. */
 .mdx-code span[style*="#6A737D"] {
   color: var(--syntax-comment) !important;
+}
+
+/* react-activity-calendar ships its own horizontally scrolling container.
+   GitHubActivity already wraps it in a focusable, labelled scroll region, so
+   the inner one is a second scrollable area that keyboard users cannot reach —
+   axe flags it as scrollable-region-focusable on mobile. Hand the scrolling to
+   our wrapper instead of nesting two of them. The library exposes no prop for
+   this, hence the class selector. */
+.react-activity-calendar__scroll-container {
+  overflow: visible !important;
 }
