@@ -1,0 +1,232 @@
+---
+title: "Turn a DJI Mic Button Into a Keyboard Shortcut"
+date: 2026-08-15
+summary: "The link button on a DJI wireless mic already sends a real keypress to your Mac over USB. Karabiner can catch it and turn it into anything, which makes the mic clipped to your shirt into a dictation trigger."
+tags: ["macOS", "Karabiner", "DJI", "HID"]
+---
+
+Dictation software has a shortcut problem. The trigger has to be a key you never
+press by accident, which means it ends up somewhere awkward, and you still have
+to reach for the keyboard to start talking. That is a strange requirement for a
+feature whose whole point is that you are not typing.
+
+Meanwhile there is already a button clipped to your shirt.
+
+DJI wireless mics have a link button on the transmitter. Hold it and the
+transmitter pairs with the receiver. Tap it and it acts as a camera shutter
+remote for a phone. DJI documents that second behaviour for phones only, and
+says nothing about computers, but the mechanism gives the trick away: phone
+camera shutters fire on a volume keypress. A shutter remote is really just a
+device that sends volume events.
+
+Plug the receiver into a Mac over USB-C and those same events arrive as ordinary
+consumer HID. Anything that can see a keyboard can see the button.
+
+<MicSignalChain />
+
+## What this gets you
+
+Tap the mic on your shirt, talk, tap it again, and the text lands wherever your
+cursor is. Your hands never go near the laptop, and nothing about it is specific
+to one dictation app. You are producing a keypress, so anything that takes a
+global hotkey will take it.
+
+I use it with [MacParakeet](https://macparakeet.com), which transcribes locally
+on Apple Silicon, but Wispr Flow, macOS Dictation and anything else with a
+configurable shortcut work the same way.
+
+## Before you start
+
+| You need | Why |
+| --- | --- |
+| A DJI wireless mic | Confirmed on the 1st generation (`AST01` transmitter, `ASR01` receiver) and on the Mic Mini 2. Other models very likely work, and step one tells you in about ten seconds. |
+| [Karabiner-Elements](https://karabiner-elements.pqrs.org) 15.3.18 or newer | The `is_consumer` device identifier landed in that version, and the rule does not work without it. |
+| A dictation app with a global hotkey | Any of them. This post ends at "a key gets pressed". |
+| The USB-C cable from the DJI box | It has to carry data. A charge-only cable is the single most common reason the receiver never shows up. |
+
+## First, check your mic actually sends something
+
+Everything below depends on this, and it costs nothing to find out.
+
+Plug the receiver into your Mac, make sure the transmitter is on and linked,
+then tap the link button once.
+
+**If the macOS volume HUD pops up, you are done here.** That popup is the proof.
+The button is already talking to your Mac, it is just talking about volume, and
+the rest of this post is redirecting what it says.
+
+If nothing happens at all, open Karabiner-EventViewer, go to the Devices tab,
+and look for the receiver. No entry there means it presents itself as an audio
+device only, with no HID interface, and no amount of configuration will help.
+
+<Callout type="warning" title="Tap, do not hold">
+  Holding the link button starts pairing mode. You will see the transmitter's
+  green LED change from steady to blinking, and if it completes you have to
+  re-link the transmitter and receiver before the mic works again. Every test in
+  this post is a short tap.
+</Callout>
+
+## The setup
+
+<Steps>
+  <Step title="Find the receiver's device identifiers">
+    Karabiner registers every HID device it sees, so once the receiver has been
+    plugged in the identifiers are already sitting in its config. Read them out
+    rather than guessing:
+
+    <Terminal>{`$ python3 -c "
+import json, os
+d = json.load(open(os.path.expanduser('~/.config/karabiner/karabiner.json')))
+for dev in d['profiles'][0].get('devices', []):
+    print(dev.get('identifiers'), 'ignore=', dev.get('ignore'))
+"
+{'is_consumer': True, 'product_id': 16392, 'vendor_id': 11427} ignore= False`}</Terminal>
+
+    Vendor `11427` is DJI. The product id is the part that varies: `16392` is the
+    1st generation receiver, and the Mic Mini 2 reports `16401`. Use whatever
+    yours prints.
+
+    `ignore= False` is worth noticing. It means Karabiner is already listening to
+    the device and you do not have to enable anything first.
+  </Step>
+
+  <Step title="Map the event to F13">
+    Open `karabiner.json`, in `~/.config/karabiner/`, and find the entry for
+    your receiver under `profiles[0].devices`. Add a `simple_modifications`
+    array to it:
+
+    ```json
+    {
+      "identifiers": { "vendor_id": 11427, "product_id": 16392, "is_consumer": true },
+      "ignore": false,
+      "simple_modifications": [
+        { "from": { "consumer_key_code": "volume_increment" }, "to": [{ "key_code": "f13" }] },
+        { "from": { "consumer_key_code": "volume_decrement" }, "to": [{ "key_code": "f13" }] }
+      ]
+    }
+    ```
+
+    Both directions are mapped in case your receiver alternates between them
+    across presses. Mine only ever sent `volume_increment`, but the second line
+    costs nothing.
+
+    You can do exactly the same thing through the GUI if you prefer: the Simple
+    Modifications tab has a target device dropdown at the top, and picking the
+    receiver there writes this same structure.
+
+    Karabiner reloads the file the moment it changes, so there is nothing to
+    restart. **The test: tap the button and the volume HUD no longer appears.**
+  </Step>
+
+  <Step title="Bind F13 in your dictation app">
+    Open your app's hotkey setting, click into the shortcut field, and tap the
+    link button. It records as F13.
+
+    There is a small joke in this. A MacBook's function row stops at F12, so
+    there is no way to type F13 on the built-in keyboard, which makes the DJI
+    button the only device you own that can enter it into a hotkey field. The
+    thing you are binding is also the only tool that can do the binding.
+
+    Pick the toggle-style trigger if your app offers a choice, the one where you
+    tap to start and tap again to stop. The next section explains why the
+    hold-to-talk variant is not an option.
+  </Step>
+
+  <Step title="Verify it saved as a real key">
+    Worth doing explicitly rather than trusting the label in the UI. Most apps
+    store the hotkey as structured data, and for MacParakeet it is JSON kept as
+    a binary blob, so a plain `defaults read` shows you hex:
+
+    <Terminal>{`$ defaults export com.macparakeet.MacParakeet - | grep -A2 hotkeyTrigger
+{"kind":"keyCode","keyCode":105}
+# 105 is F13. A "kind":"modifier" value here means it silently stayed on Fn.`}</Terminal>
+
+    Then go and talk at something. Open any text field, tap the button, say a
+    sentence, tap again.
+  </Step>
+</Steps>
+
+## Why not just map it to Fn
+
+This was my first plan, and it is the obvious one, because double-tapping Fn is
+already the system dictation gesture on a Mac.
+
+It does not work, and the reason is worth knowing even if you never touch a DJI
+mic. **Any Karabiner rule that touches Fn swallows the native double-tap.** The
+Globe key is handled far enough down the stack that a synthetic press cannot
+reproduce the gesture, so remapping Fn at all breaks double-tap dictation, and
+mapping something else *to* Fn hits the same wall from the other side.
+
+If you already have a rule involving Fn in your config, system dictation is
+quietly broken on your machine right now and this is why.
+
+F13 sidesteps it completely. No physical key on the keyboard sends it, so
+nothing competes for it, and it needs no changes to any config you already have.
+A modifier combination like `fn+space` is also fine, since the problem is
+specifically the bare double-tap.
+
+## Why hold-to-talk cannot work
+
+The natural ergonomic wish is push-to-talk: hold the button while you speak,
+release to stop. It is not possible with this hardware, and it is worth saying
+so plainly before you spend an evening on it.
+
+The link button has exactly two behaviours. A tap sends the shutter event. A
+hold enters pairing mode. There is no sustained keypress state anywhere in
+there, so there is nothing for Karabiner to hold down. This is a property of the
+button, not of your configuration.
+
+The good substitute is an auto-stop-after-silence setting, which most dictation
+apps have. Tap once, say your piece, stop talking, and it ends by itself. You
+get the same "do not touch anything to finish" feel without holding anything.
+
+## If you generate your karabiner.json
+
+Skip this unless you use a tool that writes `karabiner.json` for you, such as
+[karabiner-human-config](https://github.com/nrjdalal/karabiner-human-config),
+which compiles a friendlier DSL down to the real thing.
+
+There are two traps, and they are the reason this post puts the rule in
+`devices[]` rather than the more obvious place.
+
+**A complex modification would be wiped.** These generators typically rebuild
+`profiles[0].complex_modifications.rules` from scratch on every run. I tested it
+against a throwaway config before touching anything real: `devices[]` and
+`global` were spread through untouched, and a hand-written complex rule was
+gone. A per-device simple modification lives in the part that survives, so
+regenerating your config does not cost you the mapping.
+
+**The DSL probably cannot express it anyway.** Karabiner needs
+`consumer_key_code` rather than `key_code` in the `from` position for a volume
+event, and a DSL that builds `{ key_code }` unconditionally has no way to emit
+the other field. Worth a look at your generator's source before you spend time
+fighting its syntax.
+
+<Callout type="tip">
+  Both problems disappear at once by using a per-device simple modification. It
+  is also the only version of this rule you can set entirely through the
+  Karabiner GUI, which makes it the easier path even if you write JSON by hand
+  for everything else.
+</Callout>
+
+## When it breaks
+
+| Symptom | Cause |
+| --- | --- |
+| The volume HUD is back | Karabiner stopped intercepting. Check that the device has **Modify events** ticked in the Devices tab, and try setting `ignore_vendor_events` to `false` on its entry. |
+| The button does nothing at all | The transmitter unpaired, almost always from holding the link button rather than tapping it. Hold it on both units to re-link. |
+| It worked, then stopped after you regenerated your config | The rule was in `complex_modifications`. Move it to `devices[]`. |
+| The hotkey quietly reverted to Fn | Re-check with the `defaults export` command above. The label in the settings window is not proof. |
+| Everything looks right and no text appears | Grant the dictation app Accessibility permission. A global hotkey does not fire without it. |
+
+## Worth knowing
+
+None of this needed a driver, a companion app, or anything DJI ships. The
+receiver was already presenting itself as a keyboard, and the entire job was
+noticing that and redirecting one keypress.
+
+That is a fairly common shape once you go looking. Plenty of USB peripherals
+send standard HID that has nothing to do with their advertised purpose, and
+Karabiner-EventViewer will show you what any of them are actually saying. A
+device you already own may have a button on it that macOS is willing to listen
+to.

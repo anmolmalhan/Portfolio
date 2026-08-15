@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Callout } from "@/components/blog/Callout";
 import { ConnectionFlow, SessionOwnership } from "@/components/blog/Diagrams";
 import { Figure } from "@/components/blog/Figure";
+import { MicSignalChain } from "@/components/blog/MicChain";
 import { Step, Steps } from "@/components/blog/Steps";
 import { Terminal } from "@/components/blog/Terminal";
 import {
@@ -103,9 +104,15 @@ const components: MDXComponents = {
       {children}
     </pre>
   ),
+  // overflow-wrap:anywhere: inline code is frequently a single unbreakable
+  // token (a dotted config path, a flag), and one longer than the reading
+  // column pushes the whole document sideways on a phone. Breaking mid-token
+  // is worse-looking than not, and far better than a horizontally scrolling
+  // page. Reset inside <pre>, where the surrounding block scrolls instead and
+  // wrapping would corrupt the alignment of a transcript.
   code: ({ children, ...props }) => (
     <code
-      className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.875em] text-foreground [pre_&]:border-0 [pre_&]:bg-transparent [pre_&]:p-0 [pre_&]:text-inherit"
+      className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.875em] text-foreground [overflow-wrap:anywhere] [pre_&]:border-0 [pre_&]:bg-transparent [pre_&]:p-0 [pre_&]:text-inherit [pre_&]:[overflow-wrap:normal]"
       {...props}
     >
       {children}
@@ -136,6 +143,7 @@ const components: MDXComponents = {
   Callout,
   ConnectionFlow,
   Figure,
+  MicSignalChain,
   SessionOwnership,
   SharingPaneSketch,
   Step,
