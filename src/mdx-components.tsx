@@ -4,6 +4,11 @@ import { Callout } from "@/components/blog/Callout";
 import { ConnectionFlow, SessionOwnership } from "@/components/blog/Diagrams";
 import { Figure } from "@/components/blog/Figure";
 import { MicSignalChain } from "@/components/blog/MicChain";
+import {
+  DictationHotkeySketch,
+  KarabinerDeviceSketch,
+  VolumeHudSketch,
+} from "@/components/blog/MicSketch";
 import { Step, Steps } from "@/components/blog/Steps";
 import { Terminal } from "@/components/blog/Terminal";
 import {
@@ -142,9 +147,12 @@ const components: MDXComponents = {
 
   Callout,
   ConnectionFlow,
+  DictationHotkeySketch,
   Figure,
+  KarabinerDeviceSketch,
   MicSignalChain,
   SessionOwnership,
+  VolumeHudSketch,
   SharingPaneSketch,
   Step,
   Steps,

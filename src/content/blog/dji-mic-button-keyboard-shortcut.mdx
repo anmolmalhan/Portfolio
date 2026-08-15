@@ -55,6 +55,8 @@ then tap the link button once.
 The button is already talking to your Mac, it is just talking about volume, and
 the rest of this post is redirecting what it says.
 
+<VolumeHudSketch />
+
 If nothing happens at all, open Karabiner-EventViewer, go to the Devices tab,
 and look for the receiver. No entry there means it presents itself as an audio
 device only, with no HID interface, and no amount of configuration will help.
@@ -114,6 +116,8 @@ for dev in d['profiles'][0].get('devices', []):
     Modifications tab has a target device dropdown at the top, and picking the
     receiver there writes this same structure.
 
+    <KarabinerDeviceSketch />
+
     Karabiner reloads the file the moment it changes, so there is nothing to
     restart. **The test: tap the button and the volume HUD no longer appears.**
   </Step>
@@ -130,6 +134,8 @@ for dev in d['profiles'][0].get('devices', []):
     Pick the toggle-style trigger if your app offers a choice, the one where you
     tap to start and tap again to stop. The next section explains why the
     hold-to-talk variant is not an option.
+
+    <DictationHotkeySketch />
   </Step>
 
   <Step title="Verify it saved as a real key">
