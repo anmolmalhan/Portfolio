@@ -211,7 +211,8 @@ for dev in d['profiles'][0].get('devices', []):
 
     You can do the same thing in the app if you'd rather not edit JSON. The
     Simple Modifications tab has a device dropdown at the top, and choosing your
-    receiver there writes exactly this.
+    receiver there writes exactly this. And if hand-editing this file is putting
+    you off generally, there's a much nicer way to manage it further down.
 
     <KarabinerDeviceSketch />
 
@@ -280,23 +281,42 @@ What you want instead is auto-stop after silence, which MacParakeet has and most
 others do too. Tap once, say your bit, stop talking, and it stops on its own.
 Same feeling, without holding anything.
 
-## If a tool writes your karabiner.json
+## A nicer way to live with karabiner.json
 
-Skip this bit unless you use something that generates `karabiner.json` for you,
-like [karabiner-human-config](https://github.com/nrjdalal/karabiner-human-config).
+Raw `karabiner.json` is rough to maintain by hand. One remap is 170-odd lines of
+nested JSON, and you end up scrolling through it every time you want to change a
+key.
 
-Two things will bite you, and they're why the rule above goes in `devices[]`
-instead of the more obvious spot.
+[karabiner-human-config](https://github.com/nrjdalal/karabiner-human-config) is
+the fix. You write a small readable file instead:
+
+```json
+{
+  "caps": { "t": "hyper", "a": "100 caps" },
+  "rcmd": {
+    "_self": "rcmd",
+    "w": "$ open \"https://web.whatsapp.com\""
+  }
+}
+```
+
+then run `npx karabiner-human-config` and it compiles that into the real thing.
+Caps lock as hyper, right command plus W to open WhatsApp, app-specific groups,
+shell commands. If you have more than a couple of remaps, it's worth the swap.
+
+Two things to know if you use it, and they're why the rule above goes in
+`devices[]` rather than the more obvious spot.
 
 **A complex modification gets wiped.** These tools tend to rebuild
 `profiles[0].complex_modifications.rules` from scratch every run. I tried it on a
 throwaway config first: `devices[]` and `global` came through untouched, and a
 hand-written complex rule was gone. Put it in `devices[]` and it survives.
 
-**Your DSL probably can't write this rule anyway.** Karabiner needs
-`consumer_key_code` instead of `key_code` for a volume event, and a generator
-that always writes `{ key_code }` has no way to produce the other one. Worth
-reading the source before you fight the syntax.
+**This one rule has to stay outside it.** Karabiner needs `consumer_key_code`
+instead of `key_code` for a volume event, and the generator writes `{ key_code }`
+every time, so there's no way to express it in the short file. Not a problem in
+practice. Leave the DJI rule in `devices[]`, keep everything else in the DSL, and
+the two happily coexist.
 
 ## When it goes wrong
 
