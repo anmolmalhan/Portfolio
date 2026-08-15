@@ -1,82 +1,82 @@
 ---
 title: "Turn a DJI Mic Into a Hands-Free Note Taker"
 date: 2026-08-15
-summary: "Record meetings with a DJI wireless mic, transcribe them locally on Apple Silicon, and start and stop the whole thing with the button clipped to your shirt. No cloud, no meeting bot, no reaching for the laptop."
+summary: "Record meetings with a DJI wireless mic, transcribe them locally on your Mac, and start and stop the whole thing with the button clipped to your shirt. No cloud, no meeting bot, no reaching for the laptop."
 tags: ["macOS", "Karabiner", "DJI", "Transcription"]
 ---
 
-Meeting note takers mostly work by joining your call as a bot. Everyone sees it
-in the participant list, your audio goes to somebody's server, and you get a
-summary back. That is a lot of moving parts for "write down what was said".
+Most meeting note takers send a bot into your call. It shows up in the
+participant list, your audio goes off to someone's server, and a summary comes
+back later. That's a lot of machinery for writing down what people said.
 
-You can do the whole thing on your own machine instead. A DJI wireless mic
-handles the audio, [MacParakeet](https://macparakeet.com) transcribes it locally
-on Apple Silicon, and the transcript never leaves your Mac.
+You can do all of it on your own Mac. The DJI mic records,
+[MacParakeet](https://macparakeet.com) turns it into text, and nothing leaves
+the machine.
 
-There is also a trick hiding in the hardware. The link button on the DJI
-transmitter already sends a real keypress to your Mac over USB, which means the
-mic clipped to your shirt can start and stop the recording. That part is the
-back half of this post, and it is the reason the setup ends up feeling good
-rather than merely private.
+There's also a trick hiding in the mic itself. That little link button on the
+transmitter already sends a real keypress to your Mac over USB. So the mic on
+your shirt can start and stop the recording, and you never touch the laptop.
+That's the second half of this post, and honestly it's the part that makes the
+whole thing worth setting up.
 
 <MicSignalChain />
 
-## What you end up with
+## What you get
 
-Clip the mic on, tap its button, talk, tap again. Text appears where your cursor
-is, or a full meeting transcript with a summary lands in the app. Your hands
-never go near the keyboard, nothing joins your call, and the audio stays on the
-machine.
+Clip the mic on. Tap the button. Talk. Tap it again. The text shows up wherever
+your cursor is, or you get a full meeting transcript with a summary. No bot in
+the call, no audio leaving your Mac, and your hands stay where they are.
 
 ## What you need
 
 | You need | Why |
 | --- | --- |
-| An Apple Silicon Mac | MacParakeet needs M1 or newer and macOS 14.2 or later. The transcription model runs on the neural engine. |
-| A DJI wireless mic | Any of them work as a microphone. The button trick is confirmed on the 1st generation (`AST01` transmitter, `ASR01` receiver) and the Mic Mini 2, and step 7 tells you about yours in ten seconds. |
-| The USB-C cable from the DJI box | It has to carry data. A charge-only cable is the single most common reason the receiver never shows up. |
-| [Karabiner-Elements](https://karabiner-elements.pqrs.org) 15.3.18 or newer | Only for the button. The `is_consumer` device identifier landed in that version and the rule does not work without it. |
-| Homebrew | For the one install command. |
+| An Apple Silicon Mac | MacParakeet wants M1 or newer, on macOS 14.2 or later. |
+| A DJI wireless mic | Any of them work as a mic. For the button trick, I've confirmed the 1st generation (`AST01` transmitter, `ASR01` receiver) and the Mic Mini 2. Step 1 of part three tells you about yours in ten seconds. |
+| The USB-C cable from the box | It has to be a data cable. A charge-only one is the number one reason the receiver never shows up. |
+| [Karabiner-Elements](https://karabiner-elements.pqrs.org) 15.3.18 or newer | Only needed for the button. Older versions don't have the `is_consumer` setting the rule depends on. |
+| Homebrew | For one install command. |
 
 ## Part one: the mic
 
-### Set the receiver to Mono
+### Switch the receiver to Mono
 
-Do this before anything else, because it is the mistake that is hardest to spot
-later.
+Do this first. It's the setting people miss, and it's annoying to spot later.
 
-In **Stereo** mode the DJI receiver puts transmitter 1 on the left channel and
-transmitter 2 on the right. With a single mic that means half of every recording
-is silence. It sounds like audio "in one ear", and it gives a transcriber less
-to work with than it should have.
+In **Stereo** mode, the receiver sends transmitter 1 to the left channel and
+transmitter 2 to the right. If you're using one mic, half your recording is
+silence. It sounds like the audio is stuck in one ear, and you're handing the
+transcriber less than you could.
 
-**Mono** mixes everything into one channel, which is what you want for speech.
+**Mono** puts everything in one channel. That's what you want for speech.
 
-- **Mic 2 and Mic 3**: on the receiver's touchscreen, swipe down or tap the gear,
-  then Recording Mode, then Mono.
-- **Mic Mini**: no screen, so set it from the DJI Mimo app on your phone.
+- **Mic 2 and Mic 3**: on the receiver's touchscreen, swipe down or tap the
+  gear, then Recording Mode, then Mono.
+- **Mic Mini**: there's no screen, so set it in the DJI Mimo app on your phone.
 
-Skip Safety Track. It records a second quieter copy as insurance for video
-editing, which does nothing for you here.
+Ignore Safety Track. It records a quieter backup copy, which is handy for video
+editing and does nothing for you here.
 
-### Plug it in and select it
+### Plug it in and pick it
 
-Connect the receiver to your Mac with the USB-C cable, then open **System
-Settings**, **Sound**, **Input**. A new device appears, usually called
-`Wireless Microphone RX`. Select it.
+Connect the receiver with the USB-C cable, then open **System Settings**,
+**Sound**, **Input**. You'll see a new device, usually called
+`Wireless Microphone RX`. Click it.
 
-Do not run the receiver's 3.5 mm jack into the Mac instead. A MacBook's
-headphone port expects a headset-style plug and you will get poor audio or none.
+Don't use the receiver's 3.5 mm jack into the Mac instead. A MacBook's
+headphone port expects a headset plug, so you'll get bad audio or none at all.
 
-### Set the gain on the receiver, not in macOS
+### Set the gain on the receiver
 
-Still in that Sound panel, talk normally and watch the input meter. Aim for it
-bouncing around two thirds of the way across. Too quiet and you are transcribing
-room noise along with speech; loud enough to peg the meter and the distortion
-will produce nonsense words that no amount of AI cleanup fixes.
+While you're in that Sound panel, talk normally and watch the input meter. You
+want it bouncing around two thirds of the way across.
 
-Adjust this on the DJI receiver itself. You get a better signal than turning a
-quiet recording up afterwards.
+Too quiet and you're transcribing room noise along with your voice. Loud enough
+to peg the meter and you get distortion, which turns into nonsense words that no
+amount of AI cleanup will fix.
+
+Turn the gain on the DJI receiver itself, not in macOS. You'll get a cleaner
+signal than you would by boosting a quiet recording afterwards.
 
 ## Part two: local transcription
 
@@ -86,94 +86,94 @@ quiet recording up afterwards.
 brew install --cask macparakeet
 ```
 
-It is free and open source under GPL-3.0. The transcription runs on NVIDIA's
-Parakeet model, converted to run on Apple Silicon, so it is genuinely local
-rather than a wrapper around somebody's API.
+It's free and open source. The transcription runs on NVIDIA's Parakeet model,
+built to run on Apple Silicon, so it really is happening on your Mac and not
+behind someone's API.
 
 ### First launch
 
-Open it. macOS may note that it was downloaded from the internet, which is a
-single click because the app is notarized.
+Open it. macOS might mention it came from the internet, which is one click since
+the app is notarized.
 
-It then downloads roughly 600 MB, the speech model plus speaker detection. This
-happens once. After that, transcription works with no network at all.
+It'll download about 600 MB, which is the speech model plus speaker detection.
+That happens once. After that you can transcribe with the wifi off.
 
-### Grant the permissions it actually needs
+### The permissions
 
-| Permission | For | Required? |
+| Permission | What it's for | Do you need it? |
 | --- | --- | --- |
-| Microphone | Hearing the DJI mic | Always |
-| Accessibility | Global hotkey and pasting text | Needed for the button trick |
-| Screen Recording | Capturing the other person's voice on a call | Online meetings only |
+| Microphone | Hearing the mic | Yes, always |
+| Accessibility | Global hotkey and pasting text | Yes, for the button |
+| Screen Recording | Getting the other person's voice on a call | Only for online meetings |
 | Calendar | Auto-starting on scheduled meetings | Optional |
 
-<Callout type="note" title="Why a note taker wants Screen Recording">
-  macOS has no separate "record system sound" permission. Capturing the far side
-  of a Zoom or Meet call is gated behind Screen Recording, so an app that records
-  meetings has to ask for it. If you only ever record in-person conversations,
-  skip it: microphone-only mode never asks.
+<Callout type="note" title="Why it asks for Screen Recording">
+  macOS has no separate permission for recording system sound. If an app wants
+  the other side of a Zoom call, it has to ask for Screen Recording, because
+  that's the only door there is. It isn't watching your screen. If you only
+  record in-person conversations, skip it. Mic-only mode never asks.
 </Callout>
 
-### Point it at the mic and pick a mode
+### Point it at the mic
 
-In Settings, set the input to `Wireless Microphone RX`. If your version has no
-per-device picker it follows the macOS system default, which you already set.
+In Settings, set the input to `Wireless Microphone RX`. If your version doesn't
+have a device picker, it just follows whatever macOS is set to, which you
+already sorted out.
 
-Then choose how much of the room you want:
+Then pick how much you want it to hear:
 
-- **Microphone only**, for in-person meetings and voice notes. No Screen
-  Recording permission needed.
-- **Microphone plus system audio**, for calls. Your voice comes from the DJI mic
-  and everyone else's is pulled from your Mac's audio output. Nothing joins the
-  call and nobody sees a recorder in the participant list.
+- **Mic only**, for meetings in a room and notes to yourself. Doesn't need
+  Screen Recording.
+- **Mic plus system audio**, for calls. Your voice comes from the DJI mic and
+  everyone else's comes from your Mac's audio. Nothing joins the call and nobody
+  sees a recorder in the participant list.
 
 ### Summaries, if you want them
 
-Transcription needs nothing else. Turning a transcript into notes needs a model,
-and you have two honest options.
+Transcription works on its own. Turning a transcript into notes needs a model,
+and you've got two reasonable options.
 
-Point it at a cloud model (Anthropic, OpenAI, Gemini, OpenRouter) for good
-summaries. Only the transcript text is sent, never the audio, and an hour-long
-meeting is on the order of 10 to 15 thousand tokens, so it costs pennies.
+Point it at a cloud model (Anthropic, OpenAI, Gemini, OpenRouter) and you'll get
+better summaries. Only the text gets sent, never the audio. An hour of talking
+is maybe 10 to 15 thousand tokens, so it costs pennies.
 
-Or run it fully locally through Ollama or LM Studio. Summaries are noticeably
-weaker, but nothing leaves the machine at all. On 16 GB of RAM, stay around 8B
-models.
+Or run it locally with Ollama or LM Studio. The summaries aren't as good, but
+nothing leaves your Mac at all. On 16 GB of RAM, stick to 8B models.
 
-At this point the setup works. Everything below is about not having to touch the
+That's the setup working. Everything after this is about not having to touch the
 laptop.
 
 ## Part three: the button
 
-DJI documents the transmitter's link button as a camera shutter remote for
-phones, and says nothing about computers. The mechanism gives the trick away
-though: phone camera shutters fire on a volume keypress, so a shutter remote is
-really just a device that sends volume events. Plug the receiver into a Mac and
-those arrive as ordinary consumer HID.
+DJI describes the link button as a camera shutter remote for your phone, and
+says nothing about computers. But here's the thing: phone cameras take a photo
+when you press volume up. So a shutter remote is really just a gadget that sends
+volume presses. Plug the receiver into a Mac and those turn up as a normal
+keyboard event.
 
 <Steps>
   <Step title="Check your mic actually sends something">
-    With the receiver plugged in and the transmitter on and linked, tap the link
-    button once.
+    Plug in the receiver, make sure the transmitter is on and paired, and tap the
+    link button once.
 
     <VolumeHudSketch />
 
-    If the volume HUD appears, everything below will work. If nothing happens,
-    open Karabiner-EventViewer, go to the Devices tab, and look for the receiver.
-    No entry there means it presents itself as an audio device only and no amount
-    of configuration will help.
+    If the volume popup appears, you're set. Everything below will work.
 
-    <Callout type="warning" title="Tap, do not hold">
-      Holding the link button starts pairing mode. The transmitter's green LED
-      goes from steady to blinking, and if it completes you have to re-link the
-      transmitter and receiver before the mic works again. Every test here is a
-      short tap.
+    If nothing happens, open Karabiner-EventViewer, go to the Devices tab, and
+    look for the receiver. If it isn't listed, your model only presents itself as
+    an audio device and there's nothing to catch.
+
+    <Callout type="warning" title="Tap it, don't hold it">
+      Holding the link button starts pairing. You'll see the green light on the
+      transmitter go from steady to blinking, and if it finishes you'll have to
+      pair the two units again before the mic works. Quick taps only.
     </Callout>
   </Step>
 
-  <Step title="Find the receiver's device identifiers">
-    Karabiner registers every HID device it sees, so the identifiers are already
-    in its config. Read them out rather than guessing:
+  <Step title="Get the device ids">
+    Karabiner makes a note of every device it sees, so your ids are already in
+    its config file. Read them instead of guessing:
 
     <Terminal>{`$ python3 -c "
 import json, os
@@ -183,16 +183,17 @@ for dev in d['profiles'][0].get('devices', []):
 "
 {'is_consumer': True, 'product_id': 16392, 'vendor_id': 11427} ignore= False`}</Terminal>
 
-    Vendor `11427` is DJI. The product id varies: `16392` is the 1st generation
-    receiver and the Mic Mini 2 reports `16401`. Use whatever yours prints.
+    Vendor `11427` is DJI. The product id changes between models: mine is `16392`
+    on the 1st generation, and the Mic Mini 2 comes up as `16401`. Use whatever
+    yours says.
 
-    `ignore= False` means Karabiner is already listening to the device, so there
-    is nothing to enable first.
+    `ignore= False` is good news. It means Karabiner is already watching the
+    device and you don't have to switch anything on.
   </Step>
 
-  <Step title="Map the event to F13">
-    Open `karabiner.json`, in `~/.config/karabiner/`, and find the entry for your
-    receiver under `profiles[0].devices`. Add a `simple_modifications` array:
+  <Step title="Turn the volume press into F13">
+    Open `karabiner.json`, in `~/.config/karabiner/`, find your receiver under
+    `profiles[0].devices`, and add a `simple_modifications` array:
 
     ```json
     {
@@ -205,125 +206,122 @@ for dev in d['profiles'][0].get('devices', []):
     }
     ```
 
-    Both directions are mapped in case your receiver alternates between them
-    across presses. Mine only ever sent `volume_increment`, but the second line
-    costs nothing.
+    Mine only ever sent `volume_increment`, but some receivers might alternate
+    between up and down, so the second line is cheap insurance.
 
-    The GUI does the same thing: the Simple Modifications tab has a target device
-    dropdown at the top, and picking the receiver there writes this structure.
+    You can do the same thing in the app if you'd rather not edit JSON. The
+    Simple Modifications tab has a device dropdown at the top, and choosing your
+    receiver there writes exactly this.
 
     <KarabinerDeviceSketch />
 
-    Karabiner reloads the file the moment it changes, so there is nothing to
-    restart. **The test: tap the button and the volume HUD no longer appears.**
+    Karabiner picks up the change straight away, so there's nothing to restart.
+    **To check it worked: tap the button and the volume popup should be gone.**
   </Step>
 
-  <Step title="Bind F13 in MacParakeet">
+  <Step title="Tell MacParakeet to listen for F13">
     Settings, Capture, Dictation. There are two hotkey rows and only one of them
     can work with this mic.
 
     <DictationHotkeySketch />
 
-    Click **Change** on the hands-free row, then tap the link button. It records
+    Hit **Change** on the hands-free row, then tap the link button. It'll come up
     as F13.
 
-    There is a small joke in this. A MacBook's function row stops at F12, so
-    there is no way to type F13 on the built-in keyboard, which makes the DJI
-    button the only device you own that can enter it into a hotkey field. The
-    thing you are binding is also the only tool that can do the binding.
+    There's a nice accident in this. A MacBook's function row stops at F12, so
+    there's no way to type F13 on the keyboard, which makes the DJI button the
+    only thing you own that can put it in that box. The button you're setting up
+    is also the only way to set it up.
   </Step>
 
-  <Step title="Verify it saved as a real key">
-    Worth checking rather than trusting the label. MacParakeet stores the hotkey
-    as JSON in a binary blob, so a plain `defaults read` shows you hex:
+  <Step title="Make sure it really saved">
+    Worth checking, because the settings window will happily show you a label
+    that isn't what got stored. MacParakeet keeps the hotkey as JSON inside a
+    binary blob, so a plain `defaults read` just gives you hex:
 
     <Terminal>{`$ defaults export com.macparakeet.MacParakeet - | grep -A2 hotkeyTrigger
 {"kind":"keyCode","keyCode":105}
-# 105 is F13. A "kind":"modifier" value here means it silently stayed on Fn.`}</Terminal>
+# 105 is F13. If you see "kind":"modifier" it quietly stayed on Fn.`}</Terminal>
 
-    Then go and talk at something. Open any text field, tap the button, say a
-    sentence, tap again.
+    Then go talk at something. Open any text box, tap the button, say a sentence,
+    tap again.
   </Step>
 </Steps>
 
-## Why not just map it to Fn
+## Why not just use Fn
 
-This was my first plan, and it is the obvious one, because double-tapping Fn is
-already the system dictation gesture on a Mac.
+This was my first idea, and it's the obvious one, since double-tapping Fn is
+already how you start dictation on a Mac.
 
-It does not work, and the reason is worth knowing even if you never touch a DJI
-mic. **Any Karabiner rule that touches Fn swallows the native double-tap.** The
-Globe key is handled far enough down the stack that a synthetic press cannot
-reproduce the gesture, so remapping Fn at all breaks double-tap dictation, and
-mapping something else *to* Fn hits the same wall from the other side.
+It doesn't work, and the reason is worth knowing even if you never own a DJI
+mic. **Any Karabiner rule that touches Fn kills the built-in double-tap.** The
+Globe key gets handled so low down that a fake press can't reproduce the
+gesture. So remapping Fn breaks dictation, and mapping something else *to* Fn
+runs into the same wall from the other side.
 
-If you already have a rule involving Fn in your config, system dictation is
-quietly broken on your machine right now and this is why.
+If you've already got a rule involving Fn, system dictation is quietly broken on
+your Mac right now, and that's why.
 
-F13 sidesteps it completely. No physical key sends it, so nothing competes for
-it, and it needs no changes to any config you already have. A modifier
-combination like `fn+space` is also fine, since the problem is specifically the
-bare double-tap.
+F13 dodges all of it. Nothing on the keyboard sends it, so nothing else wants
+it, and you don't have to change any config you already have. Something like
+`fn+space` is fine too. It's only the bare double-tap that breaks.
 
-## Why hold-to-talk cannot work
+## Why you can't hold it down
 
-The natural wish is push-to-talk: hold the button while you speak, release to
-stop. It is not possible with this hardware, and it is worth saying so before
-you spend an evening on it.
+The obvious wish is push to talk: hold the button while you speak, let go when
+you're done. You can't, and I'd rather tell you now than have you spend an
+evening on it.
 
-The link button has exactly two behaviours. A tap sends the shutter event. A
-hold enters pairing mode. There is no sustained keypress anywhere in there, so
-there is nothing for Karabiner to hold down.
+The link button does two things and that's it. Tap sends the shutter press. Hold
+starts pairing. There's no in-between state where the button is being held, so
+there's nothing for Karabiner to hold down either.
 
-The substitute is auto-stop after silence, which MacParakeet and most others
-have. Tap once, say your piece, stop talking, and it ends by itself. Same
-"do not touch anything to finish" feel, without holding anything.
+What you want instead is auto-stop after silence, which MacParakeet has and most
+others do too. Tap once, say your bit, stop talking, and it stops on its own.
+Same feeling, without holding anything.
 
-## If you generate your karabiner.json
+## If a tool writes your karabiner.json
 
-Skip this unless you use a tool that writes `karabiner.json` for you, such as
-[karabiner-human-config](https://github.com/nrjdalal/karabiner-human-config),
-which compiles a friendlier DSL down to the real thing.
+Skip this bit unless you use something that generates `karabiner.json` for you,
+like [karabiner-human-config](https://github.com/nrjdalal/karabiner-human-config).
 
-There are two traps, and they are why this post puts the rule in `devices[]`
-rather than the more obvious place.
+Two things will bite you, and they're why the rule above goes in `devices[]`
+instead of the more obvious spot.
 
-**A complex modification would be wiped.** These generators typically rebuild
-`profiles[0].complex_modifications.rules` from scratch on every run. I tested it
-against a throwaway config first: `devices[]` and `global` were spread through
-untouched, and a hand-written complex rule was gone. A per-device simple
-modification lives in the part that survives.
+**A complex modification gets wiped.** These tools tend to rebuild
+`profiles[0].complex_modifications.rules` from scratch every run. I tried it on a
+throwaway config first: `devices[]` and `global` came through untouched, and a
+hand-written complex rule was gone. Put it in `devices[]` and it survives.
 
-**The DSL probably cannot express it anyway.** Karabiner needs
-`consumer_key_code` rather than `key_code` in the `from` position for a volume
-event, and a DSL that builds `{ key_code }` unconditionally has no way to emit
-the other field. Worth reading your generator's source before fighting its
-syntax.
+**Your DSL probably can't write this rule anyway.** Karabiner needs
+`consumer_key_code` instead of `key_code` for a volume event, and a generator
+that always writes `{ key_code }` has no way to produce the other one. Worth
+reading the source before you fight the syntax.
 
-## When it breaks
+## When it goes wrong
 
-| Symptom | Cause |
+| What you see | What it usually is |
 | --- | --- |
-| The receiver never appears in Sound, Input | Charge-only USB-C cable. Swap it, then try the other port, then power-cycle the receiver while plugged in. |
-| Audio only in one ear, or half the waveform flat | The receiver is in Stereo. Set it to Mono. |
-| The transcript is full of nonsense words | Gain too high and distorting, or too low and picking up the noise floor. Reset to the two-thirds target. |
-| Only your voice in the transcript, not theirs | You are in microphone-only mode. Switch to microphone plus system audio and grant Screen Recording. |
-| Only their voice, not yours | macOS flipped back to the built-in mic, or the call app grabbed the DJI exclusively. Re-select the receiver, and set it inside the call app too. |
-| The volume HUD is back | Karabiner stopped intercepting. Check the device has **Modify events** ticked, and try `ignore_vendor_events: false` on its entry. |
-| The button does nothing at all | The transmitter unpaired, almost always from holding the link button rather than tapping. Hold it on both units to re-link. |
-| It worked, then stopped after a config regen | The rule was in `complex_modifications`. Move it to `devices[]`. |
-| The hotkey quietly reverted to Fn | Re-check with the `defaults export` command above. The settings label is not proof. |
-| Everything looks right and no text appears | Accessibility permission. A global hotkey does not fire without it. |
-| The mic cuts out mid-meeting | Transmitter battery. They run about five hours. Charge in the case between meetings. |
+| The receiver never shows up in Sound, Input | Charge-only USB-C cable. Swap it, then try the other port, then turn the receiver off and on while plugged in. |
+| Audio only in one ear | The receiver is still in Stereo. Set it to Mono. |
+| The transcript is full of nonsense words | Gain too high and distorting, or too low and picking up room noise. Go back to the two-thirds target. |
+| You can hear yourself but not them | You're in mic-only mode. Switch to mic plus system audio and grant Screen Recording. |
+| You can hear them but not yourself | macOS switched back to the built-in mic, or the call app grabbed the DJI for itself. Reselect the receiver, and set it inside the call app too. |
+| The volume popup came back | Karabiner stopped catching it. Check **Modify events** is ticked for the device, and try setting `ignore_vendor_events` to `false`. |
+| The button does nothing at all | The transmitter came unpaired, almost always from holding the link button instead of tapping. Hold it on both units to pair them again. |
+| It worked, then stopped after you regenerated your config | The rule was in `complex_modifications`. Move it to `devices[]`. |
+| The hotkey went back to Fn on its own | Check it with the `defaults export` command above. Don't trust the label. |
+| Everything looks right but no text appears | Accessibility permission. The hotkey won't fire without it. |
+| The mic cuts out halfway through a meeting | Transmitter battery. You get about five hours. Charge it in the case between meetings. |
 
-## Worth knowing
+## One last thought
 
-None of this needed a driver, a companion app, or anything DJI ships. The
-receiver was already presenting itself as a keyboard, and the entire job was
-noticing that and redirecting one keypress.
+There's no driver here, no companion app, nothing DJI ships. The receiver was
+already telling your Mac it was a keyboard. All I did was notice, and send one
+keypress somewhere more useful.
 
-That shape is more common than you would think. Plenty of USB peripherals send
-standard HID that has nothing to do with their advertised purpose, and
-Karabiner-EventViewer will show you what any of them are actually saying. A
-device you already own may have a button on it that macOS is willing to listen
-to.
+That happens more than you'd expect. Plenty of USB gadgets send standard
+keyboard events that have nothing to do with what they're sold as, and
+Karabiner-EventViewer will show you what any of them are really saying. There
+might be a button on something you already own that your Mac is quietly willing
+to listen to.

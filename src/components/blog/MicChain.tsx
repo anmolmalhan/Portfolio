@@ -108,9 +108,8 @@ export function MicSignalChain() {
       </ol>
 
       <figcaption className="mt-3 text-center text-sm text-muted-foreground">
-        Four hops, and the event changes representation at every one. Nothing here is
-        DJI-specific software: the receiver is an ordinary USB keyboard as far as macOS
-        is concerned.
+        One button press, handed along four times and renamed at every step. There is no
+        DJI software anywhere in this. Your Mac thinks the receiver is a keyboard.
       </figcaption>
     </figure>
   );

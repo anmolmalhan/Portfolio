@@ -46,9 +46,8 @@ export function VolumeHudSketch() {
       </div>
 
       <figcaption className="mt-3 text-center text-sm leading-relaxed text-muted-foreground">
-        Tap the link button with the receiver plugged in and the system volume HUD appears.
-        That popup is the entire test. The button is already reaching your Mac, it is just
-        talking about volume.
+        Plug the receiver in, tap the link button, and this pops up. That is the whole test.
+        The button is already reaching your Mac. It is just saying the wrong thing.
       </figcaption>
     </figure>
   );
@@ -118,8 +117,8 @@ export function KarabinerDeviceSketch() {
       </Window>
 
       <figcaption className="mt-3 text-center text-sm leading-relaxed text-muted-foreground">
-        The target device dropdown is the important control. Leave it on
-        &ldquo;For all devices&rdquo; and you lose the volume keys on your actual keyboard.
+        The dropdown at the top is the bit that matters. Leave it on
+        &ldquo;For all devices&rdquo; and you will lose the volume keys on your real keyboard.
       </figcaption>
     </figure>
   );
@@ -188,8 +187,8 @@ export function DictationHotkeySketch() {
       </div>
 
       <figcaption className="mt-3 text-center text-sm leading-relaxed text-muted-foreground">
-        Most dictation apps offer both. Picking the wrong row is the easiest way to lose an
-        evening to a button that seems to do nothing.
+        Most dictation apps have both rows. Picking the wrong one is the easiest way to
+        spend an evening on a button that seems to do nothing.
       </figcaption>
     </figure>
   );
