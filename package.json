@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "prepare": "[ -d .git ] && lefthook install || true"
+    "prepare": "[ -d .git ] && lefthook install || true",
+    "check:canonical": "node scripts/check-canonical.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
