@@ -263,10 +263,15 @@ test.describe("smoke", () => {
     const page = await context.newPage();
     await page.goto("/");
 
+    // Wait for real content before measuring. The response is streamed, and
+    // reading innerText straight after "load" made this flake once on a run
+    // that took 1.6m instead of the usual 6s: the assertion is about what the
+    // document ends up containing, not about how fast it arrives.
+    await expect(page.getByText("THINK.", { exact: true })).toBeVisible();
+
     const text = await page.evaluate(() => document.body.innerText.replace(/\s+/g, " ").trim());
     expect(text).not.toContain("booting");
     expect(text.length).toBeGreaterThan(1000);
-    expect(text).toContain("THINK.");
     await context.close();
   });
 
