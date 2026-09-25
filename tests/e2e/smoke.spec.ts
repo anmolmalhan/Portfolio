@@ -232,6 +232,34 @@ test.describe("smoke", () => {
     await expect(page).toHaveURL(/\/blog\/run-claude-code-from-your-phone$/);
   });
 
+  test("palette theme commands are not hijacked by post titles", async ({ page }) => {
+    // Shipped bug: cmdk scored a SUBSEQUENCE, so "dark" matched the letters
+    // d-a-r-k inside "Turn a DJI Mic Into a Hands-Free Note Taker". Writing
+    // renders above Appearance, so Enter opened a blog post instead of
+    // switching the theme. Asserts on "dark" specifically: the older test
+    // used "light", which happened not to collide and so never caught this.
+    await page.goto("/");
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.type("dark");
+    await page.keyboard.press("Enter");
+
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("palette search reaches the post it names, not a lookalike project", async ({ page }) => {
+    // "dji" used to match "Swift Digital Seva Next.js 16 TypeScript" through
+    // Digital / Next.js / TypeScript, and Projects outranks Writing.
+    await page.goto("/");
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.type("dji");
+    await page.keyboard.press("Enter");
+
+    await expect(page).toHaveURL(/\/blog\/[a-z0-9-]*dji[a-z0-9-]*$/);
+  });
+
   test("command palette returns focus to its trigger on close", async ({ page }) => {
     await page.goto("/");
     const trigger = page.getByRole("button", { name: /open command palette/i });

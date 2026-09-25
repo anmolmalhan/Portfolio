@@ -33,6 +33,53 @@ import type { PostMeta } from "@/lib/posts";
 import { siteConfig } from "@/config/site";
 import { applyTheme, getServerTheme, getThemeSnapshot, subscribeToTheme } from "@/lib/theme";
 
+/**
+ * Every whitespace-separated token must appear as a substring of the item's
+ * value. Returns 0 to hide, higher to rank first.
+ *
+ * This replaces cmdk's default scoring, which matches a SUBSEQUENCE: the
+ * letters of the query in order, anywhere in the value. On a haystack of
+ * titles and tech stacks that fires constantly and silently picks the wrong
+ * row. Two real cases from production, both with the correct item also on
+ * screen but ranked below:
+ *
+ *   "dji"  matched "Swift Digital Seva Next.js 16 TypeScript ..."
+ *          via Digital / Next.js / TypeScript, and Projects renders above
+ *          Writing, so Enter opened the project instead of the DJI post.
+ *   "dark" matched the post title "Turn a DJI Mic Into a Hands-Free Note
+ *          Taker", and Writing renders above Appearance, so Enter opened a
+ *          blog post instead of switching the theme.
+ *
+ * Trimming the searchable value was tried first and is not a fix: it only
+ * shrinks the haystack until the next long title re-breaks it. Requiring a
+ * substring removes the failure mode instead of postponing it. Tokens are
+ * AND-ed so "copy email" and "dji mic" still work.
+ */
+export function paletteFilter(value: string, search: string): number {
+  const haystack = value.toLowerCase();
+  const query = search.trim().toLowerCase();
+  if (!query) return 1;
+
+  // Also compare with punctuation removed, so the dots and slashes in product
+  // names do not have to be typed: "nextjs" should reach "Next.js" and
+  // "shadcnui" should reach "shadcn/ui". Without this, requiring a literal
+  // substring quietly makes those unsearchable, which is how people actually
+  // type them.
+  const squash = (s: string) => s.replace(/[^a-z0-9]+/g, "");
+  const squashedHaystack = squash(haystack);
+
+  const tokens = query.split(/\s+/);
+  const hit = (t: string) => haystack.includes(t) || squashedHaystack.includes(squash(t));
+  if (!tokens.every(hit)) return 0;
+
+  // Rank: a match at a word boundary beats one buried mid-word, and among
+  // equals the shorter value wins because it is the more specific item.
+  // Ranking reads the un-squashed string, where word boundaries still exist.
+  const first = haystack.indexOf(tokens[0]);
+  const atWordStart = first === 0 || /\s/.test(haystack[first - 1] ?? " ");
+  return (atWordStart ? 2 : 1) + 1 / (haystack.length + 1);
+}
+
 /** Route icons, so every row is scannable by shape before it is read. */
 const ROUTE_ICONS: Record<string, LucideIcon> = {
   "/": Home,
@@ -161,7 +208,7 @@ export function CommandPalette({ posts = [] }: { posts?: PostMeta[] }) {
       {/* shadcn's CommandDialog renders children straight into DialogContent
           without a <Command> root, so cmdk's store context is undefined and
           every CommandInput/CommandList throws "reading 'subscribe'". */}
-      <Command className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted-foreground/60 [&_[cmdk-item]]:gap-3 [&_[cmdk-item]]:rounded-lg [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:size-4 [&_[cmdk-item]_svg]:text-muted-foreground [&_[cmdk-item][data-selected=true]_svg]:text-foreground">
+      <Command filter={paletteFilter} className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted-foreground/60 [&_[cmdk-item]]:gap-3 [&_[cmdk-item]]:rounded-lg [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2.5 [&_[cmdk-item]_svg]:size-4 [&_[cmdk-item]_svg]:text-muted-foreground [&_[cmdk-item][data-selected=true]_svg]:text-foreground">
         <CommandInput placeholder="Search pages, projects, and actions…" />
 
         <CommandList className="max-h-[22rem] p-2">
