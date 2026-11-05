@@ -28,8 +28,11 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
            as normal; horizontal exploration stays available via trackpad
            swipe, shift+wheel, arrow keys, and the button below. */
         /* page-inset-left puts the first slide on the same x as the header
-           logo while the track itself still scrolls edge-to-edge. */
-        className="pin-wrap page-inset-left flex md:h-[80dvh] items-center gap-16 md:gap-32 w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain pr-[20vw]"
+           logo on desktop, where the track itself still scrolls edge-to-edge.
+           Below md the track becomes a plain vertical list: full-width cards
+           inside the page gutter on both sides, no sideways scroll, so
+           nothing sits off-screen on a phone. */
+        className="pin-wrap page-inset-left flex flex-col md:flex-row md:h-[80dvh] items-center gap-16 md:gap-32 w-full overflow-x-visible md:overflow-x-auto md:snap-x md:snap-mandatory scroll-smooth md:overscroll-x-contain pr-[var(--page-gutter)] md:pr-[20vw]"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         tabIndex={0}
         role="region"
@@ -41,12 +44,12 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
           e.currentTarget.scrollBy({ left: dir * window.innerWidth * 0.7, behavior: "smooth" });
         }}
       >
-        <div className="w-[85vw] md:w-[60vw] shrink-0 snap-center">
+        <div className="w-full md:w-[60vw] shrink-0 md:snap-center">
           <h2 className="text-huge font-bold leading-none uppercase text-background">
             Selected<br />Projects
           </h2>
           <div className="h-px w-full bg-background/20 mt-12 mb-8" />
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
             <button
               type="button"
               onClick={() => scrollBy(1)}
@@ -60,7 +63,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
         {projects.filter((p) => p.featured).map((project, i) => (
           <div
             key={project.id}
-            className="w-[85vw] md:w-[60vw] shrink-0 md:h-full flex flex-col justify-center group relative text-background snap-center"
+            className="w-full md:w-[60vw] shrink-0 md:h-full flex flex-col justify-center group relative text-background md:snap-center"
           >
             {/* opacity-75, not opacity-50. The slide paints text-background on
                 the inverted panel, and halving it measured 3.63:1 against that
@@ -81,7 +84,7 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
                   src={project.image}
                   alt={project.title}
                   fill
-                  sizes="(max-width: 768px) 85vw, 60vw"
+                  sizes="(max-width: 768px) 90vw, 60vw"
                   className="object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-1000 ease-out"
                 />
               ) : (

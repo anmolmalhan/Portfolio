@@ -84,7 +84,7 @@ export function ContactForm() {
           <span className="opacity-60">:</span>
           <span className="text-[var(--syntax-blue)]">~</span>
           <span className="opacity-60">$ </span>
-          ./transmit.sh
+          Send a message
         </div>
       </div>
 
@@ -156,7 +156,7 @@ export function ContactForm() {
             type="submit"
             className="w-full bg-accent text-background font-bold font-mono py-3 rounded-md hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            <Send className="w-4 h-4" /> await transmit()
+            <Send className="w-4 h-4" /> Send message
           </button>
 
           <p className="font-mono text-xs text-muted-foreground text-center leading-relaxed">

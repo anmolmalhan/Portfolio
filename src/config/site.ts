@@ -4,8 +4,8 @@
  * Anything that appears in more than one place — the name in the header and
  * the footer, the email in the contact page and the JSON-LD, the nav in the
  * desktop bar and the mobile sheet — belongs here. Previously these were
- * retyped per file, so the header said "Studio" while the footer said the same
- * link was "About" and the two drifted apart.
+ * retyped per file, and the nav drifted: the header and the footer named the
+ * same /about link differently.
  */
 
 export type NavItem = {
@@ -21,7 +21,7 @@ export type NavItem = {
 const nav: NavItem[] = [
   { label: "Work", href: "/projects" },
   { label: "Blog", href: "/blog" },
-  { label: "Studio", href: "/about" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
