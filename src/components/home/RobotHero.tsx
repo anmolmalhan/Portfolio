@@ -55,6 +55,7 @@ function Robot({ reduced, pointer }: RobotProps) {
     });
   }, [scene]);
 
+  // eslint-disable-next-line react-hooks/immutability -- three.js mixers are mutable by design
   useEffect(() => {
     const idle = actions.Idle;
     if (!idle) return;
