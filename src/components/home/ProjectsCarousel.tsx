@@ -28,10 +28,11 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
            as normal; horizontal exploration stays available via trackpad
            swipe, shift+wheel, arrow keys, and the button below. */
         /* page-inset-left puts the first slide on the same x as the header
-           logo while the track itself still scrolls edge-to-edge.
-           Below md the track becomes a plain vertical list: full-width cards,
-           no sideways scroll, so nothing sits off-screen on a phone. */
-        className="pin-wrap page-inset-left flex flex-col md:flex-row md:h-[80dvh] items-center gap-16 md:gap-32 w-full overflow-x-visible md:overflow-x-auto md:snap-x md:snap-mandatory scroll-smooth md:overscroll-x-contain md:pr-[20vw]"
+           logo on desktop, where the track itself still scrolls edge-to-edge.
+           Below md the track becomes a plain vertical list: full-width cards
+           inside the page gutter on both sides, no sideways scroll, so
+           nothing sits off-screen on a phone. */
+        className="pin-wrap page-inset-left flex flex-col md:flex-row md:h-[80dvh] items-center gap-16 md:gap-32 w-full overflow-x-visible md:overflow-x-auto md:snap-x md:snap-mandatory scroll-smooth md:overscroll-x-contain pr-[var(--page-gutter)] md:pr-[20vw]"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         tabIndex={0}
         role="region"
@@ -48,11 +49,11 @@ export default function ProjectsCarousel({ projects }: { projects: Project[] }) 
             Selected<br />Projects
           </h2>
           <div className="h-px w-full bg-background/20 mt-12 mb-8" />
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
             <button
               type="button"
               onClick={() => scrollBy(1)}
-              className="hidden md:flex font-mono text-sm uppercase py-3 opacity-70 hover:opacity-100 items-center gap-4 text-background transition-opacity cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-foreground rounded-sm"
+              className="font-mono text-sm uppercase py-3 opacity-70 hover:opacity-100 flex items-center gap-4 text-background transition-opacity cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-foreground rounded-sm"
             >
               Scroll to explore <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
             </button>
