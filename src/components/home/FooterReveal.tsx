@@ -130,7 +130,7 @@ export default function FooterReveal() {
               href="/contact"
               className="px-8 py-4 bg-white text-black font-mono text-sm uppercase rounded-full hover:scale-105 hover:bg-[var(--syntax-blue)] hover:text-white transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              [ Execute Contact ]
+              Contact me
             </Link>
           </div>
 

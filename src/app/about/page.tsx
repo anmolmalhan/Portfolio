@@ -35,7 +35,7 @@ export default function AboutPage() {
   return (
     <Container size="content" className="py-28 md:py-32 flex-1">
       <PageHeader
-        eyebrow="studio"
+        eyebrow="about"
         title="About"
         description="I design clean interfaces and build them with production-ready code."
       />

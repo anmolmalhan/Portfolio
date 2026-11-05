@@ -80,7 +80,7 @@ test.describe("smoke", () => {
     // No RESEND_API_KEY in dev → server action returns mode: "mailto" → client
     // flow appends logs and ends at the "Transmission Complete" success state.
     // The mailto: handoff that follows is a no-op in headless Chromium.
-    await page.getByRole("button", { name: /await transmit/i }).click();
+    await page.getByRole("button", { name: /Send message/i }).click();
     await expect(page.getByText(/Transmission Complete/i)).toBeVisible({ timeout: 5_000 });
     await expect(page.getByRole("button", { name: /reset/i })).toBeVisible();
   });
@@ -90,7 +90,7 @@ test.describe("smoke", () => {
     // Scroll to the bottom so the fixed-reveal footer is fully on-screen
     // and `inert` flips off via the IntersectionObserver.
     await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight }));
-    const cta = page.getByRole("link", { name: /Execute Contact/i });
+    const cta = page.getByRole("link", { name: /Contact me/i });
     await expect(cta).toBeVisible();
     await cta.click();
     await expect(page).toHaveURL(/\/contact$/);

@@ -88,7 +88,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             className="group inline-flex items-center gap-2 py-2 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>cd ..</span>
+            <span>Back to blog</span>
           </Link>
         </div>
       </Container>

@@ -70,7 +70,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
       <Container size="content" className="pt-28 pb-8">
         <Link href="/projects" className="inline-flex items-center gap-2 py-2 text-muted-foreground hover:text-foreground font-mono text-sm transition-colors cursor-pointer group">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-          <span>cd ..</span>
+          <span>Back to projects</span>
         </Link>
       </Container>
 
